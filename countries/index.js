@@ -5,7 +5,9 @@ import axios from "axios";
 
 const port = 8080;
 const app = express();
-const apiBasicUrl = "http://localhost:8081/api/v01"
+const apiBasicUrl = "http://localhost:8081/api/v01";
+let globalAnsw = null;
+let nextQuestion = {};
 
 
 
@@ -21,7 +23,7 @@ async function getNextQuestion(){
     }catch(error){
         console.error(error);
     }
-    return null;
+    return {};
 }
 
 async function getVariants(){
@@ -47,9 +49,20 @@ async function checkVariants(nextQ, vars) {
     return vars;
   }
   
+ 
+app.post("/answ",(req,res)=>{
+    let clientAnsw = req.body.answer;
+    if(nextQuestion.capital === clientAnsw){
+        globalAnsw = true;
+    }else{
+        globalAnsw = false;
+    }
+
+    console.log(req.body.answer);
+})
 
 app.get("/", async (req,res)=>{
-    let nextQuestion = await getNextQuestion();
+    nextQuestion = await getNextQuestion();
     let nextVariants = await getVariants();
     console.log("********************");
     console.log(nextQuestion);
@@ -57,8 +70,9 @@ app.get("/", async (req,res)=>{
     console.log(nextVariants);
 
     // console.log(nextVariants);
-    res.status(200).render("index.ejs",{nextQuestion, nextVariants})
+    res.status(200).render("index.ejs",{nextQuestion, nextVariants, globalAnsw})
 })
+
 
 
 app.listen(port,(err)=>{

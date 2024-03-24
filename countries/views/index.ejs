@@ -14,18 +14,27 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
+                <% if(globalAnsw){ %>
                 <div class="card quiz-card">
                     <h2>Let's play a guessing game!</h2>
                     <p id="countryName">Guess the capital of: <strong><%= nextQuestion.nextQ.country  %></strong><span id="country"></span></p>
-                    <form id="quizForm">
+                    <form method="post" action="/answ">
                         <% nextVariants.nextVars.forEach(function(variant) { %>
                           <div class="form-group">
                             <input type="radio" name="answer" id="option<%= variant.id %>" value="<%= variant.capital %>">
-                            <label for="option<%= variant.id %>"><%= variant.capital %></label> </div>
+                            <label for="option<%= variant.id %>"><%= variant.capital %></label>
+                          </div>
                         <% }); %>
                         <button type="submit" class="btn btn-primary">Submit Answer</button>
                       </form>
                 </div>
+                      <% }else{ %>
+                        <div class="card quiz-card">
+                            <h2>Wrong guess!</h2>
+                            
+                        </div>
+                    <% } %>
+                
             </div>
         </div>
     </div>
