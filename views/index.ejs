@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url("https://img.freepik.com/free-vector/worldwide-connection-blue-background-illustration-vector_53876-76811.jpg?w=740&t=st=1711306674~exp=1711307274~hmac=7b1f083d6d3b94be952106957d2ec2d7564300f3490cbd19c0995d6006d52bda"); /* Replace with your preferred background image URL */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quiz-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card quiz-card">
+                    <h2>Country Quiz</h2>
+                    <p id="countryName">Guess the capital of: <span id="country"></span></p>
+                    <form id="quizForm">
+                        <div class="form-group">
+                            <input type="radio" name="answer" id="option1" value="option1">
+                            <label for="option1" id="optionLabel1"></label>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" name="answer" id="option2" value="option2">
+                            <label for="option2" id="optionLabel2"></label>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" name="answer" id="option3" value="option3">
+                            <label for="option3" id="optionLabel3"></label>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" name="answer" id="option4" value="option4">
+                            <label for="option4" id="optionLabel4"></label>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" name="answer" id="option5" value="option5">
+                            <label for="option5" id="optionLabel5"></label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Answer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add your JavaScript code here for functionality like:
+        // - Fetching random countries and capitals
+        // - Handling form submission and checking answers
+        // - Displaying feedback to the user
+    </script>
+</body>
+</html>
