@@ -15,31 +15,16 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card quiz-card">
-                    <h2>Country Quiz</h2>
-                    <p id="countryName">Guess the capital of: <span id="country"></span></p>
+                    <h2>Let's play a guessing game!</h2>
+                    <p id="countryName">Guess the capital of: <strong><%= nextQuestion.nextQ.country  %></strong><span id="country"></span></p>
                     <form id="quizForm">
-                        <div class="form-group">
-                            <input type="radio" name="answer" id="option1" value="option1">
-                            <label for="option1" id="optionLabel1"></label>
-                        </div>
-                        <div class="form-group">
-                            <input type="radio" name="answer" id="option2" value="option2">
-                            <label for="option2" id="optionLabel2"></label>
-                        </div>
-                        <div class="form-group">
-                            <input type="radio" name="answer" id="option3" value="option3">
-                            <label for="option3" id="optionLabel3"></label>
-                        </div>
-                        <div class="form-group">
-                            <input type="radio" name="answer" id="option4" value="option4">
-                            <label for="option4" id="optionLabel4"></label>
-                        </div>
-                        <div class="form-group">
-                            <input type="radio" name="answer" id="option5" value="option5">
-                            <label for="option5" id="optionLabel5"></label>
-                        </div>
+                        <% nextVariants.nextVars.forEach(function(variant) { %>
+                          <div class="form-group">
+                            <input type="radio" name="answer" id="option<%= variant.id %>" value="<%= variant.capital %>">
+                            <label for="option<%= variant.id %>"><%= variant.capital %></label> </div>
+                        <% }); %>
                         <button type="submit" class="btn btn-primary">Submit Answer</button>
-                    </form>
+                      </form>
                 </div>
             </div>
         </div>
