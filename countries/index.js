@@ -1,14 +1,18 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
+
 const port = 8080;
 const app = express();
 
+
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(express.static("public"));
 
 app.get("/",(req,res)=>{
-    res.status(200).render("index.ejs",{})
+    res.status(200).render("index.ejs")
 })
 
 

@@ -1,0 +1,27 @@
+
+body {
+    background-image: url("https://img.freepik.com/free-vector/worldwide-connection-blue-background-illustration-vector_53876-76811.jpg?w=740&t=st=1711306674~exp=1711307274~hmac=7b1f083d6d3b94be952106957d2ec2d7564300f3490cbd19c0995d6006d52bda"); /* Replace with your preferred background image URL */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quiz-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-card h2 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
