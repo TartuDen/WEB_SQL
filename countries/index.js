@@ -31,15 +31,15 @@ async function getNextQuestion(){
     }
     return {};
 }
-
-async function getVariants(){
+async function getNextFlag(){
     try{
-        let apiResp = await axios.get(apiBasicUrl+"/variants");
-        return apiResp.data
+        let apiResp = await axios.get(apiBasicUrl+"/flags");
+        apiResp = apiResp.data
+        return apiResp
     }catch(error){
-        console.log(error);
+        console.error(error);
     }
-    return null
+    return {};
 }
 
 async function checkVariants(nextQ, vars) {
@@ -83,6 +83,10 @@ app.get("/", async (req,res)=>{
   
     // console.log(nextVariants);
     res.status(200).render("index.ejs",{nextQuestion, nextVariants, localAnsw, score})
+})
+
+app.get("/flags",async(req,res)=>{
+    
 })
 
 

@@ -33,6 +33,15 @@ async function getNextQuestion() {
     }
 }
 
+async function getNextQForFlags(){
+    try{
+        const dbRespFlags = await client.query("SELECT * FROM flags ORDER BY RANDOM() LIMIT 6");
+        return dbRespFlags.rows;
+    }catch(error){
+        console.error("Error executing query: ",error);
+    }
+}
+
 // Create an Express application
 const app = express();
 
@@ -48,6 +57,18 @@ app.get("/api/v01/next-question", async (req, res) => {
         res.status(200).json({ nextQ });
     } catch (error) {
         console.error("Error retrieving next question:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+// Route handler to retrieve the next question
+app.get("/api/v01/flags", async (req, res) => {
+    try {
+        const nextQ = await getNextQForFlags(); // Retrieve the next question
+        console.log(nextQ); // Log the next question
+        res.status(200).json({ nextQ });
+    } catch (error) {
+        console.error("Error retrieving next flag question:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });
