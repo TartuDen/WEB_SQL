@@ -32,8 +32,8 @@
                 <div class="card quiz-card">
                     <h2>Let's play a guessing game!</h2>
                     <h3>Your score is: <%= score %></h3>
-                    <h3>The answ is: <%= nextQuestionC.capital %></h3>
-                    <p id="countryName">Guess the capital of: <strong><%= nextQuestionC.country %></strong><span id="country"></span></p>
+                    
+                    <h2 id="countryName">Guess the capital of: <br> <strong><%= nextQuestionC.country %></strong><span id="country"></span></h2>
                     <form method="post" action="/answCountry">
                         <% nextVariants.forEach(function(variant) { %>
                         <div class="form-group">
