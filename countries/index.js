@@ -154,7 +154,7 @@ app.get("/countries", async (req,res)=>{
 
     nextVariants = await checkVariants(nextQuestionC, nextVariants);
   
-    res.status(200).render("index.ejs",{nextQuestionC, nextVariants, localAnsw, score})
+    res.status(200).render("indexCountries.ejs",{nextQuestionC, nextVariants, localAnsw, score})
 })
 
 /**
@@ -169,7 +169,7 @@ app.get("/flags",async(req,res)=>{
     let nextQuestionF = await nextSeqFlags.nextQ[0]
     let nextVariantsF = await nextSeqFlags.nextQ.slice(1,5);
     nextVariantsF = await checkVariantsF(nextQuestionF, nextVariantsF);
-    res.status(200).render("index copy.ejs",{nextQuestionF, nextVariantsF, localAnsw, score})
+    res.status(200).render("indexFlags.ejs",{nextQuestionF, nextVariantsF, localAnsw, score})
 })
 
 // Start the server
