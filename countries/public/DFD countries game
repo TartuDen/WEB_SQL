@@ -1,0 +1,115 @@
+<mxfile host="app.diagrams.net" modified="2024-03-31T09:54:06.805Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="40T1gWSbqM6jWOaxo74V" version="24.2.1" type="github">
+  <diagram name="Página-1" id="-GcpW7zD7y_uSV2a83ur">
+    <mxGraphModel dx="1434" dy="738" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-1" value="CLIENT" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="20" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-2" value="LOCAL SERVER 8080" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-3" value="API SERVER 8081" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="20" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-14" value="&lt;div&gt;let globalAnsw = null;&lt;/div&gt;&lt;div&gt;let nextSeqCountries = [];&lt;/div&gt;&lt;div&gt;let nextSeqFlags = [];&lt;/div&gt;&lt;div&gt;let score = 0;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="60" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-16" target="GrBZrg6QA14ecCBY6VUF-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="255" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-20" value="&quot;countries&quot;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="GrBZrg6QA14ecCBY6VUF-19">
+          <mxGeometry x="0.6411" y="1" relative="1" as="geometry">
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-16" value="index.ejs&lt;div&gt;&amp;lt;form post &quot;/&quot;&amp;gt; gameType = countries&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="70" width="150" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-18" target="GrBZrg6QA14ecCBY6VUF-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-25" value="redirect(&quot;/countries&quot;)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="GrBZrg6QA14ecCBY6VUF-24">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-18" value="app.post(&quot;/&quot;)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="230" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-21" value="app.get(&quot;/&quot;)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="170" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-23" target="GrBZrg6QA14ecCBY6VUF-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-28" value="await axios.get(apiBasicUrl+&quot;/next-question&quot;)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;" vertex="1" connectable="0" parent="GrBZrg6QA14ecCBY6VUF-27">
+          <mxGeometry x="-0.0078" relative="1" as="geometry">
+            <mxPoint x="-10" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-23" value="app.get(&quot;/countries&quot;&lt;div&gt;&lt;div&gt;let localAnsw = globalAnsw;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; globalAnsw = null&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="350" width="170" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-26" value="&quot;/next-question&quot;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="60" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.007;entryY=0.875;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-26" target="GrBZrg6QA14ecCBY6VUF-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="153" />
+              <mxPoint x="590" y="153" />
+              <mxPoint x="590" y="470" />
+              <mxPoint x="501" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-30">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-30" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="240" width="360" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-31" value="&lt;div&gt;[&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 44, country: &#39;Chile&#39;, capital: &#39;Santiago&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 138, country: &#39;Martinique&#39;, capital: &#39;Fort-de-France&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 198, country: &#39;Sierra Leone&#39;, capital: &#39;Freetown&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 28, country: &#39;Bosnia and Herzegovina&#39;, capital: &#39;Sarajevo&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 180, country: &#39;Reunion&#39;, capital: &#39;Saint-Denis&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 117, country: &#39;Kuwait&#39;, capital: &#39;Kuwait City&#39; }&lt;/div&gt;&lt;div&gt;]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="GrBZrg6QA14ecCBY6VUF-30">
+          <mxGeometry x="10" y="35" width="370" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.018;entryY=0.578;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="198.6" as="sourcePoint" />
+            <mxPoint x="242.69999999999993" y="199.97999999999993" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="297" y="199" />
+              <mxPoint x="297" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-34" value="score" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="GrBZrg6QA14ecCBY6VUF-33">
+          <mxGeometry x="-0.3376" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.462;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-23" target="GrBZrg6QA14ecCBY6VUF-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="GrBZrg6QA14ecCBY6VUF-36">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-36" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="29" y="520" width="385" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="GrBZrg6QA14ecCBY6VUF-37" value="&lt;div&gt;nextQuestionC: { id: 88, country: &#39;Guadeloupe&#39;, capital: &#39;Basse-Terre&#39; }&lt;/div&gt;&lt;div&gt;------------------------&lt;/div&gt;&lt;div&gt;nextVariants: [&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 120, country: &#39;Latvia&#39;, capital: &#39;Riga&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 33, country: &#39;Brunei&#39;, capital: &#39;Bandar Seri Begawan&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 26, country: &#39;Bhutan&#39;, capital: &#39;Thimphu&#39; },&lt;/div&gt;&lt;div&gt;&amp;nbsp; { id: 88, country: &#39;Guadeloupe&#39;, capital: &#39;Basse-Terre&#39; }&lt;/div&gt;&lt;div&gt;]&lt;/div&gt;&lt;div&gt;------------------------&lt;/div&gt;&lt;div&gt;localAnsw: null&lt;/div&gt;&lt;div&gt;------------------------&lt;/div&gt;&lt;div&gt;score: 0&lt;/div&gt;&lt;div&gt;------------------------&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="GrBZrg6QA14ecCBY6VUF-36">
+          <mxGeometry x="10" y="30" width="390" height="200" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
