@@ -24,7 +24,6 @@ const pool = new pg.Pool({
       console.error(err);
     } else {
         dataFromDB = res.rows
-      console.log(dataFromDB);
     }
     // The connection is automatically released back to the pool
   });
@@ -38,8 +37,12 @@ app.use(bodyParser.json());
 
 app.get("/api/v01",async (req,res)=>{
     data = extractCountryCodes(dataFromDB);
-    console.log(data)
     res.status(200).json(data);
+})
+
+app.post("/api/v01/add",async(req,res)=>{
+    console.log("*********** /add ************");
+    console.log(req.body.data);
 })
 
 
