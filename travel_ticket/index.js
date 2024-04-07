@@ -5,8 +5,10 @@ import axios from 'axios';
 const port = 8080;
 const app = express();
 const apiUrl = "http://localhost:8081/api/v01"
-let countries = [];
+let message = null;
+
 let total = 0;
+
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -24,22 +26,19 @@ async function getTotalCountries(){
 async function getCodeFromName(countryName){
   try{
       let apiResp = await axios.get(apiUrl+"/getCodeFromName/"+countryName);
-      if(!apiResp.data.message){
-        return apiResp.data
-      }else{
-        throw apiResp.data.message
-      }
-      
+      return apiResp.data  
   }catch(err){
     console.error(err)
   }
 }
 
 app.get("/",async (req,res)=>{
-  countries = await getTotalCountries();
+  let localMessage = message;
+  message = null;
+  const {countries, messageGetAll} = await getTotalCountries();
   total = countries.length;
 
-  res.status(200).render("index.ejs",{countries, total})
+  res.status(200).render("index.ejs",{countries, total, localMessage})
 })
 
 app.post("/add", async (req, res) => {
@@ -48,16 +47,17 @@ app.post("/add", async (req, res) => {
     countryToAdd = await getCodeFromName(countryToAdd);
   }
   try {
-    if(countryToAdd === undefined){
-      throw new Error("Country to add is invalid or not provided");
+    if(countryToAdd.messageGetCode){
+      message = countryToAdd.messageGetCode
+    }else if (countryToAdd.countryCode){
+      message = await axios.post(apiUrl + "/add", { data: countryToAdd.countryCode });
+      message= message.data.messageAdd;
     }
-      await axios.post(apiUrl + "/add", { data: countryToAdd });
       // Redirect after successful addition
-      res.status(200).redirect("/");
   } catch (error) {
-      console.log("Error adding country: " + error);
-      res.status(500).send("Error adding country: " + error.message);
+      message = ("Error adding country: " + error);
   }
+  res.status(200).redirect("/");
 });
 
 

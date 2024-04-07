@@ -4,8 +4,10 @@ import pg from 'pg';
 
 const port = 8081;
 const app = express();
-let data = [];
 let dataFromDB;
+let messageAdd = null;
+let messageGetAll = null;
+let messageGetCode = null;
 
 const pool = new pg.Pool({
     user: 'dverves',
@@ -22,8 +24,9 @@ async function getAllData() {
         return dataFromDB.map(item => item.country_code);
     } catch (err) {
         console.error(err);
+        messageGetAll = err;;
         // You might want to handle the error here or propagate it further
-        throw err;
+        // throw err;
     }
 }
 
@@ -33,6 +36,7 @@ async function addData(dataToAdd) {
         const existingData = await pool.query('SELECT * FROM visited_countries WHERE country_code = $1', [dataToAdd]);
 
         if (existingData.rows.length > 0) {
+            messageAdd = `Data for country code already exists in the database.`;
             console.log(`Data for country code '${dataToAdd}' already exists in the database.`);
             return; // Exit the function without adding duplicate data
         }
@@ -40,10 +44,12 @@ async function addData(dataToAdd) {
         // Insert the data into the database
         const res = await pool.query('INSERT INTO visited_countries (country_code) VALUES ($1)', [dataToAdd]);
         console.log("Data Successfully added at: " + new Date().toLocaleString());
+        messageAdd = "Data Successfully added";
     } catch (err) {
         console.error(err);
+        messageAdd = err;;
         // You might want to handle the error here or propagate it further
-        throw err;
+        // throw err;
     }
 }
 
@@ -57,7 +63,8 @@ async function getCodeFromName(name) {
         }
     } catch (err) {
         console.error("Error executing query:", err);
-        throw err; // Re-throw the error to be handled by the caller
+        messageGetCode = "Error executing query:" + err;
+        // // throw err; // Re-throw the error to be handled by the caller
     }
 }
 
@@ -67,8 +74,9 @@ async function countryExists(name) {
        
         return res.rows[0].count > 0; 
     } catch (err) {
-        console.error("Error checking country existence:", err);
-        throw err;
+        console.error("Error checking country existence: ", err);
+        messageGetCode = "Error checking country existence: " + err;
+        // throw err;
     }
 }
 
@@ -83,25 +91,28 @@ app.get("/api/v01/getCodeFromName/:countryName", async (req, res) => {
     if (await countryExists(countryName)) {
         try {
             let countryCode = await getCodeFromName(countryName);
-            res.status(200).json(countryCode);
+            res.status(200).json({countryCode});
         } catch (error) {
             console.error("Error retrieving country code:", error);
-            res.status(500).json({ message: "Internal server error" });
+            messageGetCode = "Internal server error";
+            res.status(500).json({ messageGetCode });
         }
     } else {
-        res.status(200).json({ message: "Such country does not exist..." });
+        messageGetCode = "Such country does not exist...";
+        res.status(200).json({ messageGetCode });
     }
 });
 
 
 app.get("/api/v01", async (req, res) => {
-    dataFromDB = await getAllData();
-    res.status(200).json(dataFromDB);
+    let countries = await getAllData();
+    res.status(200).json({countries, messageGetAll});
 })
 
 app.post("/api/v01/add", async (req, res) => {
     await addData(req.body.data)
-    res.status(201).json({message: "added"})
+
+    res.status(201).json({messageAdd})
 })
 
 
