@@ -40,19 +40,24 @@ app.get("/",async (req,res)=>{
   res.status(200).render("index.ejs",{countries, total})
 })
 
-app.post("/add",async (req,res)=>{
+app.post("/add", async (req, res) => {
   let countryToAdd = req.body["countryToAdd"];
-  if (!validateInput(countryToAdd)){
-    console.error("Wrong input: only 2 letter are allowed");
-  }else{
-    try{
-      let apiResp = await axios.post(apiUrl+"/add",{data: countryToAdd});
-      console.log(apiResp.data);
-    }catch(error){
-      console.log("Error adding country: "+error);
-    }
+  if (!validateInput(countryToAdd)) {
+      console.error("Wrong input: only 2 letter are allowed");
+      res.status(400).send("Wrong input: only 2 letters are allowed");
   }
-})
+
+  try {
+      await axios.post(apiUrl + "/add", { data: countryToAdd });
+      // Redirect after successful addition
+      res.status(200).redirect("/");
+  } catch (error) {
+      console.log("Error adding country: " + error);
+      res.status(500).send("Error adding country: " + error.message);
+  }
+});
+
+
 
 app.listen(port,(err)=>{
   if (err) throw err;
