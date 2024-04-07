@@ -7,7 +7,6 @@ const app = express();
 const apiUrl = "http://localhost:8081/api/v01"
 let countries = [];
 let total = 0;
-let error = null;
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -22,16 +21,19 @@ async function getTotalCountries(){
   }
 }
 
-function validateInput(input) {
-  // Check if input is a string and has length 2
-  if (typeof input !== 'string' || input.length !== 2) {
-    return false;
+async function getCodeFromName(countryName){
+  try{
+      let apiResp = await axios.get(apiUrl+"/getCodeFromName/"+countryName);
+      if(!apiResp.data.message){
+        return apiResp.data
+      }else{
+        throw apiResp.data.message
+      }
+      
+  }catch(err){
+    console.error(err)
   }
-
-  // Check if input consists only of letters A-Z
-  return /^[A-Za-z]{2}$/.test(input);
 }
-
 
 app.get("/",async (req,res)=>{
   countries = await getTotalCountries();
@@ -42,12 +44,13 @@ app.get("/",async (req,res)=>{
 
 app.post("/add", async (req, res) => {
   let countryToAdd = req.body["countryToAdd"];
-  if (!validateInput(countryToAdd)) {
-      console.error("Wrong input: only 2 letter are allowed");
-      res.status(400).send("Wrong input: only 2 letters are allowed");
+  if (countryToAdd.length > 2){
+    countryToAdd = await getCodeFromName(countryToAdd);
   }
-
   try {
+    if(countryToAdd === undefined){
+      throw new Error("Country to add is invalid or not provided");
+    }
       await axios.post(apiUrl + "/add", { data: countryToAdd });
       // Redirect after successful addition
       res.status(200).redirect("/");

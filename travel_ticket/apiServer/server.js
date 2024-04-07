@@ -1,11 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import ejs from 'ejs';
 import pg from 'pg';
-
-
-
-
 
 const port = 8081;
 const app = express();
@@ -52,9 +47,52 @@ async function addData(dataToAdd) {
     }
 }
 
+async function getCodeFromName(name) {
+    try {
+        const res = await pool.query("SELECT country_code FROM country_codes_table WHERE country_name = $1", [name]);
+        if (res.rows.length > 0) {
+            return res.rows[0].country_code; // Return the country code from the first row
+        } else {
+            return null; // Return null if no matching country code found
+        }
+    } catch (err) {
+        console.error("Error executing query:", err);
+        throw err; // Re-throw the error to be handled by the caller
+    }
+}
+
+async function countryExists(name) {
+    try {
+        const res = await pool.query("SELECT COUNT(*) FROM country_codes_table WHERE country_name = $1", [name]);
+       
+        return res.rows[0].count > 0; 
+    } catch (err) {
+        console.error("Error checking country existence:", err);
+        throw err;
+    }
+}
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+
+app.get("/api/v01/getCodeFromName/:countryName", async (req, res) => {
+    let countryName = req.params.countryName;
+    // Now you can use the `countryName` variable to access the value passed in the URL
+
+    if (await countryExists(countryName)) {
+        try {
+            let countryCode = await getCodeFromName(countryName);
+            res.status(200).json(countryCode);
+        } catch (error) {
+            console.error("Error retrieving country code:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    } else {
+        res.status(200).json({ message: "Such country does not exist..." });
+    }
+});
+
 
 app.get("/api/v01", async (req, res) => {
     dataFromDB = await getAllData();
