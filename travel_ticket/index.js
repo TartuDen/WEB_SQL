@@ -37,9 +37,14 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-async function getTotalCountries(){
+async function getTotalCountries(member_name = "All Members"){
+  console.log("Memb: ",member_name);
   try{
-    let apiResp = await axios.get(apiUrl);
+    let apiResp = await axios.get(apiUrl, {
+      params: {
+        member_name: member_name
+      }
+    });
     return apiResp.data
   }catch(error){
     console.log("Faild to getTotalCountries(): "+error);
@@ -56,6 +61,17 @@ async function getCodeFromName(countryName){
 }
 
 app.get("/",async (req,res)=>{
+  let localMessage = message;
+  message = null;
+  const {countries, messageGetAll} = await getTotalCountries();
+  total = countries.length;
+
+  res.status(200).render("index.ejs",{countries, total, localMessage, users})
+})
+
+app.get("/",async (req,res)=>{
+  const {userName} = req.body;
+  console.log("userName: ",userName);
   let localMessage = message;
   message = null;
   const {countries, messageGetAll} = await getTotalCountries();

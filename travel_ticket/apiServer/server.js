@@ -17,18 +17,97 @@ const pool = new pg.Pool({
     port: 5432,
 });
 
-async function getAllData() {
+async function createFamilyMemberDB(){
+    try{
+              // Check if the table exists
+            const checkTableQuery = `
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                AND table_name = 'family_member'
+            );
+            `;
+            const { rows } = await pool.query(checkTableQuery);
+
+            const tableExists = rows[0].exists;
+
+            if (!tableExists) {
+            // Create the table if it doesn't exist
+            const createTableQuery = `
+                CREATE TABLE family_member (
+                id SERIAL PRIMARY KEY,
+                member_name VARCHAR(50) NOT NULL,
+                tab_color VARCHAR(50) NOT NULL
+                );
+            `;
+            await pool.query(createTableQuery);
+            }
+    }catch(err){
+        console.log(error.message);
+    }
+}
+await createFamilyMemberDB();
+
+
+async function createVisitedCountriesDB() {
     try {
-        const res = await pool.query('SELECT * FROM visited_countries');
-        dataFromDB = res.rows;
+        // Check if the table exists
+        const checkTableQuery = `
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                AND table_name = 'visited_countries'
+            );
+        `;
+        const { rows } = await pool.query(checkTableQuery);
+
+        const tableExists = rows[0].exists;
+
+        if (!tableExists) {
+            // Create the table if it doesn't exist
+            const createTableQuery = `
+                CREATE TABLE visited_countries (
+                    id SERIAL PRIMARY KEY,
+                    country_code VARCHAR(2) NOT NULL,
+                    family_member_id INT,
+                    FOREIGN KEY (family_member_id) REFERENCES family_member(id)
+                );
+            `;
+            await pool.query(createTableQuery);
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+await createVisitedCountriesDB();
+
+
+async function getAllData(member_name) {
+    try {
+        let query;
+        let values;
+        
+        if (member_name === "All Members") {
+            query = 'SELECT * FROM visited_countries';
+        } else {
+            query = 'SELECT * FROM visited_countries WHERE member_name = $1';
+            values = [member_name];
+        }
+
+        const res = await pool.query(query, values);
+        const dataFromDB = res.rows;
         return dataFromDB.map(item => item.country_code);
     } catch (err) {
         console.error(err);
-        messageGetAll = err;;
+        messageGetAll = err;
         // You might want to handle the error here or propagate it further
         // throw err;
     }
 }
+
 
 async function addData(dataToAdd) {
     try {
@@ -105,7 +184,8 @@ app.get("/api/v01/getCodeFromName/:countryName", async (req, res) => {
 
 
 app.get("/api/v01", async (req, res) => {
-    let countries = await getAllData();
+    const member_name = req.query.member_name;
+    let countries = await getAllData(member_name);
     res.status(200).json({countries, messageGetAll});
 })
 
@@ -115,10 +195,27 @@ app.post("/api/v01/add", async (req, res) => {
     res.status(201).json({messageAdd})
 })
 
+
+// Function to create the table if not exists and add a new member
+async function addNewMember(memberName, tabColor) {
+    try {
+      // Add the new member
+      const addMemberQuery = `
+        INSERT INTO family_member (member_name, tab_color)
+        VALUES ($1, $2)
+      `;
+      await pool.query(addMemberQuery, [memberName, tabColor]);
+  
+      console.log(`New member "${memberName}" added with tab color "${tabColor}".`);
+    } catch (error) {
+      console.error('Error adding new member:', error.message);
+    }
+  }
+
 app.post("/api/v01/add_new_member", async(req,res)=>{
     const{memberName,tabColor} = req.body;
     console.log(memberName,tabColor);
-
+    await addNewMember(memberName, tabColor);
 })
 
 app.listen(port, (err) => {

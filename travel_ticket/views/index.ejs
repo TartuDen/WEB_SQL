@@ -10,9 +10,28 @@
 
 <body>
 
-  <% users.forEach(user => { %>
-    <button class="user-button" style="background-color: <%= user.tabColor %>;"><%= user.name %></button>
-  <% }); %>
+  <form id="userForm" action="/" method="post">
+    <% const usersWithAll = [...users, { name: 'All Members', tabColor: 'blue' }]; %>
+    <% usersWithAll.forEach((user, index) => { %>
+      <button type="button" class="user-button" style="background-color: <%= user.tabColor %>;" onclick="submitForm('<%= user.name %>', <%= index %>)">
+        <%= user.name %>
+        <input type="hidden" name="userName" value="">
+      </button>
+    <% }); %>
+  </form>
+  
+  <script>
+    function submitForm(userName, index) {
+      var form = document.getElementById("userForm");
+      var hiddenInput = form.querySelectorAll("input[type='hidden']")[index];
+      hiddenInput.value = userName;
+      form.submit();
+    }
+  </script>
+  
+  
+
+  
   <form action="/newM" method="post">
       <button class="add-member-button" type="submit">+Member</button>
   </form>
