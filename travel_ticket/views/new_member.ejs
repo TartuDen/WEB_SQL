@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Member</title>
+  <link rel="stylesheet" href="./styles/new.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Add New Member</h1>
+      <form action="/new_member_submit" method="post">
+        <div class="form-group">
+          <label for="memberName">Member Name:</label>
+          <input type="text" id="memberName" name="memberName" placeholder="Enter member name" required>
+        </div>
+        <div class="form-group">
+          <label for="tabColor">Tab Color:</label>
+          <input type="color" id="tabColor" name="tabColor" required>
+        </div>
+        <button class="btn" type="submit">Add Member</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

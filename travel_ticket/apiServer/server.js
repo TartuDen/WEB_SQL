@@ -115,6 +115,11 @@ app.post("/api/v01/add", async (req, res) => {
     res.status(201).json({messageAdd})
 })
 
+app.post("/api/v01/add_new_member", async(req,res)=>{
+    const{memberName,tabColor} = req.body;
+    console.log(memberName,tabColor);
+
+})
 
 app.listen(port, (err) => {
     if (err) throw err;

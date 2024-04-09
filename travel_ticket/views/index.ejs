@@ -9,6 +9,14 @@
 </head>
 
 <body>
+
+  <% users.forEach(user => { %>
+    <button class="user-button" style="background-color: <%= user.tabColor %>;"><%= user.name %></button>
+  <% }); %>
+  <form action="/newM" method="post">
+      <button class="add-member-button" type="submit">+Member</button>
+  </form>
+
   <form action="/add" method="post">
     <input type="text" name="countryToAdd" autofocus placeholder="<%= localMessage !== null ? localMessage : 'Enter country name' %>">
     <button type="submit">Add</button>
@@ -373,6 +381,8 @@
   </section>
   <h2 class="total-count">Total Countries: <%=total%>
   </h2>
+
+  
   <script>
     const country_codes = "<%= countries %>".split(",");
     if (country_codes.length > 0 && country_codes[0] !== '') {

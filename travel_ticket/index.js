@@ -9,6 +9,29 @@ let message = null;
 
 let total = 0;
 
+let users = [
+  {
+    name: "Denys",
+    tabColor: "blue",
+    visitedCountries: ["ES","UA"]
+  },
+  {
+    name: "Alina",
+    tabColor: "green",
+    visitedCountries: ["CA","PL"]
+  },
+  {
+    name: "Danik",
+    tabColor: "red",
+    visitedCountries: ["RU","UA"]
+  },
+  {
+    name: "Lizok",
+    tabColor: "pink",
+    visitedCountries: ["GB","FR"]
+  },
+]
+
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -38,7 +61,7 @@ app.get("/",async (req,res)=>{
   const {countries, messageGetAll} = await getTotalCountries();
   total = countries.length;
 
-  res.status(200).render("index.ejs",{countries, total, localMessage})
+  res.status(200).render("index.ejs",{countries, total, localMessage, users})
 })
 
 app.post("/add", async (req, res) => {
@@ -60,8 +83,27 @@ app.post("/add", async (req, res) => {
   res.status(200).redirect("/");
 });
 
+app.post("/newM",(req,res)=>{
+  res.status(200).render("new_member.ejs")
+})
+
+function validateNewM(name, color){
+  //perform validation for name and color
+  return name, color
+}
+
+app.post("/new_member_submit",async (req,res)=>{
+  const { memberName, tabColor} = req.body
+  if (validateNewM(memberName, tabColor)){
+    try{
+      let apiResp = await axios.post(apiUrl+"/add_new_member",{memberName,tabColor});
+    }catch(err){
+      console.error(err)
+    }
+  }
 
 
+})
 app.listen(port,(err)=>{
   if (err) throw err;
   console.log("local server is running on port: "+port)

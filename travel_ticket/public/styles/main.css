@@ -102,3 +102,25 @@ button {
   left: 0;
   bottom: 0;
 }
+.user-button {
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+  width: 100px; /* Adjust the width as needed */
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.add-member-button {
+  display: inline-block;
+  width: 100px; /* Adjust the width as needed */
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5;
+}
