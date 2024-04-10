@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser  from 'body-parser';
 import axios from 'axios';
 
+
 const port = 8080;
 const app = express();
 const apiUrl = "http://localhost:8081/api/v01"
@@ -14,38 +15,36 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-async function getTotalCountries(member_name = "All Members"){
-  try{
+
+async function getTotalCountries(member_name = "All Members") {
+  try {
     let apiResp = await axios.get(apiUrl, {
       params: {
         member_name: member_name
       }
     });
-    return apiResp.data
-  }catch(error){
-    console.log("Faild to getTotalCountries(): "+error);
+    console.log("apeREsp: ", apiResp.data)
+    return apiResp.data;
+  } catch (error) {
+    console.log("Faild to getTotalCountries(): " + error);
+  }
+}async function getUsers() {
+  try {
+    let apiResp = await axios.get(apiUrl + "/users");
+    return apiResp.data;
+  } catch (error) {
+    console.log("Faild to getUsers(): " + error);
+  }
+}
+async function getCodeFromName(countryName) {
+  try {
+    let apiResp = await axios.get(apiUrl + "/getCodeFromName/" + countryName);
+    return apiResp.data;
+  } catch (err) {
+    console.error(err);
   }
 }
 
-async function getUsers(){
-  try{
-    let apiResp = await axios.get(apiUrl+"/users");
-    return apiResp.data
-  }catch(error){
-    console.log("Faild to getUsers(): "+error);
-  }
-}
-
-
-
-async function getCodeFromName(countryName){
-  try{
-      let apiResp = await axios.get(apiUrl+"/getCodeFromName/"+countryName);
-      return apiResp.data  
-  }catch(err){
-    console.error(err)
-  }
-}
 
 app.get("/",async (req,res)=>{
   let localMessage = message;
@@ -61,9 +60,9 @@ app.post("/",async (req,res)=>{
   const {userName} = req.body;
   let localMessage = message;
   message = null;
-  const {countries, messageGetAll} = await getTotalCountries();
+  const {countries, messageGetAll} = await getTotalCountries(userName);
   const users = await getUsers();
-  total = countries.length;
+  total = 2;
 
   res.status(200).render("index.ejs",{countries, total, localMessage, users})
 })

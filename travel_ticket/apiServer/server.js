@@ -93,7 +93,7 @@ async function getAllData(member_name) {
         if (member_name === "All Members") {
             query = 'SELECT * FROM visited_countries';
         } else {
-            query = 'SELECT * FROM visited_countries WHERE member_name = $1';
+            query = 'SELECT vc.country_code FROM visited_countries vc JOIN family_member fm ON vc.family_member_id = fm.id WHERE fm.member_name = $1';
             values = [member_name];
         }
 
@@ -107,6 +107,7 @@ async function getAllData(member_name) {
         // throw err;
     }
 }
+
 
 async function getUsers() {
     try {
@@ -197,6 +198,7 @@ app.get("/api/v01/getCodeFromName/:countryName", async (req, res) => {
 
 app.get("/api/v01", async (req, res) => {
     const member_name = req.query.member_name;
+    console.log("membr_name: ",member_name);
     let countries = await getAllData(member_name);
     res.status(200).json({countries, messageGetAll});
 })

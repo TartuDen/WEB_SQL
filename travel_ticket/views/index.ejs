@@ -13,11 +13,12 @@
   <form action="/" method="post">
     <% const usersWithAll = [...users, { member_name: 'All Members', tab_color: 'blue' }]; %>
     <% usersWithAll.forEach(user => { %>
-      <button type="submit" class="user-button" style="background-color: <%= user.tab_color %>;" name="userName" value="<%= user.name %>">
+      <button type="submit" class="user-button" style="background-color: <%= user.tab_color %>;" name="userName" value="<%= user.member_name %>">
         <%= user.member_name %>
       </button>
     <% }); %>
   </form>
+
   
   <form action="/newM" method="post">
       <button class="add-member-button" type="submit">+Member</button>
