@@ -9,36 +9,12 @@ let message = null;
 
 let total = 0;
 
-let users = [
-  {
-    member_name: "Denys",
-    tab_color: "blue",
-    visitedCountries: ["ES","UA"]
-  },
-  {
-    member_name: "Alina",
-    tab_color: "green",
-    visitedCountries: ["CA","PL"]
-  },
-  {
-    member_name: "Danik",
-    tab_color: "red",
-    visitedCountries: ["RU","UA"]
-  },
-  {
-    member_name: "Lizok",
-    tab_color: "pink",
-    visitedCountries: ["GB","FR"]
-  },
-]
-
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 async function getTotalCountries(member_name = "All Members"){
-  console.log("Memb in gettotalcounries: ",member_name);
   try{
     let apiResp = await axios.get(apiUrl, {
       params: {
@@ -83,7 +59,6 @@ app.get("/",async (req,res)=>{
 
 app.post("/",async (req,res)=>{
   const {userName} = req.body;
-  console.log("userName in app.post('/'): ",userName);
   let localMessage = message;
   message = null;
   const {countries, messageGetAll} = await getTotalCountries();
