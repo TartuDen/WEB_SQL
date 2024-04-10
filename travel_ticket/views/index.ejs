@@ -10,24 +10,15 @@
 
 <body>
 
-  <form id="userForm" action="/" method="post">
-    <% const usersWithAll = [...users, { name: 'All Members', tabColor: 'blue' }]; %>
-    <% usersWithAll.forEach((user, index) => { %>
-      <button type="button" class="user-button" style="background-color: <%= user.tabColor %>;" onclick="submitForm('<%= user.name %>', <%= index %>)">
-        <%= user.name %>
-        <input type="hidden" name="userName" value="">
+  <form action="/" method="post">
+    <% const usersWithAll = [...users, { member_name: 'All Members', tab_color: 'blue' }]; %>
+    <% usersWithAll.forEach(user => { %>
+      <button type="submit" class="user-button" style="background-color: <%= user.tab_color %>;" name="userName" value="<%= user.name %>">
+        <%= user.member_name %>
       </button>
     <% }); %>
   </form>
   
-  <script>
-    function submitForm(userName, index) {
-      var form = document.getElementById("userForm");
-      var hiddenInput = form.querySelectorAll("input[type='hidden']")[index];
-      hiddenInput.value = userName;
-      form.submit();
-    }
-  </script>
   
   
 

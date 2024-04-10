@@ -108,6 +108,18 @@ async function getAllData(member_name) {
     }
 }
 
+async function getUsers() {
+    try {
+        const query = 'SELECT member_name, tab_color FROM family_member';
+        const res = await pool.query(query);
+        return res.rows;
+    } catch (err) {
+        console.error(err);
+        // You might want to handle the error here or propagate it further
+        // throw err;
+    }
+}
+
 
 async function addData(dataToAdd) {
     try {
@@ -189,6 +201,12 @@ app.get("/api/v01", async (req, res) => {
     res.status(200).json({countries, messageGetAll});
 })
 
+app.get("/api/v01/users",async (req,res)=>{
+    let users = await getUsers();
+    console.log("users: ",users);
+    res.status(200).json(users)
+})
+
 app.post("/api/v01/add", async (req, res) => {
     await addData(req.body.data)
 
@@ -216,6 +234,7 @@ app.post("/api/v01/add_new_member", async(req,res)=>{
     const{memberName,tabColor} = req.body;
     console.log(memberName,tabColor);
     await addNewMember(memberName, tabColor);
+    res.status(201).json({message: "new member added"})
 })
 
 app.listen(port, (err) => {

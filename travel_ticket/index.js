@@ -11,23 +11,23 @@ let total = 0;
 
 let users = [
   {
-    name: "Denys",
-    tabColor: "blue",
+    member_name: "Denys",
+    tab_color: "blue",
     visitedCountries: ["ES","UA"]
   },
   {
-    name: "Alina",
-    tabColor: "green",
+    member_name: "Alina",
+    tab_color: "green",
     visitedCountries: ["CA","PL"]
   },
   {
-    name: "Danik",
-    tabColor: "red",
+    member_name: "Danik",
+    tab_color: "red",
     visitedCountries: ["RU","UA"]
   },
   {
-    name: "Lizok",
-    tabColor: "pink",
+    member_name: "Lizok",
+    tab_color: "pink",
     visitedCountries: ["GB","FR"]
   },
 ]
@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 async function getTotalCountries(member_name = "All Members"){
-  console.log("Memb: ",member_name);
+  console.log("Memb in gettotalcounries: ",member_name);
   try{
     let apiResp = await axios.get(apiUrl, {
       params: {
@@ -50,6 +50,17 @@ async function getTotalCountries(member_name = "All Members"){
     console.log("Faild to getTotalCountries(): "+error);
   }
 }
+
+async function getUsers(){
+  try{
+    let apiResp = await axios.get(apiUrl+"/users");
+    return apiResp.data
+  }catch(error){
+    console.log("Faild to getUsers(): "+error);
+  }
+}
+
+
 
 async function getCodeFromName(countryName){
   try{
@@ -64,17 +75,19 @@ app.get("/",async (req,res)=>{
   let localMessage = message;
   message = null;
   const {countries, messageGetAll} = await getTotalCountries();
+  const users = await getUsers();
   total = countries.length;
 
   res.status(200).render("index.ejs",{countries, total, localMessage, users})
 })
 
-app.get("/",async (req,res)=>{
+app.post("/",async (req,res)=>{
   const {userName} = req.body;
-  console.log("userName: ",userName);
+  console.log("userName in app.post('/'): ",userName);
   let localMessage = message;
   message = null;
   const {countries, messageGetAll} = await getTotalCountries();
+  const users = await getUsers();
   total = countries.length;
 
   res.status(200).render("index.ejs",{countries, total, localMessage, users})
@@ -110,14 +123,18 @@ function validateNewM(name, color){
 
 app.post("/new_member_submit",async (req,res)=>{
   const { memberName, tabColor} = req.body
+  
   if (validateNewM(memberName, tabColor)){
+    
     try{
+
       let apiResp = await axios.post(apiUrl+"/add_new_member",{memberName,tabColor});
     }catch(err){
       console.error(err)
     }
   }
-
+  
+  res.status(200).redirect("/");
 
 })
 app.listen(port,(err)=>{
