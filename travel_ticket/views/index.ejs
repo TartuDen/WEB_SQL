@@ -23,11 +23,14 @@
   <form action="/newM" method="post">
       <button class="add-member-button" type="submit">+Member</button>
   </form>
-
+  
+  <% if(locals.userName && locals.userName !== "All Members"){ %>
   <form action="/add" method="post">
     <input type="text" name="countryToAdd" autofocus placeholder="<%= localMessage !== null ? localMessage : 'Enter country name' %>">
+    <input type="hidden" name="memberName" value="<%= userName %>">
     <button type="submit">Add</button>
   </form>
+  <% } %>
 
   <section class="ag-canvas">
     <svg class="ag-canvas_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"

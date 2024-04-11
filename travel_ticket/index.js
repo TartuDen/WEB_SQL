@@ -69,19 +69,23 @@ app.post("/",async (req,res)=>{
   }
   
 
-  res.status(200).render("index.ejs",{countries, total, localMessage, users, tab_color})
+  res.status(200).render("index.ejs",{countries, total, localMessage, users, tab_color, userName})
 })
 
 app.post("/add", async (req, res) => {
-  let countryToAdd = req.body["countryToAdd"];
+  const {countryToAdd, memberName}  = req.body;
+
   if (countryToAdd.length > 2){
     countryToAdd = await getCodeFromName(countryToAdd);
   }
   try {
+    console.log(countryToAdd, memberName);
     if(countryToAdd.messageGetCode){
       message = countryToAdd.messageGetCode
-    }else if (countryToAdd.countryCode){
-      message = await axios.post(apiUrl + "/add", { data: countryToAdd.countryCode });
+
+    }else{
+      
+      message = await axios.post(apiUrl + "/add", { data: countryToAdd, name: memberName });
       message= message.data.messageAdd;
     }
       // Redirect after successful addition

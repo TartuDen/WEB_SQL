@@ -122,28 +122,39 @@ async function getUsers() {
 }
 
 
-async function addData(dataToAdd) {
+async function addData(country_code, member_name) {
     try {
         // Check if the data already exists in the database
-        const existingData = await pool.query('SELECT * FROM visited_countries WHERE country_code = $1', [dataToAdd]);
+        const existingData = await pool.query('SELECT * FROM visited_countries vc JOIN family_member fm ON vc.family_member_id = fm.id WHERE vc.country_code = $1 AND fm.member_name = $2', [country_code, member_name]);
 
         if (existingData.rows.length > 0) {
-            messageAdd = `Data for country code already exists in the database.`;
-            console.log(`Data for country code '${dataToAdd}' already exists in the database.`);
+            messageAdd = `Data for country code already exists for member ${member_name} in the database.`;
+            console.log(`Data for country code '${country_code}' already exists for member ${member_name} in the database.`);
             return; // Exit the function without adding duplicate data
         }
 
-        // Insert the data into the database
-        const res = await pool.query('INSERT INTO visited_countries (country_code) VALUES ($1)', [dataToAdd]);
-        console.log("Data Successfully added at: " + new Date().toLocaleString());
+        // Find the id of the member_name
+        const memberResult = await pool.query('SELECT id FROM family_member WHERE member_name = $1', [member_name]);
+
+        if (memberResult.rows.length === 0) {
+            throw new Error(`Member '${member_name}' not found in the database.`);
+        }
+
+        const memberId = memberResult.rows[0].id;
+
+        // Insert the data into the database with the corresponding family_member_id
+        await pool.query('INSERT INTO visited_countries (country_code, family_member_id) VALUES ($1, $2)', [country_code, memberId]);
+        
+        console.log(`Data for country code '${country_code}' successfully added for member ${member_name} at ${new Date().toLocaleString()}`);
         messageAdd = "Data Successfully added";
     } catch (err) {
         console.error(err);
-        messageAdd = err;;
+        messageAdd = err;
         // You might want to handle the error here or propagate it further
         // throw err;
     }
 }
+
 
 async function getCodeFromName(name) {
     try {
@@ -208,7 +219,9 @@ app.get("/api/v01/users",async (req,res)=>{
 })
 
 app.post("/api/v01/add", async (req, res) => {
-    await addData(req.body.data)
+    const {data, name} = req.body;
+    console.log(data, name);
+    await addData(data, name)
 
     res.status(201).json({messageAdd})
 })
