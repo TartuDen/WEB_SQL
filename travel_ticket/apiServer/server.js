@@ -220,7 +220,6 @@ app.get("/api/v01/users",async (req,res)=>{
 
 app.post("/api/v01/add", async (req, res) => {
     const {data, name} = req.body;
-    console.log(data, name);
     await addData(data, name)
 
     res.status(201).json({messageAdd})
@@ -245,7 +244,6 @@ async function addNewMember(memberName, tabColor) {
 
 app.post("/api/v01/add_new_member", async(req,res)=>{
     const{memberName,tabColor} = req.body;
-    console.log(memberName,tabColor);
     await addNewMember(memberName, tabColor);
     res.status(201).json({message: "new member added"})
 })

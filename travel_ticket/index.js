@@ -79,7 +79,6 @@ app.post("/add", async (req, res) => {
     countryToAdd = await getCodeFromName(countryToAdd);
   }
   try {
-    console.log(countryToAdd, memberName);
     if(countryToAdd.messageGetCode){
       message = countryToAdd.messageGetCode
 
