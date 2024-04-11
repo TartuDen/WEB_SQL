@@ -93,13 +93,13 @@ async function getAllData(member_name) {
         if (member_name === "All Members") {
             query = 'SELECT * FROM visited_countries';
         } else {
-            query = 'SELECT vc.country_code FROM visited_countries vc JOIN family_member fm ON vc.family_member_id = fm.id WHERE fm.member_name = $1';
+            query = 'SELECT vc.country_code, fm.tab_color FROM visited_countries vc JOIN family_member fm ON vc.family_member_id = fm.id WHERE fm.member_name = $1';
             values = [member_name];
         }
 
         const res = await pool.query(query, values);
         const dataFromDB = res.rows;
-        return dataFromDB.map(item => item.country_code);
+        return dataFromDB.map(item => ({ country_code: item.country_code, tab_color: item.tab_color }));
     } catch (err) {
         console.error(err);
         messageGetAll = err;
@@ -198,14 +198,15 @@ app.get("/api/v01/getCodeFromName/:countryName", async (req, res) => {
 
 app.get("/api/v01", async (req, res) => {
     const member_name = req.query.member_name;
-    console.log("membr_name: ",member_name);
     let countries = await getAllData(member_name);
+    console.log("*****countries******");
+    console.log(countries);
     res.status(200).json({countries, messageGetAll});
 })
 
 app.get("/api/v01/users",async (req,res)=>{
     let users = await getUsers();
-    console.log("users: ",users);
+    // console.log("users: ",users);
     res.status(200).json(users)
 })
 

@@ -391,17 +391,21 @@
 
   
   <script>
-    const country_codes = "<%= countries %>".split(",");
-    if (country_codes.length > 0 && country_codes[0] !== '') {
-        console.log(country_codes);
-        country_codes.forEach(code => {
-            const element = document.getElementById(code);
-            if (element) { // Check if element exists
-                element.style.fill = 'teal';
+    const countries = <%- JSON.stringify(countries) %>;
+    console.log(countries);
+    countries.forEach(country => {
+        const element = document.getElementById(country.country_code);
+        if (element) {
+            if ( country.tab_color!== undefined){
+              element.style.fill = country.tab_color;
+            }else{
+              element.style.fill = 'teal';
             }
-        });
-    }
+            
+        }
+    });
 </script>
+
 </body>
 
 </html>

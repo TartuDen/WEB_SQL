@@ -23,7 +23,6 @@ async function getTotalCountries(member_name = "All Members") {
         member_name: member_name
       }
     });
-    console.log("apeREsp: ", apiResp.data)
     return apiResp.data;
   } catch (error) {
     console.log("Faild to getTotalCountries(): " + error);
@@ -49,22 +48,30 @@ async function getCodeFromName(countryName) {
 app.get("/",async (req,res)=>{
   let localMessage = message;
   message = null;
-  const {countries, messageGetAll} = await getTotalCountries();
+  const {countries} = await getTotalCountries();
+  console.log(" ******* countries ************");
+  console.log(countries);
   const users = await getUsers();
   total = countries.length;
+  let tab_color = 'teal';
 
-  res.status(200).render("index.ejs",{countries, total, localMessage, users})
+  res.status(200).render("index.ejs",{countries, total, localMessage, users, tab_color})
 })
 
 app.post("/",async (req,res)=>{
+  let tab_color = undefined
   const {userName} = req.body;
   let localMessage = message;
   message = null;
-  const {countries, messageGetAll} = await getTotalCountries(userName);
+  const {countries} = await getTotalCountries(userName);
   const users = await getUsers();
-  total = 2;
+  total = countries.length;
+  if (total !== 0){
+    tab_color = countries[0].tab_color;
+  }
+  
 
-  res.status(200).render("index.ejs",{countries, total, localMessage, users})
+  res.status(200).render("index.ejs",{countries, total, localMessage, users, tab_color})
 })
 
 app.post("/add", async (req, res) => {
