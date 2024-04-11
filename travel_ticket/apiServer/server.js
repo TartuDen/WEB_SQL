@@ -199,14 +199,11 @@ app.get("/api/v01/getCodeFromName/:countryName", async (req, res) => {
 app.get("/api/v01", async (req, res) => {
     const member_name = req.query.member_name;
     let countries = await getAllData(member_name);
-    console.log("*****countries******");
-    console.log(countries);
     res.status(200).json({countries, messageGetAll});
 })
 
 app.get("/api/v01/users",async (req,res)=>{
     let users = await getUsers();
-    // console.log("users: ",users);
     res.status(200).json(users)
 })
 

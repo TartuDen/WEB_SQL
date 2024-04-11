@@ -49,8 +49,6 @@ app.get("/",async (req,res)=>{
   let localMessage = message;
   message = null;
   const {countries} = await getTotalCountries();
-  console.log(" ******* countries ************");
-  console.log(countries);
   const users = await getUsers();
   total = countries.length;
   let tab_color = 'teal';
