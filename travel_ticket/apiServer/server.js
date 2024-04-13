@@ -4,7 +4,6 @@ import pg from 'pg';
 
 const port = 8081;
 const app = express();
-let dataFromDB;
 let messageAdd = null;
 let messageGetAll = null;
 let messageGetCode = null;
