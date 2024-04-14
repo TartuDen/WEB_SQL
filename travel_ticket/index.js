@@ -1,11 +1,13 @@
 import express from 'express';
 import bodyParser  from 'body-parser';
 import axios from 'axios';
+import { ServerRequests } from './public/helpersConstructor.js';
 
-
+const apiUrl = "http://localhost:8081/api/v01"
 const port = 8080;
 const app = express();
-const apiUrl = "http://localhost:8081/api/v01"
+const servReq = new ServerRequests(apiUrl);
+
 let message = null;
 
 let total = 0;
@@ -16,40 +18,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
-async function getTotalCountries(member_name = "All Members") {
-  try {
-    let apiResp = await axios.get(apiUrl, {
-      params: {
-        member_name: member_name
-      }
-    });
-    return apiResp.data;
-  } catch (error) {
-    console.log("Faild to getTotalCountries(): " + error);
-  }
-}async function getUsers() {
-  try {
-    let apiResp = await axios.get(apiUrl + "/users");
-    return apiResp.data;
-  } catch (error) {
-    console.log("Faild to getUsers(): " + error);
-  }
-}
-async function getCodeFromName(countryName) {
-  try {
-    let apiResp = await axios.get(apiUrl + "/getCodeFromName/" + countryName);
-    return apiResp.data;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
 app.get("/",async (req,res)=>{
   let localMessage = message;
   message = null;
-  const {countries} = await getTotalCountries();
-  const users = await getUsers();
+  
+  const {countries} = await servReq.getTotalCountries();
+  const users = await servReq.getUsers();
   total = countries.length;
   let tab_color = 'teal';
 
@@ -61,8 +35,8 @@ app.post("/",async (req,res)=>{
   const {userName} = req.body;
   let localMessage = message;
   message = null;
-  const {countries} = await getTotalCountries(userName);
-  const users = await getUsers();
+  const {countries} = await servReq.getTotalCountries(userName);
+  const users = await servReq.getUsers();
   total = countries.length;
   if (total !== 0){
     tab_color = countries[0].tab_color;
@@ -76,7 +50,7 @@ app.post("/add", async (req, res) => {
   const {countryToAdd, memberName}  = req.body;
 
   if (countryToAdd.length > 2){
-    countryToAdd = await getCodeFromName(countryToAdd);
+    countryToAdd = await servReq.getCodeFromName(countryToAdd);
   }
   try {
     if(countryToAdd.messageGetCode){

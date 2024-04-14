@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import pg from 'pg';
+import { Querys } from './allFuncs.js';
 
 const port = 8081;
 const app = express();
@@ -46,7 +47,7 @@ async function createFamilyMemberDB(){
         console.log(error.message);
     }
 }
-await createFamilyMemberDB();
+await Querys.familyDB();
 
 
 async function createVisitedCountriesDB() {
