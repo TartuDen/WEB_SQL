@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Login Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        body.dark-mode .btn {
+            border-color: #ffffff;
+        }
+        .custom-header {
+            background-color: #007bff; /* Custom blue color */
+            color: #ffffff;
+        }
+        .custom-footer {
+            background-color: #6c757d; /* Custom grey color */
+            color: #ffffff;
+        }
+        footer a {
+            color: inherit;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+
+        <%- include("partials/header.ejs") %>
+
+        <main class="content d-flex justify-content-center align-items-center">
+            <div class="text-center">
+                <button type="button" class="btn btn-primary btn-lg m-2">Log In</button>
+                <button type="button" class="btn btn-secondary btn-lg m-2">Register</button>
+            </div>
+        </main>
+
+        <%- include("partials/footer.ejs") %>
+       
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('darkModeSwitch').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        });
+    </script>
+</body>
+</html>
