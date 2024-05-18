@@ -18,18 +18,18 @@
             flex: 1;
         }
         body.dark-mode {
-            background-color: #121212;
+            background-color: #8c8c8c;
             color: #ffffff;
         }
         body.dark-mode .btn {
             border-color: #ffffff;
         }
         .custom-header {
-            background-color: #007bff; /* Custom blue color */
+            background-color: #01264f; /* Custom blue color */
             color: #ffffff;
         }
         .custom-footer {
-            background-color: #6c757d; /* Custom grey color */
+            background-color: #001834; /* Custom grey color */
             color: #ffffff;
         }
         footer a {
@@ -44,10 +44,44 @@
     <div class="wrapper">
 
         <%- include("partials/header.ejs") %>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">Open modal for @fat</button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Open modal for @getbootstrap</button>
 
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
         <main class="content d-flex justify-content-center align-items-center">
             <div class="text-center">
+                <%- include("partials/login.ejs") %>
+                
+
                 <button type="button" class="btn btn-primary btn-lg m-2">Log In</button>
+                <button type="button" class="btn btn-primary btn-lg m-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-whatever="@mdo">Log In</button>
+
                 <button type="button" class="btn btn-secondary btn-lg m-2">Register</button>
             </div>
         </main>
