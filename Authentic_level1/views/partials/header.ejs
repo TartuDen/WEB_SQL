@@ -4,4 +4,9 @@
         <input type="checkbox" class="custom-control-input" id="darkModeSwitch">
         <label class="custom-control-label" for="darkModeSwitch">Dark Mode</label>
     </div>
+    <% if(locals.user_data){ %>
+    <div class="logging_info">
+        <h3><%= user_data %></h3>
+    </div>
+    <% } %>
 </header>
