@@ -3,11 +3,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import {Logger, LoggerCollection} from "./public/user_logger.js"
 import { log } from 'console';
+import axios from 'axios';
 
 const app = express();
 const port = 8080;
-let user_logging = [];
-const loggerCollection = new LoggerCollection(user_logging);
+
 
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -28,9 +28,18 @@ app.post("/register",(req,res)=>{
 
 })
 
-app.post("/login", (req,res)=>{
+app.post("/login", async (req,res)=>{
     const {email, password} = req.body;
     console.log("email: ", email, password)
+
+    try{
+        let apiResp = await axios("/http://localhost:8081/get_user",{email,password});
+        let user_logging = apiResp.data;
+        const loggerCollection = new LoggerCollection(user_logging);
+        res.session.loggerCollection = loggerCollection;
+    }catch(err){
+        console.error("Faild to get data from /get_user: ",err);
+    }
     let getUser = loggerCollection.getLoggerByEmail(email);
     if(getUser){
         res.redirect("/secret_page")
