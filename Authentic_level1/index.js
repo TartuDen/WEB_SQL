@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import {Logger, LoggerCollection} from "./public/user_logger.js"
 import { log } from 'console';
 import axios from 'axios';
+import bcrypt from 'bcrypt';
 
 const app = express();
 const port = 8080;
@@ -16,9 +17,13 @@ app.use(express.static("public"));
 
 app.post("/register",async (req,res)=>{
     const {user_name, email, password}= req.body;
+
     try{
         let apiResp = await axios.post("http://localhost:8081/reg_user", {user_name, email, password});
-        if (apiResp){
+        if (apiResp.data.message){
+            console.log(apiResp.data.message);
+            res.redirect("/")
+        } else if (apiResp){
             console.log("successfully created");
             res.redirect("/secret_page");
         }else{
