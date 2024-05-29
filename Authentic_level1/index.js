@@ -14,34 +14,47 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-app.post("/register",(req,res)=>{
+app.post("/register",async (req,res)=>{
     const {user_name, email, password}= req.body;
-    if(loggerCollection.getLoggerByEmail(email)){
-        console.log("user already exist");
-        res.redirect("/");
-    }else{
-        let create_user = loggerCollection.addLogger(user_name, email, password);
-        console.log("successfully created");
-        res.redirect("/secret_page")
-    }
-    
+    try{
+        let apiResp = await axios.post("http://localhost:8081/reg_user", {user_name, email, password});
+        if (apiResp){
+            console.log("successfully created");
+            res.redirect("/secret_page");
+        }else{
+            console.log("try to log in");
+            res.redirect("/");
+        }
+    }catch(err){
+        console.error("Failed to get data from ",err)
+    }    
 
 })
 
 app.post("/login", async (req,res)=>{
     const {email, password} = req.body;
-    console.log("email: ", email, password)
+    console.log("email: ", email, password);
+    let user_logging;
 
     try{
-        let apiResp = await axios("/http://localhost:8081/get_user",{email,password});
-        let user_logging = apiResp.data;
-        const loggerCollection = new LoggerCollection(user_logging);
-        res.session.loggerCollection = loggerCollection;
-    }catch(err){
-        console.error("Faild to get data from /get_user: ",err);
+        let apiResp = await axios.post("http://localhost:8081/get_user",{email,password});
+        user_logging = apiResp.data;
+
+    }catch (err) {
+        if (err.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error(`Failed to get data from /get_user: ${err.message}, Status Code: ${err.response.status}, Response Data: ${JSON.stringify(err.response.data)}`);
+        } else if (err.request) {
+            // The request was made but no response was received
+            console.error(`Failed to get data from /get_user: ${err.message}, No response received`);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error(`Failed to get data from /get_user: ${err.message}`);
+        }
     }
-    let getUser = loggerCollection.getLoggerByEmail(email);
-    if(getUser){
+
+    if(user_logging){
         res.redirect("/secret_page")
     }else{
         res.redirect("/")

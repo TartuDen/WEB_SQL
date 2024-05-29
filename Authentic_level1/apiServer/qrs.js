@@ -37,16 +37,19 @@ export async function createUsersTable() {
     }
   }
 
-export async function getUserFromTable(email){
+export async function getUserFromTable(email, password){
     try {
         const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows.length === 0) {
           return res.status(404).send('User not found');
         }
+        if (result.rows.password != password){
+            return res.status(404).send("Wrong password");
+        }
+
         res.json(result.rows[0]);
-      } catch (error) {
-        console.error('Error fetching user by email:', error);
-        res.status(500).send('Internal Server Error');
+      } catch (err) {
+        console.error('Error fetching user by email:', err);
       }
 }
 
