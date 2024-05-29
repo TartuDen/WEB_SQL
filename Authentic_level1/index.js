@@ -17,7 +17,10 @@ app.use(express.static("public"));
 app.use(session({ //Configures the Express session middleware with a secret key, which is used to sign the session ID cookie.
     secret: "someSECRETword",
     resave: false, //Determines whether the session should be saved back to the session store, even if it hasn't been modified during the request.
-    saveUninitialized: true //saveUninitialized: Determines whether a session should be created for an uninitialized (new) session.
+    saveUninitialized: true, //saveUninitialized: Determines whether a session should be created for an uninitialized (new) session.
+    cookie:{
+        maxAge: 1000 * 60 *60, // it is in 1/1000 of second. The expiration of cookie
+    }
 }));
 
 // And only after that passport initialization!!!
@@ -32,9 +35,17 @@ app.post("/register", async (req, res) => {
         if (apiResp.data.message) {
             console.log(apiResp.data.message);
             res.redirect("/");
-        } else if (apiResp) {
-            console.log("successfully created");
-            res.redirect("/secret_page");
+        } else if (apiResp.data) {
+            const user = apiResp.data;
+            req.login(user, (err)=>{
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("successfully created");
+                    res.redirect("/secret_page");
+                } 
+                
+            })
         } else {
             console.log("try to log in");
             res.redirect("/");

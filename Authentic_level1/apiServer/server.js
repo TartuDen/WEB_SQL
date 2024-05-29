@@ -80,8 +80,8 @@ app.post("/reg_user", async (req, res) => {
 				console.log("Error during hashing the password: ", err.message);
 			} else {
 				// Insert the new user
-				await client.query('INSERT INTO users (user_name, email, password) VALUES ($1, $2, $3)', [user_name, email, hash]);
-				res.status(201).send('User registered successfully'); // 201 Created status code 
+				const result = await client.query('INSERT INTO users (user_name, email, password) VALUES ($1, $2, $3) RETURNING *', [user_name, email, hash]);
+				res.json(result.rows[0]); // 201 Created status code 
 			}
 
 		})
