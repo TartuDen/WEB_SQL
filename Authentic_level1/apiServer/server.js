@@ -95,7 +95,7 @@ app.post("/get_user", async (req,res)=>{
         if (result.rows.length === 0) {
           return res.status(404).send('User not found');
         }
-        if (result.rows.password != password){
+        if (result.rows[0].password != password){
             return res.status(404).send("Wrong password");
         }
         res.json(result.rows[0]);
