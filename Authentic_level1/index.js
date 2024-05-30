@@ -6,6 +6,7 @@ import session from 'express-session'; // Middleware for managing sessions in Ex
 import passport from 'passport';//Authentication middleware for Node.js.
 import { Strategy as LocalStrategy } from 'passport-local'; // Strategy for username and password authentication with Passport.
 import env from 'dotenv';
+import GoogleStrategy from 'passport-google-oauth2';
 
 const app = express();
 const port = 8080;
@@ -20,8 +21,8 @@ app.use(session({ //Configures the Express session middleware with a secret key,
     secret: process.env.SESSION_SECRET,
     resave: false, //Determines whether the session should be saved back to the session store, even if it hasn't been modified during the request.
     saveUninitialized: true, //saveUninitialized: Determines whether a session should be created for an uninitialized (new) session.
-    cookie:{
-        maxAge: 1000 * 60 *60, // it is in 1/1000 of second. The expiration of cookie
+    cookie: {
+        maxAge: 1000 * 60 * 60, // it is in 1/1000 of second. The expiration of cookie
     }
 }));
 
@@ -39,14 +40,14 @@ app.post("/register", async (req, res) => {
             res.redirect("/");
         } else if (apiResp.data) {
             const user = apiResp.data;
-            req.login(user, (err)=>{
-                if(err){
+            req.login(user, (err) => {
+                if (err) {
                     console.log(err);
-                }else{
+                } else {
                     console.log("successfully created");
                     res.redirect("/secret_page");
-                } 
-                
+                }
+
             })
         } else {
             console.log("try to log in");
@@ -80,6 +81,11 @@ app.get("/", (req, res) => {
     res.status(200).render("index.ejs");
 });
 
+app.get("auth/google", passport.authenticate("google", {
+    scope: ["profile", "email"],
+}))
+
+//_____________LOCAL STRATEGY__________________
 // should be initialized right before server start
 // Defines a new Passport local strategy for authenticating users.
 // The strategy's verify function is called with the provided username and password.
@@ -90,7 +96,7 @@ app.get("/", (req, res) => {
 // The Fix
 // To fix this, you need to explicitly tell Passport to use email as the username field. This is done by passing an options object to the LocalStrategy constructor with the usernameField property set to 'email'.
 
-passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, cb) => {
+passport.use("local", new LocalStrategy({ usernameField: 'email' }, async (email, password, cb) => {
     let user;
     try {
         let apiResp = await axios.post("http://localhost:8081/get_user", { email, password });
@@ -113,6 +119,16 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
         }
     }
 }));
+
+// _______________ GOOGLE STRATEGY _________________
+passport.use("google", new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:8080/auth/google/secret_page",
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+}, async (accessToken, refreshToken, profile, cb) => {
+    console.log("........profile............\n", profile);
+}))
 
 // passport.serializeUser: is a function provided by Passport that determines which data of the user object should be stored in the session.
 // Once you've determined what data to store, you call the callback cb with null (to indicate that there's no error) and the data you want to store.

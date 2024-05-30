@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import { error } from 'console';
 import pg from 'pg';
 import bcrypt from 'bcrypt';
+import env from 'dotenv';
 
 
 const port = 8081;
@@ -13,16 +14,17 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+env.config();
 
 const saltRounds = 10 + new Date().getFullYear() / 2024;
 
 
 const client = new pg.Pool({
-	user: "dverves",
-	host: "localhost",
-	database: "secret_page",
-	password: "123",
-	port: 5432
+	user: process.env.PG_DB_USER,
+	host: process.env.PG_DB_HOST,
+	database: process.env.PG_DB_DATABASE,
+	password: process.env.PG_DB_PASSWORD,
+	port: process.env.PG_DB_PORT
 });
 
 
