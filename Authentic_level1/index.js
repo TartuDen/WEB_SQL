@@ -5,6 +5,7 @@ import axios from 'axios';
 import session from 'express-session'; // Middleware for managing sessions in Express.
 import passport from 'passport';//Authentication middleware for Node.js.
 import { Strategy as LocalStrategy } from 'passport-local'; // Strategy for username and password authentication with Passport.
+import env from 'dotenv';
 
 const app = express();
 const port = 8080;
@@ -12,10 +13,11 @@ const port = 8080;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
+env.config(); //initializing dotenv module for storing enviroment variables;
 
 // First always goes session creation
 app.use(session({ //Configures the Express session middleware with a secret key, which is used to sign the session ID cookie.
-    secret: "someSECRETword",
+    secret: process.env.SESSION_SECRET,
     resave: false, //Determines whether the session should be saved back to the session store, even if it hasn't been modified during the request.
     saveUninitialized: true, //saveUninitialized: Determines whether a session should be created for an uninitialized (new) session.
     cookie:{
