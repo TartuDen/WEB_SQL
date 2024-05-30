@@ -81,9 +81,15 @@ app.get("/", (req, res) => {
     res.status(200).render("index.ejs");
 });
 
-app.get("auth/google", passport.authenticate("google", {
+app.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "email"],
 }))
+
+app.get("/auth/google/secret_page", passport.authenticate("google",{
+    successRedirect: "/secret_page",
+    failureRedirect: "/",
+}))
+
 
 //_____________LOCAL STRATEGY__________________
 // should be initialized right before server start
@@ -128,6 +134,19 @@ passport.use("google", new GoogleStrategy({
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 }, async (accessToken, refreshToken, profile, cb) => {
     console.log("........profile............\n", profile);
+    try {
+        let apiResp = await axios.post("http://localhost:8081/get_user_auth", { email: profile.email});
+        if (!apiResp.data.email){
+            const newUser = await axios.post("http://localhost:8081/reg_user", { user_name: profile.name, email: profile.email, password: profile.sub });
+            cb(null, newUser.data);
+        }else{
+            //IF user already exist
+            cb(null, newUser.data);
+        }
+    } catch (err) {
+        console.error("Error during fetching user: ", err.message);
+        cb(err);
+    }
 }))
 
 // passport.serializeUser: is a function provided by Passport that determines which data of the user object should be stored in the session.

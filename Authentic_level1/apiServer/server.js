@@ -20,11 +20,11 @@ const saltRounds = 10 + new Date().getFullYear() / 2024;
 
 
 const client = new pg.Pool({
-	user: process.env.PG_DB_USER,
-	host: process.env.PG_DB_HOST,
-	database: process.env.PG_DB_DATABASE,
-	password: process.env.PG_DB_PASSWORD,
-	port: process.env.PG_DB_PORT
+	user: "dverves",
+	host: "localhost",
+	database: "secret_page",
+	password: "123",
+	port: 5432
 });
 
 
@@ -96,6 +96,7 @@ app.post("/reg_user", async (req, res) => {
 
 })
 
+
 app.post("/get_user", async (req, res) => {
 	const { email, password } = req.body;
 	if (!email) {
@@ -121,9 +122,24 @@ app.post("/get_user", async (req, res) => {
 		console.error('Error fetching user by email:', err);
 		return res.json({message: 'Something went wrong in server side'});
 	}
+})
 
-
-
+app.post("/get_user_auth", async (req, res) => {
+	const email = req.body;
+	if (!email) {
+		return res.json({message: 'Email is required'});
+	}
+	try {
+		const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+		if (result.rows.length === 0) {
+			return res.json({message: 'User not found'});
+		}else{
+			return res.json(result.rows[0]);
+		}
+	} catch (err) {
+		console.error('Error fetching user by email:', err);
+		return res.json({message: 'Something went wrong in server side'});
+	}
 })
 
 app.listen(port, async (err) => {
