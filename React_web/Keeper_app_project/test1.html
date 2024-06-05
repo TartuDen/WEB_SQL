@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap Landing Page</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <!-- Header -->
+    <header class="bg-primary text-white text-center py-3">
+      <h1>Welcome to Our Landing Page</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="container my-5">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <h2>Main Content Goes Here</h2>
+            <p>This is where you can add the main content of your landing page.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center bg-light py-3">
+      <div class="container">
+        <p class="mb-0">&copy; 2024 Your Company. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
