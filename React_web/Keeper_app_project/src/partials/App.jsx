@@ -24,7 +24,8 @@ function App() {
         </div>
       </div>
     </div>
-    <Footer />
+    <Footer
+    friendsList={contacts[0].friends} />
   </div>
 }
 

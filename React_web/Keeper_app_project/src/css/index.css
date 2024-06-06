@@ -33,3 +33,23 @@ body {
   border: 2px solid #ddd; /* Optional: Add a border */
   padding: 5px; /* Optional: Add padding */
 }
+
+.friends-images {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.friend-img {
+  width: 40px; /* Adjust the size as needed */
+  height: 40px; /* Adjust the size as needed */
+  border-radius: 50%;
+  border: 2px solid white; /* Optional: Add a border */
+  position: relative;
+  margin-left: -10px; /* Adjust the overlap */
+  box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Optional: Add a shadow */
+}
+
+.friend-img:first-child {
+  margin-left: 0; /* No negative margin for the first image */
+}
