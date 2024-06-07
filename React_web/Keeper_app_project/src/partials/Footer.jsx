@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar } from "./avaIMG";
+import { FootAva } from "./avaIMG";
 import contacts from "../contacts";
 
 function Footer({ friendsList }) {
@@ -12,7 +12,7 @@ function Footer({ friendsList }) {
                         {friendsList.map((name, index) => {
                             const friend = contacts.find(contact => contact.name === name);
                             return friend ? (
-                                <Avatar
+                                <FootAva
                                     key={index}
                                     imgUrl={friend.imgUrl}
                                 />

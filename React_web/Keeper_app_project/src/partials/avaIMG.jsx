@@ -9,4 +9,9 @@ function MyAva(props){
 
 }
 
-export {Avatar, MyAva};
+function FootAva(props){
+    return <img src={props.imgUrl} alt="contact photo" className="foot_ava" />
+
+}
+
+export {Avatar, MyAva, FootAva};

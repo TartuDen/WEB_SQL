@@ -40,7 +40,7 @@ body {
   align-items: center;
 }
 
-.friend-img {
+.foot_ava {
   width: 40px; /* Adjust the size as needed */
   height: 40px; /* Adjust the size as needed */
   border-radius: 50%;
@@ -50,6 +50,6 @@ body {
   box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Optional: Add a shadow */
 }
 
-.friend-img:first-child {
+.foot_ava:first-child {
   margin-left: 0; /* No negative margin for the first image */
 }
