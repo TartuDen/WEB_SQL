@@ -13,7 +13,7 @@ function App() {
       <div className="container my-5">
         <div className="row justify-content-center">
           {contacts.map((contact, idx) =>
-            <div className="col-md-4" key={idx}>
+            <div className="col-md-4 mb-4" key={idx}>
               <Card
                 name={contact.name}
                 tel={contact.tel}
