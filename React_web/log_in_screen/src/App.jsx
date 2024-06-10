@@ -18,8 +18,8 @@ function conditinRender(){ //same as this: {isLoggedIn ? <MainPage/> : <LogIn />
 
 function App(){
   return(
-  <div class="container">
-    <div class="row justify-content-center">
+  <div className="container">
+    <div className="row justify-content-center">
       {isLoggedIn ? <MainPage/> : <LogIn />}
     </div>
   </div>
