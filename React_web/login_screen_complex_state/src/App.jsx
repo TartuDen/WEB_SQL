@@ -14,18 +14,11 @@ function App() {
   function addFullName(event){
     const {name,value}=event.target;
     updateFullName(pValue=>{
-      console.log("......pValue......\n",pValue)
-      if(name==="fName"){
-        return {
-          fName: value,
-          lName: pValue.lName
-        }
-      }else if (name==="lName"){
-        return {
-          fName: pValue.fName,
-          lName: value
-        }
+      return{
+        ...pValue,
+        [name]: value
       }
+      
     })
   }
 
