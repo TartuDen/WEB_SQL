@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+body {
+  background-color: #f8f9fa; /* Light grey background */
+  font-family: 'Comic Neue', cursive;
+}
+.container {
+  max-width: 600px;
+  margin-top: 50px;
+}
+h1 {
+  font-size: 3rem;
+  color: #007bff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.form-control {
+  border-radius: 25px;
+  font-size: 1.2rem;
+}
+.btn-custom {
+  background-color: #007bff;
+  color: white;
+  border-radius: 25px;
+  font-size: 1.2rem;
+}
+.todo-item {
+  font-size: 1.2rem;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+}

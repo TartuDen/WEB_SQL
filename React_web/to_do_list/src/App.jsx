@@ -1,34 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import List from './List';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputTask, updateInputTask]=useState("");
+
+  function funcUpdateTask(event){
+    updateInputTask(event.target.value);
+  }
+
+  const [todoList, updateToDoList]=useState({
+    tasks: []
+  })
+
+  function clearList(event){
+    event.preventDefault();
+    updateToDoList({
+      tasks: []
+    })
+  }
+
+  function funcUpdateList(event){
+    event.preventDefault();
+
+    updateToDoList(prevValue=>({
+      tasks: [...prevValue.tasks,inputTask]
+    }));
+    updateInputTask("");
+
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="container">
+      <h1>To-Do List</h1>
+      <form id="todo-form" className="d-flex mb-4">
+        <input type="text" id="todo-input" className="form-control mr-2" value={inputTask} onChange={funcUpdateTask} placeholder="Enter your task" />
+          <button type="submit" className="btn btn-custom" onClick={funcUpdateList}>Submit</button>
+          <button type="submit" className="btn btn-custom" onClick={clearList}>Clear</button>
+      </form>
+      <List
+      tasksToAdd={todoList.tasks} />
+    </div>
   )
 }
 
