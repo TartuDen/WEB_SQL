@@ -1,0 +1,22 @@
+body {
+    background-color: #f8f9fa;
+    /* Light grey background */
+}
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.login-card h2 {
+    margin-bottom: 1.5rem;
+}
