@@ -11,9 +11,12 @@ function App() {
 
   const [todoList, updateToDoList]=useState([])
 
+  const [checkState, changeCheckState] = useState(todoList.map(() => false));
+
   function clearList(event){
     event.preventDefault();
     updateToDoList([])
+    changeCheckState(todoList.map(() => false))
   }
 
   function funcUpdateList(event){
@@ -24,13 +27,9 @@ function App() {
   }
 
   function deleteItem(event){
-    console.log("clicked\n",event.target.id);
     let id = event.target.id;
     updateToDoList(prevValue =>{
-      const newList = [
-        ...prevValue.slice(0, id),
-        ...prevValue.slice(id + 1, -1)
-      ];
+      const newList = prevValue.filter((_, index) => index != id);
       return newList;
     })
   }
@@ -44,8 +43,10 @@ function App() {
           <button type="submit" className="btn btn-custom" onClick={clearList}>Clear</button>
       </form>
       <List
+      checkState = {checkState}
+      changeCheckState = {changeCheckState}
       onCheck = {deleteItem}
-      tasksToAdd={todoList} />
+      todoList={todoList} />
     </div>
   )
 }
