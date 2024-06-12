@@ -9,25 +9,30 @@ function App() {
     updateInputTask(event.target.value);
   }
 
-  const [todoList, updateToDoList]=useState({
-    tasks: []
-  })
+  const [todoList, updateToDoList]=useState([])
 
   function clearList(event){
     event.preventDefault();
-    updateToDoList({
-      tasks: []
-    })
+    updateToDoList([])
   }
 
   function funcUpdateList(event){
     event.preventDefault();
 
-    updateToDoList(prevValue=>({
-      tasks: [...prevValue.tasks,inputTask]
-    }));
+    updateToDoList(prevValue=>([...prevValue,inputTask]));
     updateInputTask("");
+  }
 
+  function deleteItem(event){
+    console.log("clicked\n",event.target.id);
+    let id = event.target.id;
+    updateToDoList(prevValue =>{
+      const newList = [
+        ...prevValue.slice(0, id),
+        ...prevValue.slice(id + 1, -1)
+      ];
+      return newList;
+    })
   }
 
   return (
@@ -39,7 +44,8 @@ function App() {
           <button type="submit" className="btn btn-custom" onClick={clearList}>Clear</button>
       </form>
       <List
-      tasksToAdd={todoList.tasks} />
+      onCheck = {deleteItem}
+      tasksToAdd={todoList} />
     </div>
   )
 }
