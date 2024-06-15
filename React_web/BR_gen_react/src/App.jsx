@@ -3,18 +3,20 @@ import viteLogo from '/vite.svg'
 import './css/App.css'
 import Header from './components/header'
 import Footer from './components/footer'
+import EquipmentTable from '../src/firstPage/table';
 
 import { CssBaseline, Container, Box, Typography } from '@mui/material';
 
 function App() {
-  const [backendData, setBackEndData]=useState({msg: ''});
+  const [backEndData, setBackEndData]=useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api");
+        const response = await fetch("/api/main_table");
         const data = await response.json();
         setBackEndData(data);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -23,6 +25,10 @@ function App() {
     fetchData();
   }, []);
 
+    // Example of how you might use the data
+    if (!backEndData) {
+      return <div>Loading...</div>;
+    }
 
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh">
@@ -30,7 +36,9 @@ function App() {
             <Header />
             <Container component="main" sx={{ flex: 1 }}>
                 {/* Main content goes here */}
-                {backendData.msg}
+                < EquipmentTable
+                data = {backEndData} />
+
                 
             </Container>
             <Footer />

@@ -9,6 +9,9 @@ import axios from "axios";
 import cors from 'cors';
 
 
+import { getUtensils, getParams, getMainTableEq, getActivityTypeFromAPI, getProcOps, postNewOp, getAllProjects, getAllTp, getProcessInitInfo, deleteProcessInitialInfo, postProcessInitialInfo } from "./public/apiCallFuncs.js";
+
+
 
 
 
@@ -29,8 +32,9 @@ app.use(session({
 }));
 app.use(cors());
 
-app.get("/api", (req, res) => {
-    res.json({msg: "hello from proxy"})
+app.get("/api/main_table", async (req, res) => {
+    let equipmentMap = await getMainTableEq();
+    res.json(equipmentMap)
 })
 
 app.listen(port, (err) => {
