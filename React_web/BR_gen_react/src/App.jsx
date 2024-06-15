@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react'
-import viteLogo from '/vite.svg'
-import './css/App.css'
-import Header from './components/header'
-import Footer from './components/footer'
+import { useEffect, useState } from 'react';
+import viteLogo from '/vite.svg';
+import './css/App.css';
+import Header from './components/header';
+import Footer from './components/footer';
 import EquipmentTable from '../src/firstPage/table';
-
-import { CssBaseline, Container, Box, Typography } from '@mui/material';
+import { CssBaseline, Container, Box } from '@mui/material';
 
 function App() {
-  const [backEndData, setBackEndData]=useState([]);
+  const [backEndData, setBackEndData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +15,6 @@ function App() {
         const response = await fetch("/api/main_table");
         const data = await response.json();
         setBackEndData(data);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -25,25 +23,24 @@ function App() {
     fetchData();
   }, []);
 
-    // Example of how you might use the data
-    if (!backEndData) {
-      return <div>Loading...</div>;
-    }
+  if (!backEndData.length) {
+    return <div>Loading...</div>;
+  }
 
-    return (
-        <Box display="flex" flexDirection="column" minHeight="100vh">
-            <CssBaseline />
-            <Header />
-            <Container component="main" sx={{ flex: 1 }}>
-                {/* Main content goes here */}
+  return (
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      <CssBaseline />
+      <Header />
+      <Container component="main" sx={{ flex: 1 }}>
+        {/* Main content goes here */}
                 < EquipmentTable
                 data = {backEndData} />
 
                 
-            </Container>
-            <Footer />
-        </Box>
-    );
+      </Container>
+      <Footer />
+    </Box>
+  );
 }
 
-export default App
+export default App;
