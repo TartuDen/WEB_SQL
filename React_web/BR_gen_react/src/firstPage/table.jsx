@@ -9,8 +9,6 @@ import CodeSelectorForMainTable from "./selectors_for_table";
 import PlusButtons from "./addCodeButton";
 
 export default function EquipmentTable(props) {
-  // Logging props.data to ensure it has the expected structure
-  console.log("props.data: ", props.data);
 
   const rows = props.data.map((elem) => {
     return {
