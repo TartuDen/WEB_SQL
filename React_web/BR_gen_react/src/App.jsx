@@ -5,10 +5,11 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 import EquipmentTable from "../src/firstPage/table";
 import { CssBaseline, Container, Box } from "@mui/material";
-import InputProjTpVers from './firstPage/inputForProject';
+import InputProjTpVers from "./firstPage/inputForProject";
 
-const ServerAPIUrl = "http://3.72.208.221:8090"
-const LocalAPIUrl="http://localhost:8085"
+const ServerAPIUrl = "http://3.72.208.221:8090";
+const LocalAPIUrl = "http://localhost:8085";
+
 function App() {
   const [backEndData, setBackEndData] = useState([]);
 
@@ -29,13 +30,19 @@ function App() {
     fetchData();
   }, []);
 
-  const [savedProjects, updateSavedProjects] = useState([{
-    project: [{
-      tp: [{
-        version: []
-      }]
-    }]
-  }]);
+  const [savedProjects, updateSavedProjects] = useState([
+    {
+      project: [
+        {
+          tp: [
+            {
+              version: [],
+            },
+          ],
+        },
+      ],
+    },
+  ]);
 
   useEffect(() => {
     const fetchProjData = async () => {
@@ -43,28 +50,50 @@ function App() {
         const response = await fetch(`${ServerAPIUrl}/processdata/projects`);
         const projects = await response.json();
 
-        const projectsWithDetails = await Promise.all(projects.map(async (project) => {
-          const tpResponse = await fetch(`${ServerAPIUrl}/processdata/projects/${project.length>0&&project}/tp`);
-          const tps = await tpResponse.json();
+        const projectsWithDetails = await Promise.all(
+          projects.map(async (project) => {
+            const tpResponse = await fetch(
+              `${ServerAPIUrl}/processdata/projects/${
+                project.length > 0 && project
+              }/tp`
+            );
+            const tps = await tpResponse.json();
 
-          const tpsWithVersions = await Promise.all(tps.map(async (tp) => {
-            const versionResponse = await fetch(`${ServerAPIUrl}/processdata/projects/${project.length>0&&project}/tp/${tp}/versions`);
-            const versions = await versionResponse.json();
-            return { tp, versions };
-          }));
+            const tpsWithVersions = await Promise.all(
+              tps.map(async (tp) => {
+                const versionResponse = await fetch(
+                  `${ServerAPIUrl}/processdata/projects/${
+                    project.length > 0 && project
+                  }/tp/${tp}/versions`
+                );
+                const versions = await versionResponse.json();
+                return { tp, versions };
+              })
+            );
 
-          return { project, tps: tpsWithVersions };
-        }));
+            return { project, tps: tpsWithVersions };
+          })
+        );
         console.log("projectsWithDetails: ", projectsWithDetails); // Log the projectsWithDetails object
         updateSavedProjects(projectsWithDetails);
       } catch (error) {
-        console.log('Error fetching project data:', error);
+        console.log("Error fetching project data:", error);
       }
     };
 
     fetchProjData();
   }, []);
-  
+
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedTP, setSelectedTP] = useState(null);
+  function checkProject(value) {
+    setSelectedProject(value);
+  }
+
+  function checkTP(value) {
+    console.log("clicked tp\n", value);
+  }
+
   if (!backEndData.length) {
     return <div>Loading...</div>;
   }
@@ -77,7 +106,17 @@ function App() {
         {/* Main content goes here */}
         <Box mb={4} mt={6}>
           <InputProjTpVers
-          savedProjects={savedProjects} />
+            savedChoise={savedProjects}
+            checkChoice={checkProject}
+          />
+          {selectedProject && (
+            <InputProjTpVers
+              savedChoice={savedProjects.find(
+                (elem) => elem.project === selectedProject
+              )}
+              checkChoice={checkTP}
+            />
+          )}
         </Box>
         <EquipmentTable data={backEndData} />
       </Container>
