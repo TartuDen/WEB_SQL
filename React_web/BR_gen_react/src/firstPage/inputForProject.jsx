@@ -1,29 +1,27 @@
-import * as React from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { Box, Container } from '@mui/material';
+import * as React from "react";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Box, Container } from "@mui/material";
 
 function InputProjTpVers(props) {
-    const suggestion = props.savedChoise.map((elem,idx)=>{
-        if(elem.project){
-            return {label: elem.project}
-        }else if(elem.tp){
-            return {label: elem.tp}
-        }
-        return {lable: ["aaa","bbb"]}
-        
-    })
+  const suggestion = props.savedChoise.map((elem) => {
+    return { label: elem.project };
+  });
+  console.log(".........suggestion.......\n", suggestion);
+
   return (
     <Container>
-        <Autocomplete
-          options={suggestion}
-          getOptionLabel={(option) => option.label}
-          renderInput={(params) => <TextField {...params} label="Project" variant="outlined" />}
-          style={{ width: 300 }}
-          onChange={(event,value)=>{
-            props.checkChoice(value.label)
-          }}
-        />
+      <Autocomplete
+        disablePortal
+        id="project"
+        options={suggestion}
+        renderInput={(params) => <TextField {...params} label="projects" />}
+        style={{ width: 300 }}
+        isOptionEqualToValue={(option, value) => option.label === value.label}
+        onChange={(event, value) => {
+          props.funcCheckChoice(value ? value.label : null);
+        }}
+      />
     </Container>
   );
 }

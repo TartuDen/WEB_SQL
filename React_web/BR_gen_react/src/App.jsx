@@ -30,19 +30,7 @@ function App() {
     fetchData();
   }, []);
 
-  const [savedProjects, updateSavedProjects] = useState([
-    {
-      project: [
-        {
-          tp: [
-            {
-              version: [],
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+  const [savedProjects, updateSavedProjects] = useState([]);
 
   useEffect(() => {
     const fetchProjData = async () => {
@@ -86,8 +74,10 @@ function App() {
 
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedTP, setSelectedTP] = useState(null);
+  
   function checkProject(value) {
     setSelectedProject(value);
+    console.log(".......selectedProject.......\n",selectedProject);
   }
 
   function checkTP(value) {
@@ -107,16 +97,9 @@ function App() {
         <Box mb={4} mt={6}>
           <InputProjTpVers
             savedChoise={savedProjects}
-            checkChoice={checkProject}
+            funcCheckChoice={checkProject}
           />
-          {selectedProject && (
-            <InputProjTpVers
-              savedChoice={savedProjects.find(
-                (elem) => elem.project === selectedProject
-              )}
-              checkChoice={checkTP}
-            />
-          )}
+          
         </Box>
         <EquipmentTable data={backEndData} />
       </Container>

@@ -15,7 +15,7 @@ import { getUtensils, getParams, getMainTableEq, getActivityTypeFromAPI, getProc
 
 
 
-const port = process.env.PORT || 8085;
+const port = process.env.PORT || 8086;
 const app = express();
 
 app.use(express.static("public"));
