@@ -1,124 +1,345 @@
+
+
 function delay(duration) {
   return new Promise((resolve) => {
     setTimeout(resolve, duration);
   });
 }
 
+
+
+// async function GetBR(project, tp, version) {
+//   await delay(500); // Simulating a delay of 500ms
+
+//   const materialIn = new Material(0, "reagent", "test001-1");
+//   const materialOut = new Material(0, "waste", "");
+//   const equipment = "conv_oven";
+  
+//   const description = [
+//     {
+//       operation_type: "material_load_on_trays",
+//       content: `Using shovel "{shovel}" product is loaded on trays.
+//       Each tray is weighed on balances {balances}, data is recorded into Table <number>.
+//       Tray is placed into drying oven.
+//       After all product is loaded on trays and placed into oven, the oven is closed.
+//       Heating is set {targetTempMin}{targetTempMax}°C.
+//       Timer is set to {durationMin}{durationMax} .
+//       The drying starts.`,
+//       other: ``,
+//     }
+//   ];
+
+//   const eq_in_operation = [
+//     new EquipmentInfo("balances", "007-1", "max=3kg"),
+//     new EquipmentInfo("shovel", "", "buto tp.1")
+//   ];
+
+//   const parameters = [
+//     new Parameter("durationMin", 11),
+//     new Parameter("durationMax", 21),
+//     new Parameter("targetTempMin", 10),
+//     new Parameter("targetTempMax", 30),
+//     new Parameter("initialTempSet", 0),
+//     new Parameter("finalTempSet", 0),
+//     new Parameter("processTemp", 0),
+//     new Parameter("rpmMin", 0),
+//     new Parameter("rpmMax", 0),
+//     new Parameter("flowMin", 0),
+//     new Parameter("flowMax", 0),
+//     new Parameter("ppumpSetMin", 0),
+//     new Parameter("ppumpSetMax", 0),
+//     new Parameter("vpumpTorrProcess", 0),
+//     new Parameter("vpumpTorrMin", 0),
+//     new Parameter("vpumpTorrMax", 0)
+//   ];
+
+//   const operations = [
+//     new Operation(1, 1, materialIn, materialOut, equipment, description, eq_in_operation, parameters)
+//   ];
+
+//   const br = new BatchRecord("Buto", "tp.1", "1.0", operations);
+
+//   return br;
+// }
+
+// // Simulating delay function
+// function delay(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
+
+
+
 async function GetEqMapMOCK() {
   await delay(500); // Simulating a delay of 500ms
 
   // Simulated list of equipment for different types
-  const equipmentMap = [
+  const data = [
     {
-      id: 1,
       equipment: "balances",
-      eq_info: [
-        { code: "007-1", description: "max=3kg" },
-        { code: "007-10", description: "max=2kg" },
-        { code: "007-12", description: "max=1kg" },
-        { code: "007-16", description: "max=220kg" },
-        { code: "007-21", description: "max=1.3kg" },
-        { code: "007-25", description: "max=3.5kg" },
-        { code: "007-26", description: "max=3.5kg" },
-        { code: "007-27", description: "max=3.5kg" },
-        { code: "007-34", description: "max=3.5kg" },
-        { code: "007-6", description: "max=10kg" },
-        { code: "007-20", description: "max=3kg" },
-        { code: "007-23", description: "max=150kg" },
-        { code: "007-24", description: "max=30kg" },
-        { code: "007-39", description: "max=30kg" },
-        { code: "007-40", description: "max=30kg" },
-        { code: "007-41", description: "max=3kg" },
-        { code: "007-42", description: "max=30kg" },
-        { code: "007-43", description: "max=1kg" },
-        { code: "007-44", description: "max=120kg" },
-        { code: "007-45", description: "max=60kg" },
-      ],
+      code: "007-1",
+      description: "max=3kg",
     },
     {
-      id: 2,
+      equipment: "balances",
+      code: "007-10",
+      description: "max=2kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-12",
+      description: "max=1kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-16",
+      description: "max=220kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-21",
+      description: "max=1.3kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-25",
+      description: "max=3.5kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-26",
+      description: "max=3.5kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-27",
+      description: "max=3.5kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-34",
+      description: "max=3.5kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-6",
+      description: "max=10kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-20",
+      description: "max=3kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-23",
+      description: "max=150kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-24",
+      description: "max=30kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-39",
+      description: "max=30kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-40",
+      description: "max=30kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-41",
+      description: "max=3kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-42",
+      description: "max=30kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-43",
+      description: "max=1kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-44",
+      description: "max=120kg",
+    },
+    {
+      equipment: "balances",
+      code: "007-45",
+      description: "max=60kg",
+    },
+    {
       equipment: "reactor",
-      eq_info: [
-        { code: "002-10", description: "30L glass" },
-        { code: "002-11", description: "15L glass" },
-        { code: "002-12", description: "150L glass" },
-        { code: "002-13", description: "100L glass" },
-        { code: "002-14", description: "100L g-lined" },
-        { code: "002-15", description: "150L glass" },
-        { code: "002-16", description: "50L glass" },
-        { code: "002-17", description: "100L glass" },
-      ],
+      code: "002-10",
+      description: "30L glass",
     },
     {
-      id: 3,
+      equipment: "reactor",
+      code: "002-11",
+      description: "15L glass",
+    },
+    {
+      equipment: "reactor",
+      code: "002-12",
+      description: "150L glass",
+    },
+    {
+      equipment: "reactor",
+      code: "002-13",
+      description: "100L glass",
+    },
+    {
+      equipment: "reactor",
+      code: "002-14",
+      description: "100L g-lined",
+    },
+    {
+      equipment: "reactor",
+      code: "002-15",
+      description: "150L glass",
+    },
+    {
+      equipment: "reactor",
+      code: "002-16",
+      description: "50L glass",
+    },
+    {
+      equipment: "reactor",
+      code: "002-17",
+      description: "100L glass",
+    },
+    {
       equipment: "d_filter",
-      eq_info: [
-        { code: "046-4", description: "ss 40/80L" },
-        { code: "046-6", description: "ss 30/45L" },
-        { code: "046-7", description: "ss agit 100/140L" },
-      ],
+      code: "046-4",
+      description: "ss 40/80L",
     },
     {
-      id: 4,
+      equipment: "d_filter",
+      code: "046-6",
+      description: "ss 30/45L",
+    },
+    {
+      equipment: "d_filter",
+      code: "046-7",
+      description: "ss agit 100/140L",
+    },
+    {
       equipment: "n_filter",
-      eq_info: [
-        { code: "046-1", description: "" },
-        { code: "046-13", description: "" },
-        { code: "046-14", description: "" },
-        { code: "046-2", description: "" },
-        { code: "046-3", description: "" },
-      ],
+      code: "046-1",
+      description: "",
     },
     {
-      id: 5,
+      equipment: "n_filter",
+      code: "046-13",
+      description: "",
+    },
+    {
+      equipment: "n_filter",
+      code: "046-14",
+      description: "",
+    },
+    {
+      equipment: "n_filter",
+      code: "046-2",
+      description: "",
+    },
+    {
+      equipment: "n_filter",
+      code: "046-3",
+      description: "",
+    },
+    {
       equipment: "m_pump",
-      eq_info: [
-        { code: "001-22", description: "" },
-        { code: "001-23", description: "" },
-        { code: "001-24", description: "" },
-      ],
+      code: "001-22",
+      description: "",
     },
     {
-      id: 6,
+      equipment: "m_pump",
+      code: "001-23",
+      description: "",
+    },
+    {
+      equipment: "m_pump",
+      code: "001-24",
+      description: "",
+    },
+    {
       equipment: "p_pump",
-      eq_info: [
-        { code: "001-13", description: "" },
-        { code: "001-21", description: "" },
-        { code: "001-29", description: "" },
-      ],
+      code: "001-13",
+      description: "",
     },
     {
-      id: 7,
+      equipment: "p_pump",
+      code: "001-21",
+      description: "",
+    },
+    {
+      equipment: "p_pump",
+      code: "001-29",
+      description: "",
+    },
+    {
       equipment: "o_pump",
-      eq_info: [
-        { code: "001-38", description: "" },
-        { code: "001-43", description: "" },
-      ],
+      code: "001-38",
+      description: "",
     },
     {
-      id: 8,
+      equipment: "o_pump",
+      code: "001-43",
+      description: "",
+    },
+    {
       equipment: "vac_oven",
-      eq_info: [
-        { code: "012-10", description: "" },
-        { code: "012-15", description: "" },
-        { code: "012-17", description: "" },
-        { code: "012-9", description: "" },
-      ],
+      code: "012-10",
+      description: "",
     },
     {
-      id: 9,
+      equipment: "vac_oven",
+      code: "012-15",
+      description: "",
+    },
+    {
+      equipment: "vac_oven",
+      code: "012-17",
+      description: "",
+    },
+    {
+      equipment: "vac_oven",
+      code: "012-9",
+      description: "",
+    },
+    {
       equipment: "conv_oven",
-      eq_info: [
-        { code: "012-13", description: "" },
-        { code: "012-14", description: "" },
-        { code: "012-16", description: "" },
-        { code: "012-6", description: "" },
-      ],
+      code: "012-13",
+      description: "",
+    },
+    {
+      equipment: "conv_oven",
+      code: "012-14",
+      description: "",
+    },
+    {
+      equipment: "conv_oven",
+      code: "012-16",
+      description: "",
+    },
+    {
+      equipment: "conv_oven",
+      code: "012-6",
+      description: "",
     },
   ];
+  
 
   // Return the simulated equipment list for the specified type
-  return equipmentMap || [];
+  return {data};
 }
 
 async function GetEqOps() {
@@ -468,7 +689,7 @@ async function GetBR(project, tp, version) {
   await delay(500); // Simulating a delay of 500ms
 
   // Simulated list of equipment types
-  const br = {
+  const data = {
     project: "Buto",
     tp: "tp.1",
     version: "1.0",
@@ -502,15 +723,61 @@ async function GetBR(project, tp, version) {
         eq_in_operation: [
           {
             equipment: "balances",
-            eq_info: {
-              code: "007-1",
-              description: "max=3kg",
-            },
+            code: "007-39",
+            description: "max=30kg",
+          },
+          {
+            equipment: "shovel",
+            code: "",
+            description: "but tp.1",
           },
         ],
+        parameters: [
+          { parameter: "durationMin", value:11 },
+          { parameter: "durationMax", value:21 },
+          { parameter: "targetTempMin", value:10},
+          { parameter: "targetTempMax", value:30 },
+          { parameter: "initialTempSet", value:0 },
+          { parameter: "finalTempSet", value:0 },
+          { parameter: "processTemp", value:0 },
+          { parameter: "rpmMin", value:0 },
+          { parameter: "rpmMax", value:0 },
+          { parameter: "flowMin", value:0 },
+          { parameter: "flowMax", value:0 },
+          { parameter: "ppumpSetMin", value:0 },
+          { parameter: "ppumpSetMax", value:0 },
+          { parameter: "vpumpTorrProcess", value:0 },
+          { parameter: "vpumpTorrMin", value:0 },
+          { parameter: "vpumpTorrMax", value:0 }
+        ]
       },
     ],
   };
+  return data;
 }
 
-export { GetEqMapMOCK, GetEqOps };
+async function GetParamsMOCK() {
+  await delay(500); // Simulating a delay of 500ms
+  // Simulated list of parameters for operations
+  const parameters = [
+    { id: 1, parameter: "durationMin" },
+    { id: 2, parameter: "durationMax" },
+    { id: 3, parameter: "targetTempMin" },
+    { id: 4, parameter: "targetTempMax" },
+    { id: 5, parameter: "initialTempSet" },
+    { id: 6, parameter: "finalTempSet" },
+    { id: 7, parameter: "processTemp" },
+    { id: 8, parameter: "rpmMin" },
+    { id: 9, parameter: "rpmMax" },
+    { id: 10, parameter: "flowMin" },
+    { id: 11, parameter: "flowMax" },
+    { id: 12, parameter: "ppumpSetMin" },
+    { id: 13, parameter: "ppumpSetMax" },
+    { id: 14, parameter: "vpumpTorrProcess" },
+    { id: 15, parameter: "vpumpTorrMin" },
+    { id: 16, parameter: "vpumpTorrMax" }
+  ];
+  return parameters;
+}
+
+export { GetEqMapMOCK, GetEqOps, GetParamsMOCK, GetBR };

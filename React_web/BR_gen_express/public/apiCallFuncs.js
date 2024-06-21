@@ -1,5 +1,7 @@
 import axios from "axios";
-import { EquipmentNoOperation, EquipmentInfo, Operation } from "./dataClasses.js";
+// import { EquipmentNoOperation, EquipmentInfo, Operation } from "./dataClasses.js";
+import {BatchRecord, Operation, Parameter, EquipmentInfo, Material } from "./opClassesMOCK.js"
+import { GetEqMapMOCK, GetEqOps, GetParamsMOCK, GetBR } from "./apiMOCK.js"
 
 // const ServerAPIUrl = "http://3.72.208.221:8090";
 const ServerAPIUrl = "http://localhost:8085";
@@ -45,6 +47,25 @@ export async function postNewOp(newOp){
     }
 }
 
+function transformEquipmentInfo(equipmentArray) {
+    const equipmentMap = {};
+  
+    equipmentArray.forEach(item => {
+      if (!equipmentMap[item.equipment]) {
+        equipmentMap[item.equipment] = {
+          equipment: item.equipment,
+          equipmentInfo: []
+        };
+      }
+      equipmentMap[item.equipment].equipmentInfo.push({
+        code: item.code,
+        description: item.description
+      });
+    });
+  
+    return Object.values(equipmentMap);
+  }
+
 /**
  * Fetches main table equipment data from the server.
  * 
@@ -52,12 +73,14 @@ export async function postNewOp(newOp){
  */
 export async function getMainTableEq() {
     try {
-        let apiResp = await axios.get(`${ServerAPIUrl}/main_table_equipment`);
+        // let apiResp = await axios.get(`${ServerAPIUrl}/main_table_equipment`);
+        let apiResp = await GetEqMapMOCK();
+        // console.log("........here........\n",apiResp.data);
         
         if (apiResp.data && Array.isArray(apiResp.data)) {
-            let newObj = apiResp.data.map(item => new EquipmentNoOperation(item.name, item.equipmentInfo));
-            // console.log(newObj);
-            return newObj;
+            let newObj = apiResp.data.map(item => new EquipmentInfo(item.equipment, item.code, item.description));
+            console.log("........newObj.........\n",transformEquipmentInfo(newObj))
+            return transformEquipmentInfo(newObj);
         } else {
             console.error("Invalid API response format");
             return null;

@@ -12,7 +12,7 @@ export default function EquipmentTable(props) {
 
   const rows = props.data.map((elem) => {
     return {
-      name: elem.name,
+      name: elem.equipment,
       fieldClicked: 0,
       code1: elem.equipmentInfo.map((item) => {
         return { code: item.code, description: item.description };
