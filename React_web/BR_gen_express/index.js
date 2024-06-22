@@ -34,7 +34,7 @@ app.use(cors());
 
 app.get("/api/main_table", async (req, res) => {
     let equipmentMap = await getMainTableEq();
-    console.log("........equipmentMap........\n",equipmentMap);
+    let memory = await getB
     res.json(equipmentMap)
 })
 

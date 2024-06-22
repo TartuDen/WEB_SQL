@@ -13,6 +13,76 @@ function handleError(error, message) {
     return null;
 }
 
+
+
+function transformEquipmentInfo(equipmentArray) {
+    const equipmentMap = {};
+  
+    equipmentArray.forEach(item => {
+      if (!equipmentMap[item.equipment]) {
+        equipmentMap[item.equipment] = {
+          equipment: item.equipment,
+          equipmentInfo: []
+        };
+      }
+      equipmentMap[item.equipment].equipmentInfo.push({
+        code: item.code,
+        description: item.description
+      });
+    });
+  
+    return Object.values(equipmentMap);
+  }
+
+/**
+ * Fetches main table equipment data from the server.
+ * 
+ * @returns {Array|null} An array of EquipmentNoOperation objects if successful, or null if an error occurs.
+ */
+export async function getMainTableEq() {
+    try {
+        // let apiResp = await axios.get(`${ServerAPIUrl}/main_table_equipment`);
+        let apiResp = await GetEqMapMOCK();
+        // console.log("........here........\n",apiResp.data);
+        
+        if (apiResp.data && Array.isArray(apiResp.data)) {
+            let newObj = apiResp.data.map(item => new EquipmentInfo(item.equipment, item.code, item.description));
+            return transformEquipmentInfo(newObj);
+        } else {
+            console.error("Invalid API response format");
+            return null;
+        }
+    } catch (error) {
+        return handleError(error, "Error getting data from getMainTableEq:");
+    }
+}
+
+export async function getAllProjTpVers(){
+    try{
+        let apiResp = await GetBR();
+    } catch (error) {
+        return handleError(error, "Error getting data from getMainTableEq:");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Fetches process operations data from the server based on the provided project name, TP, and version.
  * 
@@ -47,48 +117,7 @@ export async function postNewOp(newOp){
     }
 }
 
-function transformEquipmentInfo(equipmentArray) {
-    const equipmentMap = {};
-  
-    equipmentArray.forEach(item => {
-      if (!equipmentMap[item.equipment]) {
-        equipmentMap[item.equipment] = {
-          equipment: item.equipment,
-          equipmentInfo: []
-        };
-      }
-      equipmentMap[item.equipment].equipmentInfo.push({
-        code: item.code,
-        description: item.description
-      });
-    });
-  
-    return Object.values(equipmentMap);
-  }
 
-/**
- * Fetches main table equipment data from the server.
- * 
- * @returns {Array|null} An array of EquipmentNoOperation objects if successful, or null if an error occurs.
- */
-export async function getMainTableEq() {
-    try {
-        // let apiResp = await axios.get(`${ServerAPIUrl}/main_table_equipment`);
-        let apiResp = await GetEqMapMOCK();
-        // console.log("........here........\n",apiResp.data);
-        
-        if (apiResp.data && Array.isArray(apiResp.data)) {
-            let newObj = apiResp.data.map(item => new EquipmentInfo(item.equipment, item.code, item.description));
-            console.log("........newObj.........\n",transformEquipmentInfo(newObj))
-            return transformEquipmentInfo(newObj);
-        } else {
-            console.error("Invalid API response format");
-            return null;
-        }
-    } catch (error) {
-        return handleError(error, "Error getting data from getMainTableEq:");
-    }
-}
 
 /**
  * Fetches project data from the server based on the provided project name.

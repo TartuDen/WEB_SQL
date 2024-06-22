@@ -1,13 +1,14 @@
-
 class Material {
-  constructor(mass, type, wh_code) {
+  constructor(reagent = "SM.1", mass = 0, type = "reagent", wh_code = "Buto SM.1 001") {
+    this.reagent = reagent;
     this.mass = mass;
     this.type = type;
     this.wh_code = wh_code;
   }
 }
+
 class EquipmentInfo {
-  constructor(equipment, code, description) {
+  constructor(equipment = "none", code = "none", description = "none") {
     this.equipment = equipment;
     this.code = code;
     this.description = description;
@@ -15,25 +16,36 @@ class EquipmentInfo {
 }
 
 class Parameter {
-  constructor(parameter, value) {
+  constructor(parameter = "none", value = 0) {
     this.parameter = parameter;
     this.value = value;
   }
 }
+
 class Operation {
-  constructor(id, opNumb, materialIn, materialOut, equipment, description, eq_in_operation, parameters) {
+  constructor(
+    id,
+    opNumb,
+    materialIn = new Material(),
+    materialOut = new Material(),
+    mainEqName = "none",
+    description = "none",
+    eq_in_operation = [new EquipmentInfo()],
+    parameters = new Parameter()
+  ) {
     this.id = id;
     this.opNumb = opNumb;
     this.materialIn = materialIn;
     this.materialOut = materialOut;
-    this.equipment = equipment;
+    this.mainEqName = mainEqName;  // Corrected this line
     this.description = description;
     this.eq_in_operation = eq_in_operation;
     this.parameters = parameters;
   }
 }
+
 class BatchRecord {
-  constructor(project, tp, version, operations) {
+  constructor(project = "none", tp = "none", version = "none", operations = [new Operation()]) {
     this.project = project;
     this.tp = tp;
     this.version = version;
@@ -41,4 +53,4 @@ class BatchRecord {
   }
 }
 
-export {BatchRecord, Operation, Parameter, EquipmentInfo, Material }
+export { BatchRecord, Operation, Parameter, EquipmentInfo, Material };
