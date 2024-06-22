@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
+import { CssBaseline, Container, Box } from "@mui/material";
 import viteLogo from "/vite.svg";
 import "./css/App.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import EquipmentTable from "../src/firstPage/table";
-import { CssBaseline, Container, Box } from "@mui/material";
-import InputProjTpVers from "./firstPage/inputForProject";
+import { InputProj, InputTp, InputVersion } from "./firstPage/inputForProject";
 
 const ServerAPIUrl = "http://3.72.208.221:8090";
 const LocalAPIUrl = "http://localhost:8085";
 
 function App() {
-  const [backEndData, setBackEndData] = useState([]);
+  const [backEndDataMap, setBackEndDataMap] = useState([]);
+  const [backendDataProj, setBackendDataProj] = useState([]);
+  const [backendDataTp, setBackendDataTp] = useState([]);
+  const [backendDataVersion, setBackendDataVersion] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("/api/main_table");
         const data = await response.json();
-        setBackEndData(data);
+        setBackEndDataMap(data.equipmentMap);
+        setBackendDataProj(data.projTpVers);
       } catch (error) {
         console.error(
           'Error fetching data from fetch("/api/main_table"):',
@@ -30,61 +34,29 @@ function App() {
     fetchData();
   }, []);
 
-  const [savedProjects, updateSavedProjects] = useState([]);
-
-  useEffect(() => {
-    const fetchProjData = async () => {
-      try {
-        const response = await fetch(`${ServerAPIUrl}/processdata/projects`);
-        const projects = await response.json();
-
-        const projectsWithDetails = await Promise.all(
-          projects.map(async (project) => {
-            const tpResponse = await fetch(
-              `${ServerAPIUrl}/processdata/projects/${
-                project.length > 0 && project
-              }/tp`
-            );
-            const tps = await tpResponse.json();
-
-            const tpsWithVersions = await Promise.all(
-              tps.map(async (tp) => {
-                const versionResponse = await fetch(
-                  `${ServerAPIUrl}/processdata/projects/${
-                    project.length > 0 && project
-                  }/tp/${tp}/versions`
-                );
-                const versions = await versionResponse.json();
-                return { tp, versions };
-              })
-            );
-
-            return { project, tps: tpsWithVersions };
-          })
-        );
-        console.log("projectsWithDetails: ", projectsWithDetails); // Log the projectsWithDetails object
-        updateSavedProjects(projectsWithDetails);
-      } catch (error) {
-        console.log("Error fetching project data:", error);
-      }
-    };
-
-    fetchProjData();
-  }, []);
-
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedTP, setSelectedTP] = useState(null);
-  
-  function checkProject(value) {
-    setSelectedProject(value);
-    console.log(".......selectedProject.......\n",selectedProject);
+  function funcCheckChoiceProj(value) {
+    const proj = backendDataProj.find((elem) => elem.project === value);
+    if (proj) {
+      setBackendDataTp(proj.tps);
+      setBackendDataVersion([]); // Reset versions when project changes
+    }
   }
 
-  function checkTP(value) {
-    console.log("clicked tp\n", value);
+  function funcCheckChoiceTp(value) {
+    const tp = backendDataTp.find((elem) => elem.tp === value);
+    if (tp) {
+      setBackendDataVersion(tp.versions);
+    }
   }
 
-  if (!backEndData.length) {
+  function funcCheckChoiceVersion(value) {
+    const version = backendDataVersion.find((elem) => elem.version === value);
+    if (version) {
+      setBackendDataVersion([version]);
+    }
+  }
+
+  if (!backEndDataMap.length) {
     return <div>Loading...</div>;
   }
 
@@ -94,14 +66,25 @@ function App() {
       <Header />
       <Container component="main" sx={{ flex: 1 }}>
         {/* Main content goes here */}
-        <Box mb={4} mt={6}>
-          <InputProjTpVers
-            savedChoise={savedProjects}
-            funcCheckChoice={checkProject}
+        <Box mb={1} mt={6}>
+          <InputProj
+            select={backendDataProj}
+            funcCheckChoiceProj={funcCheckChoiceProj}
           />
-          
         </Box>
-        <EquipmentTable data={backEndData} />
+        <Box mb={1}>
+          <InputTp
+            select={backendDataTp}
+            funcCheckChoiceTp={funcCheckChoiceTp}
+          />
+        </Box>
+        <Box mb={1}>
+          <InputVersion
+            select={backendDataVersion}
+            funcCheckChoiceVersion={funcCheckChoiceVersion}
+          />
+        </Box>
+        <EquipmentTable data={backEndDataMap} />
       </Container>
       <Footer />
     </Box>

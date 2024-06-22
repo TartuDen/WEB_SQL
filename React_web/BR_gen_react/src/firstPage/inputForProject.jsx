@@ -3,11 +3,10 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Box, Container } from "@mui/material";
 
-function InputProjTpVers(props) {
-  const suggestion = props.savedChoise.map((elem) => {
+function InputProj(props) {
+  const suggestion = props.select.map((elem) => {
     return { label: elem.project };
   });
-  console.log(".........suggestion.......\n", suggestion);
 
   return (
     <Container>
@@ -15,15 +14,59 @@ function InputProjTpVers(props) {
         disablePortal
         id="project"
         options={suggestion}
-        renderInput={(params) => <TextField {...params} label="projects" />}
+        renderInput={(params) => <TextField {...params} label="Projects" />}
         style={{ width: 300 }}
         isOptionEqualToValue={(option, value) => option.label === value.label}
         onChange={(event, value) => {
-          props.funcCheckChoice(value ? value.label : null);
+          props.funcCheckChoiceProj(value ? value.label : null);
         }}
       />
     </Container>
   );
 }
 
-export default InputProjTpVers;
+function InputTp(props) {
+  const suggestion = props.select.map((elem) => {
+    return { label: elem.tp };
+  });
+
+  return (
+    <Container>
+      <Autocomplete
+        disablePortal
+        id="tp"
+        options={suggestion}
+        renderInput={(params) => <TextField {...params} label="TPs" />}
+        style={{ width: 300 }}
+        isOptionEqualToValue={(option, value) => option.label === value.label}
+        onChange={(event, value) => {
+          props.funcCheckChoiceTp(value ? value.label : null);
+        }}
+      />
+    </Container>
+  );
+}
+
+function InputVersion(props) {
+  const suggestion = props.select.map((elem) => {
+    return { label: elem.version };
+  });
+
+  return (
+    <Container>
+      <Autocomplete
+        disablePortal
+        id="version"
+        options={suggestion}
+        renderInput={(params) => <TextField {...params} label="Versions" />}
+        style={{ width: 300 }}
+        isOptionEqualToValue={(option, value) => option.label === value.label}
+        onChange={(event, value) => {
+          props.funcCheckChoiceVersion(value ? value.label : null);
+        }}
+      />
+    </Container>
+  );
+}
+
+export { InputProj, InputTp, InputVersion };

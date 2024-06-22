@@ -60,6 +60,7 @@ export async function getMainTableEq() {
 export async function getAllProjTpVers(){
     try{
         let apiResp = await GetBR();
+        return apiResp;
     } catch (error) {
         return handleError(error, "Error getting data from getMainTableEq:");
     }

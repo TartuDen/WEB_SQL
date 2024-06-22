@@ -9,7 +9,8 @@ import axios from "axios";
 import cors from 'cors';
 
 
-import { getUtensils, getParams, getMainTableEq, getActivityTypeFromAPI, getProcOps, postNewOp, getAllProjects, getAllTp, getProcessInitInfo, deleteProcessInitialInfo, postProcessInitialInfo } from "./public/apiCallFuncs.js";
+import { getUtensils, getParams, getMainTableEq, getAllProjTpVers, getActivityTypeFromAPI, getProcOps, postNewOp, getAllProjects, getAllTp, getProcessInitInfo, deleteProcessInitialInfo, postProcessInitialInfo } from "./public/apiCallFuncs.js";
+import { GetBR } from "./public/apiMOCK.js";
 
 
 
@@ -32,10 +33,56 @@ app.use(session({
 }));
 app.use(cors());
 
+async function organizeData(memory) {
+    const rawData = memory;
+    const organizedData = [];
+  
+    // Helper function to find or create a project
+    function findOrCreateProject(projectName) {
+      let project = organizedData.find(p => p.project === projectName);
+      if (!project) {
+        project = { project: projectName, tps: [] };
+        organizedData.push(project);
+      }
+      return project;
+    }
+  
+    // Helper function to find or create a tp
+    function findOrCreateTp(project, tpName) {
+      let tp = project.tps.find(t => t.tp === tpName);
+      if (!tp) {
+        tp = { tp: tpName, versions: [] };
+        project.tps.push(tp);
+      }
+      return tp;
+    }
+  
+    // Helper function to find or create a version
+    function findOrCreateVersion(tp, versionName) {
+      let version = tp.versions.find(v => v.version === versionName);
+      if (!version) {
+        version = { version: versionName };
+        tp.versions.push(version);
+      }
+      return version;
+    }
+  
+    rawData.forEach(record => {
+      const project = findOrCreateProject(record.project);
+      const tp = findOrCreateTp(project, record.tp);
+      findOrCreateVersion(tp, record.version);
+    });
+  
+    return organizedData;
+  }
+
 app.get("/api/main_table", async (req, res) => {
     let equipmentMap = await getMainTableEq();
-    let memory = await getB
-    res.json(equipmentMap)
+    let memory = await getAllProjTpVers();
+    let projTpVers = await organizeData(memory);
+
+
+    res.json({equipmentMap, projTpVers})
 })
 
 app.listen(port, (err) => {
