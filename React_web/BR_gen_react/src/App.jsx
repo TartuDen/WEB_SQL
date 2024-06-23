@@ -11,9 +11,10 @@ const LocalAPIUrl = "http://localhost:8085";
 
 function App() {
   const [backEndDataMap, setBackEndDataMap] = useState([]);
-  const [backendDataProj, setBackendDataProj] = useState([]);
-  const [backendDataTp, setBackendDataTp] = useState([]);
-  const [backendDataVersion, setBackendDataVersion] = useState([]);
+  const [backEndDataProj, setBackEndDataProj] = useState([]);
+  const [backEndDataMemory, setBackEndDataMemory] = useState([]);
+  const [backEndDataTp, setBackEndDataTp] = useState([]);
+  const [backEndDataVersion, setBackEndDataVersion] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,7 +22,8 @@ function App() {
         const response = await fetch("/api/main_table");
         const data = await response.json();
         setBackEndDataMap(data.equipmentMap);
-        setBackendDataProj(data.projTpVers);
+        setBackEndDataProj(data.projTpVers);
+        setBackEndDataMemory(data.memory)
       } catch (error) {
         console.error(
           'Error fetching data from fetch("/api/main_table"):',
@@ -34,24 +36,24 @@ function App() {
   }, []);
 
   function funcCheckChoiceProj(value) {
-    const proj = backendDataProj.find((elem) => elem.project === value);
+    const proj = backEndDataProj.find((elem) => elem.project === value);
     if (proj) {
-      setBackendDataTp(proj.tps);
-      setBackendDataVersion([]); // Reset versions when project changes
+      setBackEndDataTp(proj.tps);
+      setBackEndDataVersion([]); // Reset versions when project changes
     }
   }
 
   function funcCheckChoiceTp(value) {
-    const tp = backendDataTp.find((elem) => elem.tp === value);
+    const tp = backEndDataTp.find((elem) => elem.tp === value);
     if (tp) {
-      setBackendDataVersion(tp.versions);
+      setBackEndDataVersion(tp.versions);
     }
   }
 
   function funcCheckChoiceVersion(value) {
-    const version = backendDataVersion.find((elem) => elem.version === value);
+    const version = backEndDataVersion.find((elem) => elem.version === value);
     if (version) {
-      setBackendDataVersion([version]);
+      setBackEndDataVersion([version]);
     }
   }
 
@@ -67,19 +69,19 @@ function App() {
         {/* Main content goes here */}
         <Box mb={1} mt={6}>
           <InputProj
-            select={backendDataProj}
+            select={backEndDataProj}
             funcCheckChoiceProj={funcCheckChoiceProj}
           />
         </Box>
         <Box mb={1}>
           <InputTp
-            select={backendDataTp}
+            select={backEndDataTp}
             funcCheckChoiceTp={funcCheckChoiceTp}
           />
         </Box>
         <Box mb={1}>
           <InputVersion
-            select={backendDataVersion}
+            select={backEndDataVersion}
             funcCheckChoiceVersion={funcCheckChoiceVersion}
           />
         </Box>

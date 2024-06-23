@@ -677,7 +677,7 @@ async function GetEqOps() {
   return activities;
 }
 
-async function GetBR(project=null, tp=null, version=null) {
+async function GetBR(project = null, tp = null, version = null) {
   await delay(500); // Simulating a delay of 500ms
 
   // Simulated list of equipment types
@@ -686,66 +686,64 @@ async function GetBR(project=null, tp=null, version=null) {
       project: "Buto",
       tp: "tp.1",
       version: "1.0",
-	  eq_in_br: [
-		{
-			equipment: "m_pump",
-			code: "001-21",
-			description: "",
-		  },
-		{
-			equipment: "p_pump",
-			code: "001-13",
-			description: "",
-		  },
-		{
-			equipment: "reactor",
-			code: "002-17",
-			description: "glass 150L",
-		  },
-		{
-			equipment: "reactor",
-			code: "002-13",
-			description: "glass 150L",
-		  },
-		{
-			equipment: "balances",
-			code: "007-39",
-			description: "max=30kg",
-		  },
-		  {
-			equipment: "shovel",
-			code: "",
-			description: "but tp.1",
-		  },
-
-	  ],
-	  material_in_br: [
-		{
-			reagent: "SM.1",
-			mass: 11,
-			typeIn: "sm", //e.g. SM, reagent, solvent, process aid
-			wh_code: "test001-1",
-		  },
-		  {
-			reagent: "SM.2",
-			mass: 12,
-			typeIn: "sm", //e.g. SM, reagent, solvent, process aid
-			wh_code: "test001-1",
-		  }
-
-	  ],
+      eq_in_br: [
+        {
+          equipment: "m_pump",
+          code: "001-21",
+          description: "",
+        },
+        {
+          equipment: "p_pump",
+          code: "001-13",
+          description: "",
+        },
+        {
+          equipment: "reactor",
+          code: "002-17",
+          description: "glass 150L",
+        },
+        {
+          equipment: "reactor",
+          code: "002-13",
+          description: "glass 150L",
+        },
+        {
+          equipment: "balances",
+          code: "007-39",
+          description: "max=30kg",
+        },
+        {
+          equipment: "shovel",
+          code: "",
+          description: "but tp.1",
+        },
+      ],
+      material_in_br: [
+        {
+          reagent: "SM.1",
+          mass: 11,
+          typeIn: "sm", //e.g. SM, reagent, solvent, process aid
+          wh_code: "test001-1",
+        },
+        {
+          reagent: "SM.2",
+          mass: 12,
+          typeIn: "sm", //e.g. SM, reagent, solvent, process aid
+          wh_code: "test001-1",
+        },
+      ],
       operations: [
         {
           id: 1,
           opNumb: 1,
           materialIn: {
-			reagent: "SM.1",
+            reagent: "SM.1",
             mass: 11,
             typeIn: "sm", //e.g. SM, reagent, solvent, process aid
             wh_code: "test001-1",
           },
           materialOut: {
-			reagent: "aqueous",
+            reagent: "aqueous",
             mass: 0,
             typeOut: "waste", //e.g. IP or waste
           },
@@ -796,78 +794,125 @@ async function GetBR(project=null, tp=null, version=null) {
         },
       ],
     },
-	{
-		project: "Tile",
-		tp: "tp.3",
-		version: "2.0",
-		operations: [
-		  {
-			id: 1,
-			opNumb: 1,
-			materialIn: {
-			  reagent: "SM.1",
-			  mass: 11,
-			  typeIn: "reagent", //e.g. SM, reagent, solvent, process aid
-			  wh_code: "test001-1",
-			},
-			materialOut: {
-			  reagent: "aqueous",
-			  mass: 4,
-			  typeOut: "waste", //e.g. IP or waste
-			},
-			mainEqName: "conv_oven",
-			description: [
-			  {
-				operation_type: "material_load_on_trays",
-				content: `Using shovel "{shovel}" product is loaded on trays.
+    {
+      project: "Tile",
+      tp: "tp.3",
+      version: "2.0",
+      eq_in_br: [
+        {
+          equipment: "o_pump",
+          code: "001-23",
+          description: "",
+        },
+        {
+          equipment: "p_pump",
+          code: "001-13",
+          description: "",
+        },
+        {
+          equipment: "reactor",
+          code: "002-17",
+          description: "glass 150L",
+        },
+        {
+          equipment: "reactor",
+          code: "002-13",
+          description: "glass 150L",
+        },
+        {
+          equipment: "balances",
+          code: "007-39",
+          description: "max=30kg",
+        },
+        {
+          equipment: "shovel",
+          code: "",
+          description: "but tp.1",
+        },
+      ],
+      material_in_br: [
+        {
+          reagent: "SM.1",
+          mass: 11,
+          typeIn: "sm", //e.g. SM, reagent, solvent, process aid
+          wh_code: "test001-1",
+        },
+        {
+          reagent: "SM.2",
+          mass: 12,
+          typeIn: "sm", //e.g. SM, reagent, solvent, process aid
+          wh_code: "test001-1",
+        },
+      ],
+      operations: [
+        {
+          id: 1,
+          opNumb: 1,
+          materialIn: {
+            reagent: "SM.1",
+            mass: 11,
+            typeIn: "reagent", //e.g. SM, reagent, solvent, process aid
+            wh_code: "test001-1",
+          },
+          materialOut: {
+            reagent: "aqueous",
+            mass: 4,
+            typeOut: "waste", //e.g. IP or waste
+          },
+          mainEqName: "conv_oven",
+          description: [
+            {
+              operation_type: "material_load_on_trays",
+              content: `Using shovel "{shovel}" product is loaded on trays.
 			  Each tray is weighed on balances {balances}, data is recorded into Table <number>.
 			  Tray is placed into drying oven.
 			  After all product is loaded on trays and placed into oven, the oven is clodes.
 			  Heating is set {targetTempMin}{targetTempMax}°C.
 			  Timer is set to {durationMin}{durationMax} .
 			  The dryining starts.`,
-				other: ``,
-			  },
-			],
-			eq_in_operation: [
-			  {
-				equipment: "balances",
-				code: "007-39",
-				description: "max=30kg",
-			  },
-			  {
-				equipment: "shovel",
-				code: "",
-				description: "but tp.1",
-			  },
-			],
-			parameters: [
-			  { parameter: "durationMin", value: 11 },
-			  { parameter: "durationMax", value: 21 },
-			  { parameter: "targetTempMin", value: 10 },
-			  { parameter: "targetTempMax", value: 30 },
-			  { parameter: "initialTempSet", value: 0 },
-			  { parameter: "finalTempSet", value: 0 },
-			  { parameter: "processTemp", value: 0 },
-			  { parameter: "rpmMin", value: 0 },
-			  { parameter: "rpmMax", value: 0 },
-			  { parameter: "flowMin", value: 0 },
-			  { parameter: "flowMax", value: 0 },
-			  { parameter: "ppumpSetMin", value: 0 },
-			  { parameter: "ppumpSetMax", value: 0 },
-			  { parameter: "vpumpTorrProcess", value: 0 },
-			  { parameter: "vpumpTorrMin", value: 0 },
-			  { parameter: "vpumpTorrMax", value: 0 },
-			],
-		  },
-		],
-	  },
+              other: ``,
+            },
+          ],
+          eq_in_operation: [
+            {
+              equipment: "balances",
+              code: "007-39",
+              description: "max=30kg",
+            },
+            {
+              equipment: "shovel",
+              code: "",
+              description: "but tp.1",
+            },
+          ],
+          parameters: [
+            { parameter: "durationMin", value: 11 },
+            { parameter: "durationMax", value: 21 },
+            { parameter: "targetTempMin", value: 10 },
+            { parameter: "targetTempMax", value: 30 },
+            { parameter: "initialTempSet", value: 0 },
+            { parameter: "finalTempSet", value: 0 },
+            { parameter: "processTemp", value: 0 },
+            { parameter: "rpmMin", value: 0 },
+            { parameter: "rpmMax", value: 0 },
+            { parameter: "flowMin", value: 0 },
+            { parameter: "flowMax", value: 0 },
+            { parameter: "ppumpSetMin", value: 0 },
+            { parameter: "ppumpSetMax", value: 0 },
+            { parameter: "vpumpTorrProcess", value: 0 },
+            { parameter: "vpumpTorrMin", value: 0 },
+            { parameter: "vpumpTorrMax", value: 0 },
+          ],
+        },
+      ],
+    },
   ];
-  if(project && tp && version){
-	  return data.find(br=> br.project ===project && br.tp === tp && br.version === version);
-
-  }else{
-	return data
+  if (project && tp && version) {
+    return data.find(
+      (br) => br.project === project && br.tp === tp && br.version === version
+    );
+  } else {
+    return data;
   }
 }
 

@@ -82,7 +82,7 @@ app.get("/api/main_table", async (req, res) => {
     let projTpVers = await organizeData(memory);
 
 
-    res.json({equipmentMap, projTpVers})
+    res.json({equipmentMap, projTpVers, memory})
 })
 
 app.listen(port, (err) => {
