@@ -686,14 +686,62 @@ async function GetBR(project=null, tp=null, version=null) {
       project: "Buto",
       tp: "tp.1",
       version: "1.0",
+	  eq_in_br: [
+		{
+			equipment: "m_pump",
+			code: "001-21",
+			description: "",
+		  },
+		{
+			equipment: "p_pump",
+			code: "001-13",
+			description: "",
+		  },
+		{
+			equipment: "reactor",
+			code: "002-17",
+			description: "glass 150L",
+		  },
+		{
+			equipment: "reactor",
+			code: "002-13",
+			description: "glass 150L",
+		  },
+		{
+			equipment: "balances",
+			code: "007-39",
+			description: "max=30kg",
+		  },
+		  {
+			equipment: "shovel",
+			code: "",
+			description: "but tp.1",
+		  },
+
+	  ],
+	  material_in_br: [
+		{
+			reagent: "SM.1",
+			mass: 11,
+			typeIn: "sm", //e.g. SM, reagent, solvent, process aid
+			wh_code: "test001-1",
+		  },
+		  {
+			reagent: "SM.2",
+			mass: 12,
+			typeIn: "sm", //e.g. SM, reagent, solvent, process aid
+			wh_code: "test001-1",
+		  }
+
+	  ],
       operations: [
         {
           id: 1,
           opNumb: 1,
           materialIn: {
 			reagent: "SM.1",
-            mass: 0,
-            typeIn: "reagent", //e.g. SM, reagent, solvent, process aid
+            mass: 11,
+            typeIn: "sm", //e.g. SM, reagent, solvent, process aid
             wh_code: "test001-1",
           },
           materialOut: {
@@ -758,13 +806,13 @@ async function GetBR(project=null, tp=null, version=null) {
 			opNumb: 1,
 			materialIn: {
 			  reagent: "SM.1",
-			  mass: 0,
+			  mass: 11,
 			  typeIn: "reagent", //e.g. SM, reagent, solvent, process aid
 			  wh_code: "test001-1",
 			},
 			materialOut: {
 			  reagent: "aqueous",
-			  mass: 0,
+			  mass: 4,
 			  typeOut: "waste", //e.g. IP or waste
 			},
 			mainEqName: "conv_oven",

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { CssBaseline, Container, Box } from "@mui/material";
-import viteLogo from "/vite.svg";
 import "./css/App.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import EquipmentTable from "../src/firstPage/table";
+import { EquipmentTable, MatTable } from "./firstPage/mainTables";
 import { InputProj, InputTp, InputVersion } from "./firstPage/inputForProject";
 
 const ServerAPIUrl = "http://3.72.208.221:8090";
@@ -64,7 +63,7 @@ function App() {
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <CssBaseline />
       <Header />
-      <Container component="main" sx={{ flex: 1 }}>
+      <Container component="main" sx={{ flex: 1, width: '90vw', maxWidth: 'none' }}>
         {/* Main content goes here */}
         <Box mb={1} mt={6}>
           <InputProj
@@ -84,7 +83,14 @@ function App() {
             funcCheckChoiceVersion={funcCheckChoiceVersion}
           />
         </Box>
-        <EquipmentTable data={backEndDataMap} />
+        <Box display="flex" justifyContent="space-between" mb={3}>
+          <Box flex={1} mr={1}>
+            <EquipmentTable data={backEndDataMap} />
+          </Box>
+          <Box flex={1} ml={1}>
+            <MatTable />
+          </Box>
+        </Box>
       </Container>
       <Footer />
     </Box>
