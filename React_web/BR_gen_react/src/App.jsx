@@ -55,7 +55,9 @@ function App() {
     if (version) {
       setBackEndDataVersion([version]);
     }
+    console.log("...changed.....");
   }
+
 
   if (!backEndDataMap.length) {
     return <div>Loading...</div>;

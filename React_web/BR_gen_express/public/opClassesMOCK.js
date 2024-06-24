@@ -1,5 +1,5 @@
 class Material {
-  constructor(reagent = "SM.1", mass = 0, type = "reagent", wh_code = "") {
+  constructor(reagent = "SM.1", mass = 0, type = "Reagent", wh_code = "") {
     this.reagent = reagent;
     this.mass = mass;
     this.type = type;
