@@ -23,7 +23,7 @@ function App() {
         const data = await response.json();
         setBackEndDataMap(data.equipmentMap);
         setBackEndDataProj(data.projTpVers);
-        setBackEndDataMemory(data.memory)
+        setBackEndDataMemory(data.memory);
       } catch (error) {
         console.error(
           'Error fetching data from fetch("/api/main_table"):',
@@ -58,7 +58,6 @@ function App() {
     console.log("...changed.....");
   }
 
-
   if (!backEndDataMap.length) {
     return <div>Loading...</div>;
   }
@@ -67,7 +66,10 @@ function App() {
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <CssBaseline />
       <Header />
-      <Container component="main" sx={{ flex: 1, width: '90vw', maxWidth: 'none' }}>
+      <Container
+        component="main"
+        sx={{ flex: 1, width: "90vw", maxWidth: "none" }}
+      >
         {/* Main content goes here */}
         <Box mb={1} mt={6}>
           <InputProj
@@ -89,7 +91,7 @@ function App() {
         </Box>
         <Box display="flex" justifyContent="space-between" mb={3}>
           <Box flex={1} mr={1}>
-            <EquipmentTable data={backEndDataMap} />
+            <EquipmentTable data={backEndDataMap}  />
           </Box>
           <Box flex={1} ml={1}>
             <MatTable />
