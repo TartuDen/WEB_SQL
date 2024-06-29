@@ -1,27 +1,22 @@
-// Example: ThreadList component
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ThreadList = () => {
-  const [threads, setThreads] = useState([]);
-
-  useEffect(() => {
-    const fetchThreads = async () => {
-      const res = await axios.get('/api/threads');
-      setThreads(res.data);
-    };
-
-    fetchThreads();
-  }, []);
+  const threads = [
+    { id: 1, title: 'Thread 1' },
+    { id: 2, title: 'Thread 2' },
+  ];
 
   return (
     <div>
-      {threads.map(thread => (
-        <div key={thread.id}>
-          <h2>{thread.title}</h2>
-          <p>{thread.content}</p>
-        </div>
-      ))}
+      <h2>Threads</h2>
+      <ul>
+        {threads.map(thread => (
+          <li key={thread.id}>
+            <Link to={`/thread/${thread.id}`}>{thread.title}</Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
