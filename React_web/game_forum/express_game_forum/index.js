@@ -1,33 +1,70 @@
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import session from 'express-session';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8081;
+const ReactHomeUrl = "http://localhost:5173"
 
-// __dirname equivalent for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/build')));
+// Configure session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+}));
 
-// Define API routes
-app.get("/login", (req, res) => {
-    // Login route logic
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Configure passport strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: `${ReactHomeUrl}/auth/google/callback`,
+}, (accessToken, refreshToken, profile, done) => {
+  // User authentication logic here
+  // For simplicity, we are returning the profile as the user object
+  return done(null, profile);
+}));
+
+// Serialize user into session
+passport.serializeUser((user, done) => {
+  done(null, user);
 });
 
-app.get('/api/thread/:id', (req, res) => {
-    const threadId = req.params.id;
-    // Fetch thread details and send response
-    res.json({ threadId, title: `Thread ${threadId}`, content: 'Thread content here' });
+// Deserialize user from session
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
 });
 
-// Catch-all handler for any request that doesn't match the above
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+// Google OAuth routes
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    // Successful authentication, redirect to home
+    res.redirect(`${ReactHomeUrl}`);
+  }
+);
+
+// Protected route example
+app.get('/profile', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(req.user);
+  } else {
+    res.redirect('/auth/google');
+  }
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
