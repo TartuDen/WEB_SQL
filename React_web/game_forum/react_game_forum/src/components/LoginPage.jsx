@@ -5,7 +5,7 @@ import { Google as GoogleIcon } from "@mui/icons-material";
 const LoginPage = () => {
   const handleLogin = () => {
     // Logic for Google OAuth login
-    window.location.href = "/auth/google";
+    window.location.href = "http://localhost:8081/auth/google";
   };
 
   return (

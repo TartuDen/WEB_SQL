@@ -1,1 +1,22 @@
-/node_modules
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+
+# Dependency directories
+node_modules/
+
+# Production build files
+dist/
+
+# OS generated files
+.DS_Store
+Thumbs.db
