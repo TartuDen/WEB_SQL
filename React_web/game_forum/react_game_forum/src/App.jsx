@@ -1,18 +1,18 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage';
-import ThreadList from './components/ThreadList';
 import ThreadDetail from './components/ThreadDetail';
+import ThreadList from './components/ThreadList';
 import LoginPage from './components/LoginPage';
 
 const App = () => {
   return (
     <Router>
-      <Switch>
-        <Route path="/login" component={LoginPage} />
-        <Route path="/" exact component={MainPage} />
-        <Route path="/threads" component={ThreadList} />
-        <Route path="/thread/:id" component={ThreadDetail} />
-      </Switch>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/threads" element={<ThreadList />} />
+        <Route path="/thread/:id" element={<ThreadDetail />} />
+      </Routes>
     </Router>
   );
 };
