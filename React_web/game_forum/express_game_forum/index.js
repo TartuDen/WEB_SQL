@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8081;
-const ReactHomeUrl = "http://localhost:5173";
+const ReactHomeUrl = "http://localhost:8081";
 const ExpressApiServer = "http://localhost:8082"
 
 app.use(express.json());
@@ -42,11 +42,12 @@ app.get('/auth/google/callback',
 // Protected route example
 app.get('/', (req, res) => {
   if (req.isAuthenticated()) {
-    res.json(req.user);
+    res.status(200).render();
   } else {
     res.redirect('/auth/google');
   }
 });
+
 
 // _______________ GOOGLE STRATEGY _________________
 passport.use("google", new GoogleStrategy({
