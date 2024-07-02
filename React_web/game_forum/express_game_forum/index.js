@@ -4,12 +4,18 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import dotenv from 'dotenv';
 
+
+import { threads,posts } from './apiMOCK.js';
+import { Thread, Post, Likes } from './classes.js';
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8081;
-const ReactHomeUrl = "http://localhost:8081";
+const ProxyUrl = "http://localhost:8081";
 const ExpressApiServer = "http://localhost:8082"
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,17 +38,28 @@ app.use(passport.session());
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: `${ReactHomeUrl}/login` }),
+  passport.authenticate('google', { failureRedirect: `${ProxyUrl}/login` }),
   (req, res) => {
     // Successful authentication, redirect to home
-    res.redirect(`${ReactHomeUrl}`);
+    res.redirect(`${ProxyUrl}`);
   }
 );
+
+app.get("/thread/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const thread = threads.find(thread => thread.id === id);
+
+  if (thread) {
+      res.status(200).render("thread.ejs",{thread});
+  } else {
+      res.status(404).send('Thread not found');
+  }
+});
 
 // Protected route example
 app.get('/', (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).render();
+    res.status(200).render("index.ejs",{threads});
   } else {
     res.redirect('/auth/google');
   }
@@ -53,7 +70,7 @@ app.get('/', (req, res) => {
 passport.use("google", new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:8081/auth/google/callback",
+  callbackURL: `${ProxyUrl}/auth/google/callback`,
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
@@ -64,7 +81,7 @@ passport.use("google", new GoogleStrategy({
         ava: null
       }}
       if (!apiResp.data.email) {
-          const newUser = await axios.post("http://localhost:8081/reg_user", { user_name: profile.given_name, email: profile.email, ava: profile.photos[0].value });
+          const newUser = await axios.post(`${ProxyUrl}/reg_user`, { user_name: profile.given_name, email: profile.email, ava: profile.photos[0].value });
           cb(null, newUser.data);
       } else {
           //IF user already exist
