@@ -1,4 +1,27 @@
 body {
-    padding-top: 20px;
-  }
-  
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+}
+.navbar {
+  background-color: #0f3460;
+}
+.footer {
+  background-color: #0f3460;
+  color: #e0e0e0;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  padding: 1rem 0;
+  text-align: center;
+}
+.table-dark th,
+.table-dark td,
+.table-dark thead th {
+  border-color: #3a3a3a;
+}
+a {
+  color: #00aaff;
+}
+a:hover {
+  color: #66c2ff;
+}

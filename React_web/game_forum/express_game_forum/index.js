@@ -19,6 +19,7 @@ const ExpressApiServer = "http://localhost:8082"
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"))
 
 // Configure session middleware
 app.use(session({
@@ -48,9 +49,10 @@ app.get('/auth/google/callback',
 app.get("/thread/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const thread = threads.find(thread => thread.id === id);
+  const postsFromThread = posts.filter(post => post.threadID === thread.id);
 
   if (thread) {
-      res.status(200).render("thread.ejs",{thread});
+      res.status(200).render("thread.ejs",{thread, postsFromThread});
   } else {
       res.status(404).send('Thread not found');
   }

@@ -10,18 +10,38 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
-    <div class="container">
-      <h1 class="mt-5">Threads</h1>
-      <ul class="list-group">
-        <% if(locals.threads) {%> <% threads.forEach(thread => { %>
-        <li class="list-group-item">
-          <a href="/thread/<%= thread.id %>"><%= thread.title %></a>
-        </li>
-        <% }) %> <%}%>
-      </ul>
+    <%- include('parts/header.ejs') %>
+    <div class="container my-5">
+      <h1 class="mb-4">Threads</h1>
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Genre</th>
+            <th scope="col">Author</th>
+            <th scope="col">Created</th>
+            <th scope="col">Likes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if(locals.threads) { %> <% threads.forEach(thread => { %>
+          <tr>
+            <th scope="row"><%= thread.id %></th>
+            <td><a href="/thread/<%= thread.id %>"><%= thread.title %></a></td>
+            <td><%= thread.genre %></td>
+            <td><%= thread.author %></td>
+            <td><%= new Date(thread.created).toLocaleDateString() %></td>
+            <td><%= thread.likes.like %> / <%= thread.likes.dislike %></td>
+          </tr>
+          <% }) %> <% } %>
+        </tbody>
+      </table>
     </div>
+    <%- include('parts/footer.ejs') %>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
