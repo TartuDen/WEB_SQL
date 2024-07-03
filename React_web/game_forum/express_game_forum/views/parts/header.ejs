@@ -1,25 +1,65 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">MMORPG Forum</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Threads</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
+      <a class="navbar-brand" href="/">MMORPG Forum</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-light" type="submit">Search</button>
+        </form>
+        <% if (locals.user) { %>
+        <div class="navbar-user ms-3 d-flex align-items-center">
+          <% if (user.ava) { %>
+          <img
+            src="<%= user.ava %>"
+            alt="avatar"
+            class="rounded-circle"
+            width="40"
+            height="40"
+          />
+          <% } %>
+          <span class="ms-2"><%= user.user_name %></span>
+          <a class="logout-btn ms-3" href="/auth/logout">
+            <img
+              src="/imgs/2305619_door_exit_logout_open_out_icon.svg"
+              alt="logout logo"
+              class="logout-icon"
+              width="24"
+              height="24"
+            />
+          </a>
         </div>
+        <% } else { %>
+        <a class="btn btn-outline-light ms-3" href="/auth/google">Login</a>
+        <% } %>
+      </div>
     </div>
-</nav>
+  </nav>
+  
+  <style>
+
+  </style>
+  

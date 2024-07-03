@@ -1,99 +1,133 @@
-import express from 'express';
-import session from 'express-session';
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import dotenv from 'dotenv';
+import express from "express";
+import session from "express-session";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import dotenv from "dotenv";
 
-
-import { threads,posts } from './apiMOCK.js';
-import { Thread, Post, Likes } from './classes.js';
+import { threads, posts } from "./apiMOCK.js";
+import { Thread, Post, Likes } from "./classes.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8081;
 const ProxyUrl = "http://localhost:8081";
-const ExpressApiServer = "http://localhost:8082"
-
-
+const ExpressApiServer = "http://localhost:8082";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"))
+app.use(express.static("public"));
 
 // Configure session middleware
-app.use(session({
-  secret: process.env.SESSION_SECRET || "someKeY",
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "someKeY",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60,
+    },
+  })
+);
 
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Google OAuth routes
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "consent", //for development keep this line, to ask user to log in
+  })
+);
 
-app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: `${ProxyUrl}/login` }),
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: `${ProxyUrl}/login` }),
   (req, res) => {
     // Successful authentication, redirect to home
     res.redirect(`${ProxyUrl}`);
   }
 );
 
-app.get("/thread/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const thread = threads.find(thread => thread.id === id);
-  const postsFromThread = posts.filter(post => post.threadID === thread.id);
+app.get('/auth/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error(err);
+      res.redirect('/');
+    } else {
+      req.session.destroy(() => {
+        res.redirect('/auth/google');
+      });
+    }
+  });
+});
 
-  if (thread) {
-      res.status(200).render("thread.ejs",{thread, postsFromThread});
+
+app.get("/thread/:id", (req, res) => {
+  if (req.isAuthenticated()) {
+    const id = parseInt(req.params.id);
+    const thread = threads.find((thread) => thread.id === id);
+    const postsFromThread = posts.filter((post) => post.threadID === thread.id);
+    if (thread) {
+      res.status(200).render("thread.ejs", { thread, postsFromThread, user: req.user });
+    } else {
+      res.status(404).send("Thread not found");
+    }
   } else {
-      res.status(404).send('Thread not found');
+    res.redirect("/auth/google");
   }
 });
 
 // Protected route example
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).render("index.ejs",{threads});
+    res.status(200).render("index.ejs", { threads, user: req.user });
   } else {
-    res.redirect('/auth/google');
+    res.redirect("/auth/google");
   }
 });
 
-
 // _______________ GOOGLE STRATEGY _________________
-passport.use("google", new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `${ProxyUrl}/auth/google/callback`,
-  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
-}, async (accessToken, refreshToken, profile, cb) => {
-  try {
-      // let apiResp = await axios.post("http://localhost:8082/get_user_auth", { email: profile.email });
-      let apiResp = {data: {
-        user_name: "Den",
-        email: 'den@ver.com',
-        ava: null
-      }}
-      if (!apiResp.data.email) {
-          const newUser = await axios.post(`${ProxyUrl}/reg_user`, { user_name: profile.given_name, email: profile.email, ava: profile.photos[0].value });
+passport.use(
+  "google",
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `${ProxyUrl}/auth/google/callback`,
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        // let apiResp = await axios.post("http://localhost:8082/get_user_auth", { email: profile.email });
+        let apiResp = {
+          data: {
+            user_name: "Den",
+            email: "den@ver.com",
+            ava: "https://as1.ftcdn.net/v2/jpg/05/65/49/44/1000_F_565494411_I2uUanw2CqAoWRROhKdThGvmdtyYMsWh.jpg",
+          },
+        };
+        if (!apiResp.data.email) {
+          const newUser = await axios.post(`${ProxyUrl}/reg_user`, {
+            user_name: profile.given_name,
+            email: profile.email,
+            ava: profile.photos[0].value,
+          });
           cb(null, newUser.data);
-      } else {
+        } else {
           //IF user already exist
           cb(null, apiResp.data);
+        }
+      } catch (err) {
+        console.error("Error during fetching user: ", err.message);
+        cb(err);
       }
-  } catch (err) {
-      console.error("Error during fetching user: ", err.message);
-      cb(err);
-  }
-}))
+    }
+  )
+);
 
 // passport.serializeUser: is a function provided by Passport that determines which data of the user object should be stored in the session.
 // Once you've determined what data to store, you call the callback cb with null (to indicate that there's no error) and the data you want to store.
@@ -106,7 +140,6 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
   cb(null, user);
 });
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

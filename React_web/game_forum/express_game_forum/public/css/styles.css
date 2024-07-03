@@ -25,3 +25,29 @@ a {
 a:hover {
   color: #66c2ff;
 }
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.logout-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+}
+
+.logout-icon {
+  width: 40px;
+  height: 40px;
+}
