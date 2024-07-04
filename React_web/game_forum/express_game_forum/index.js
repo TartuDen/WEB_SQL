@@ -68,10 +68,12 @@ app.get('/auth/logout', (req, res) => {
 
 // Handler to add a new thread
 app.post('/add_thread', (req, res) => {
-  const { title, genre, author, content } = req.body;
+  const { title, genre, content } = req.body;
 
   // Generate a new ID for the thread
   const newId = threads.length > 0 ? Math.max(...threads.map(thread => thread.id)) + 1 : 1;
+
+  const author = req.user.user_name;
 
   // Create a new Thread object
   const newThread = new Thread(
