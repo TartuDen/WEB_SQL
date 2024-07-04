@@ -40,7 +40,7 @@ app.get(
   "/auth/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "consent", //for development keep this line, to ask user to log in
+    // prompt: "consent", //for development keep this line, to ask user to log in
   })
 );
 
