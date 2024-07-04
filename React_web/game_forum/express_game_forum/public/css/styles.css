@@ -55,3 +55,24 @@ a:hover {
 .form-check {
   margin-bottom: 0.5rem;
 }
+
+
+
+/* css for sorting */
+.sortable {
+  cursor: pointer;
+}
+
+.sortable:after {
+  content: '\f0dc'; /* FontAwesome sort icon */
+  font-family: FontAwesome;
+  padding-left: 5px;
+}
+
+.sortable.asc:after {
+  content: '\f0de'; /* FontAwesome sort-up icon */
+}
+
+.sortable.desc:after {
+  content: '\f0dd'; /* FontAwesome sort-down icon */
+}
