@@ -14,7 +14,7 @@ class Likes {
 }
 
 class Thread {
-    constructor(id=0, title="none", genre="none", author="none", created=new Date("2023-07-06T16:00:00.000Z"), likes=new Likes(), imgs=[], content="none") {
+    constructor(id=0, title="none", genre=[], author="none", created=new Date("2023-07-06T16:00:00.000Z"), likes=new Likes(), imgs=[], content="none") {
         this.id = id;
         this.title = title;
         this.genre = genre;

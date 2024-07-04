@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 import { threads, posts } from "./apiMOCK.js";
 import { Thread, Post, Likes } from "./classes.js";
+import { genres } from "./settings.js";
 
 dotenv.config();
 
@@ -100,7 +101,7 @@ app.get("/thread/:id", (req, res) => {
     const thread = threads.find((thread) => thread.id === id);
     const postsFromThread = posts.filter((post) => post.threadID === thread.id);
     if (thread) {
-      res.status(200).render("thread.ejs", { thread, postsFromThread, user: req.user });
+      res.status(200).render("thread.ejs", { thread, postsFromThread, user: req.user, genres });
     } else {
       res.status(404).send("Thread not found");
     }
@@ -112,7 +113,7 @@ app.get("/thread/:id", (req, res) => {
 // Protected route example
 app.get("/", (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).render("index.ejs", { threads, user: req.user });
+    res.status(200).render("index.ejs", { threads, user: req.user, genres });
   } else {
     res.redirect("/auth/google");
   }

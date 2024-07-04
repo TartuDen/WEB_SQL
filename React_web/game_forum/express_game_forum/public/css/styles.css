@@ -51,3 +51,7 @@ a:hover {
   width: 40px;
   height: 40px;
 }
+
+.form-check {
+  margin-bottom: 0.5rem;
+}

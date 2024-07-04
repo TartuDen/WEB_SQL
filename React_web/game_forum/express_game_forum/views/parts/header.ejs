@@ -56,6 +56,7 @@
       <a class="btn btn-outline-light ms-3" href="/auth/google">Login</a>
       <% } %>
 
+      <!-- Modal ADD NEW THREAD -->
       <!-- Modal -->
       <div
         class="modal fade"
@@ -90,13 +91,33 @@
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="threadGenre" class="form-label">Genre</label>
+                  <label for="threadGenres" class="form-label">Genres</label>
+                  <div id="threadGenres" class="d-flex flex-wrap">
+                    <% genres.forEach(genre => { %>
+                    <div class="form-check me-2">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="genres"
+                        value="<%= genre %>"
+                        id="genre_<%= genre %>"
+                      />
+                      <label class="form-check-label" for="genre_<%= genre %>">
+                        <%= genre %>
+                      </label>
+                    </div>
+                    <% }) %>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="threadAuthor" class="form-label">Author</label>
                   <input
-                    name="genre"
+                    name="author"
                     type="text"
                     class="form-control"
-                    id="threadGenre"
-                    required
+                    id="threadAuthor"
+                    value="<%= user.user_name %>"
+                    readonly
                   />
                 </div>
                 <div class="mb-3">
@@ -110,7 +131,7 @@
                   ></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">
-                  Add Thread
+                  Post new Thread
                 </button>
               </form>
             </div>

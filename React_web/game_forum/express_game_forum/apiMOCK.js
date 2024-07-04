@@ -2,7 +2,7 @@ let threads = [
     {
         id: 0,
         title: "Lineage 2 - Classic Server Updates",
-        genre: "MMORPG",
+        genre: ["MMORPG"],
         author: "john@gamersforum.com",
         created: new Date("2023-06-10T14:48:00.000Z"),
         likes: {
@@ -15,7 +15,7 @@ let threads = [
     {
         id: 1,
         title: "Throne and Liberty - Beta Test Feedback",
-        genre: "MMORPG",
+        genre: ["MMORPG", "Open World"],
         author: "alex@gamehub.com",
         created: new Date("2023-07-01T10:30:00.000Z"),
         likes: {
@@ -28,7 +28,7 @@ let threads = [
     {
         id: 2,
         title: "World of Warcraft - Dragonflight Expansion Review",
-        genre: "MMORPG",
+        genre: ["MMORPG", "Open World"],
         author: "lisa@gamecritic.com",
         created: new Date("2023-06-20T08:45:00.000Z"),
         likes: {
@@ -41,7 +41,7 @@ let threads = [
     {
         id: 3,
         title: "Tarisland - New MMORPG on the Block",
-        genre: "RPG",
+        genre: ["RPG", "Fantasy"],
         author: "chris@gamingworld.com",
         created: new Date("2023-07-05T17:20:00.000Z"),
         likes: {

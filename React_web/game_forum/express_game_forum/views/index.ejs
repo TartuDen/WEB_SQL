@@ -28,17 +28,20 @@
           </tr>
         </thead>
         <tbody>
-          <% if(locals.threads) { %> <% threads.forEach(thread => { %>
-          <tr>
-            <th scope="row"><%= thread.id %></th>
-            <td><a href="/thread/<%= thread.id %>"><%= thread.title %></a></td>
-            <td><%= thread.genre %></td>
-            <td><%= thread.author %></td>
-            <td><%= new Date(thread.created).toLocaleDateString() %></td>
-            <td>👍<%= thread.likes.like %> / 👎🏾<%= thread.likes.dislike %></td>
-          </tr>
-          <% }) %> <% } %>
+          <% if (locals.threads) { %>
+            <% threads.forEach(thread => { %>
+              <tr>
+                <th scope="row"><%= thread.id %></th>
+                <td><a href="/thread/<%= thread.id %>"><%= thread.title %></a></td>
+                <td><%= thread.genre.join(', ') %></td>
+                <td><%= thread.author %></td>
+                <td><%= new Date(thread.created).toLocaleDateString() %></td>
+                <td>👍<%= thread.likes.like %> / 👎🏾<%= thread.likes.dislike %></td>
+              </tr>
+            <% }) %>
+          <% } %>
         </tbody>
+        
       </table>
     </div>
     <%- include('parts/footer.ejs') %>
