@@ -66,6 +66,32 @@ app.get('/auth/logout', (req, res) => {
 });
 
 
+// Handler to add a new thread
+app.post('/add_thread', (req, res) => {
+  const { title, genre, author, content } = req.body;
+
+  // Generate a new ID for the thread
+  const newId = threads.length > 0 ? Math.max(...threads.map(thread => thread.id)) + 1 : 1;
+
+  // Create a new Thread object
+  const newThread = new Thread(
+    newId,
+    title,
+    genre,
+    author,
+    new Date(),
+    new Likes(),
+    [], // empty array for images
+    content
+  );
+
+  // Add the new thread to the threads array
+  threads.push(newThread);
+
+  // Send a response back to the client
+  res.redirect(`/thread/${newThread.id}`);
+});
+
 app.get("/thread/:id", (req, res) => {
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);

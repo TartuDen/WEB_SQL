@@ -1,65 +1,141 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">MMORPG Forum</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-        </ul>
-        <form class="d-flex">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button class="btn btn-outline-light" type="submit">Search</button>
-        </form>
-        <% if (locals.user) { %>
-        <div class="navbar-user ms-3 d-flex align-items-center">
-          <% if (user.ava) { %>
-          <img
-            src="<%= user.ava %>"
-            alt="avatar"
-            class="rounded-circle"
-            width="40"
-            height="40"
-          />
-          <% } %>
-          <span class="ms-2"><%= user.user_name %></span>
-          <a class="logout-btn ms-3" href="/auth/logout">
-            <img
-              src="/imgs/2305619_door_exit_logout_open_out_icon.svg"
-              alt="logout logo"
-              class="logout-icon"
-              width="24"
-              height="24"
-            />
-          </a>
-        </div>
-        <% } else { %>
-        <a class="btn btn-outline-light ms-3" href="/auth/google">Login</a>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">MMORPG Forum</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <button class="btn btn-outline-light" type="submit">Search</button>
+      </form>
+      <% if (locals.user) { %>
+      <div class="navbar-user ms-3 d-flex align-items-center">
+        <% if (user.ava) { %>
+        <img
+          src="<%= user.ava %>"
+          alt="avatar"
+          class="rounded-circle"
+          width="40"
+          height="40"
+        />
         <% } %>
+        <span class="ms-2"><%= user.user_name %></span>
+        <a class="logout-btn ms-3" href="/auth/logout">
+          <img
+            src="/imgs/2305619_door_exit_logout_open_out_icon.svg"
+            alt="logout logo"
+            class="logout-icon"
+            width="24"
+            height="24"
+          />
+        </a>
       </div>
-    </div>
-  </nav>
-  
-  <style>
+      <% } else { %>
+      <a class="btn btn-outline-light ms-3" href="/auth/google">Login</a>
+      <% } %>
 
-  </style>
-  
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="addThreadModal"
+        tabindex="-1"
+        aria-labelledby="addThreadModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addThreadModalLabel">
+                Add New Thread
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="addThreadForm" method="post" action="/add_thread">
+                <div class="mb-3">
+                  <label for="threadTitle" class="form-label">Title</label>
+                  <input
+                    name="title"
+                    type="text"
+                    class="form-control"
+                    id="threadTitle"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="threadGenre" class="form-label">Genre</label>
+                  <input
+                    name="genre"
+                    type="text"
+                    class="form-control"
+                    id="threadGenre"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="threadAuthor" class="form-label">Author</label>
+                  <input
+                    name="author"
+                    type="text"
+                    class="form-control"
+                    id="threadAuthor"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="threadContent" class="form-label">Content</label>
+                  <textarea
+                    name="content"
+                    class="form-control"
+                    id="threadContent"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Add Thread
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-outline-light ms-3"
+        data-bs-toggle="modal"
+        data-bs-target="#addThreadModal"
+      >
+        Add Thread
+      </button>
+    </div>
+  </div>
+</nav>
