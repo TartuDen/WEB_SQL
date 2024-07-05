@@ -22,4 +22,9 @@ const genres = [
   ];
   
 
-  export {genres};
+  const MAX_TITLE_LENGTH = 100;
+  const MAX_CONTENT_LENGTH = 4000;
+
+  const isInProduction = false
+
+  export {genres, MAX_CONTENT_LENGTH, MAX_TITLE_LENGTH, isInProduction};

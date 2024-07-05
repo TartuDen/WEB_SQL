@@ -102,3 +102,16 @@ table tr:hover {
 .sortable.desc:after {
   content: '\f0dd'; /* FontAwesome sort-down icon */
 }
+
+
+
+/* Custom styles for the modal */
+#addThreadModal .modal-content {
+  color: #333; /* Darker text color */
+}
+
+#addThreadModal .form-label,
+#addThreadModal .form-control,
+#addThreadModal .form-check-label {
+  color: #333; /* Darker text color */
+}

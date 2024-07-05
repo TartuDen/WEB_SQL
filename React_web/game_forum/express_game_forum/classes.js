@@ -1,3 +1,4 @@
+
 class Likes {
     constructor(like=0, dislike=0) {
         this.like = like;
@@ -46,4 +47,16 @@ class Post {
     }
 }
 
-export {Likes, Post, Thread}
+
+
+class AppError extends Error {
+    constructor(message, statusCode) {
+      super(message);
+      this.statusCode = statusCode;
+    }
+  }
+  
+  
+ 
+
+export {Likes, Post, Thread, AppError}

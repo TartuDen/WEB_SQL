@@ -1,3 +1,4 @@
+// Your main file (e.g., app.js or server.js)
 import express from "express";
 import session from "express-session";
 import passport from "passport";
@@ -7,6 +8,8 @@ import dotenv from "dotenv";
 import { threads, posts } from "./apiMOCK.js";
 import { Thread, Post, Likes } from "./classes.js";
 import { genres } from "./settings.js";
+import { validateTitleAndContent, errorHandler } from "./validation.js";
+import { AppError } from "./classes.js";
 
 dotenv.config();
 
@@ -40,7 +43,7 @@ app.get(
   "/auth/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    // prompt: "consent", //for development keep this line, to ask user to log in
+    prompt: "consent", //for development keep this line, to ask user to log in
   })
 );
 
@@ -53,57 +56,76 @@ app.get(
   }
 );
 
-app.get('/auth/logout', (req, res) => {
+app.get("/auth/logout", (req, res) => {
+  console.log("here");
   req.logout((err) => {
     if (err) {
       console.error(err);
-      res.redirect('/');
+      res.redirect("/");
     } else {
       req.session.destroy(() => {
-        res.redirect('/auth/google');
+        res.redirect("/auth/google");
       });
     }
   });
 });
 
-
 // Handler to add a new thread
-app.post('/add_thread', (req, res) => {
-  const { title, genre, content } = req.body;
+app.post("/add_thread", (req, res, next) => {
+  try {
+    let { title, genre, content } = req.body;
+    validateTitleAndContent(title, content);
 
-  // Generate a new ID for the thread
-  const newId = threads.length > 0 ? Math.max(...threads.map(thread => thread.id)) + 1 : 1;
+    // Check if genre is not an array
+    if (!Array.isArray(genre)) {
+      // If it's not, make it an array
+      genre = [genre];
+    }
 
-  const author = req.user.user_name;
+    // Generate a new ID for the thread
+    const newId =
+      threads.length > 0
+        ? Math.max(...threads.map((thread) => thread.id)) + 1
+        : 1;
 
-  // Create a new Thread object
-  const newThread = new Thread(
-    newId,
-    title,
-    genre,
-    author,
-    new Date(),
-    new Likes(),
-    [], // empty array for images
-    content
-  );
+    const author = req.user.user_name;
 
-  // Add the new thread to the threads array
-  threads.push(newThread);
+    // Create a new Thread object
+    const newThread = new Thread(
+      newId,
+      title,
+      genre,
+      author,
+      new Date(),
+      new Likes(),
+      [], // empty array for images
+      content
+    );
 
-  // Send a response back to the client
-  res.redirect(`/thread/${newThread.id}`);
+    // Add the new thread to the threads array
+    threads.push(newThread);
+
+    // Send a response back to the client
+    res.redirect(`/thread/${newThread.id}`);
+  } catch (err) {
+    next(err); // Pass the error to the error handler middleware
+  }
 });
 
-app.get("/thread/:id", (req, res) => {
+app.get("/thread/:id", (req, res, next) => {
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
     const thread = threads.find((thread) => thread.id === id);
     const postsFromThread = posts.filter((post) => post.threadID === thread.id);
     if (thread) {
-      res.status(200).render("thread.ejs", { thread, postsFromThread, user: req.user, genres });
+      res.status(200).render("thread.ejs", {
+        thread,
+        postsFromThread,
+        user: req.user,
+        genres,
+      });
     } else {
-      res.status(404).send("Thread not found");
+      next(new AppError("Thread not found", 404)); // Pass the error to the error handler middleware
     }
   } else {
     res.redirect("/auth/google");
@@ -134,15 +156,15 @@ passport.use(
         // let apiResp = await axios.post("http://localhost:8082/get_user_auth", { email: profile.email });
         let apiResp = {
           data: {
-            user_name: "Den",
-            email: "den@ver.com",
-            ava: "https://as1.ftcdn.net/v2/jpg/05/65/49/44/1000_F_565494411_I2uUanw2CqAoWRROhKdThGvmdtyYMsWh.jpg",
+            user_name: profile.name.givenName,
+            email: profile.emails[0].value,
+            ava: profile.photos[0].value,
           },
         };
         if (!apiResp.data.email) {
           const newUser = await axios.post(`${ProxyUrl}/reg_user`, {
-            user_name: profile.given_name,
-            email: profile.email,
+            user_name: profile.name.givenName,
+            email: profile.emails[0].value,
             ava: profile.photos[0].value,
           });
           cb(null, newUser.data);
@@ -152,7 +174,7 @@ passport.use(
         }
       } catch (err) {
         console.error("Error during fetching user: ", err.message);
-        cb(err);
+        cb(new AppError("Error during fetching user", 500));
       }
     }
   )
@@ -169,6 +191,10 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
   cb(null, user);
 });
+
+// Use the error handling middleware
+// Place the error handler middleware registration after all your route handlers and other middleware, but before the app.listen call. This ensures that any errors occurring during request handling will be caught and handled by this middleware.
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
