@@ -1,3 +1,7 @@
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 let threads = [
     {
         id: 0,
@@ -104,4 +108,17 @@ let posts = [
     }
 ];
 
-export { threads, posts };
+
+// Simulate fetching threads from the database
+async function fetchThreads() {
+    await delay(1000); // Simulate a 1 second delay
+    return threads;
+}
+
+// Simulate fetching posts for a specific thread from the database
+async function fetchPostsByThreadID(threadID) {
+    await delay(1000); // Simulate a 1 second delay
+    return posts.filter(post => post.threadID === threadID);
+}
+
+export { fetchThreads, fetchPostsByThreadID };

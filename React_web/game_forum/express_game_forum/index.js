@@ -5,10 +5,10 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 
-import { threads, posts } from "./apiMOCK.js";
+import { fetchThreads, fetchPostsByThreadID } from "./apiMOCK.js";
 import { Thread, Post, Likes } from "./classes.js";
 import { genres } from "./settings.js";
-import { validateTitleAndContent, errorHandler } from "./validation.js";
+import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 
 dotenv.config();
@@ -38,6 +38,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+const errorHandler = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+
+  res.status(statusCode).json({
+    status: 'error',
+    statusCode,
+    message,
+  });
+};
+
+//_____________________________________________________
+
 // Google OAuth routes
 app.get(
   "/auth/google",
@@ -57,7 +70,6 @@ app.get(
 );
 
 app.get("/auth/logout", (req, res) => {
-  console.log("here");
   req.logout((err) => {
     if (err) {
       console.error(err);
@@ -71,8 +83,9 @@ app.get("/auth/logout", (req, res) => {
 });
 
 // Handler to add a new thread
-app.post("/add_thread", (req, res, next) => {
+app.post("/add_thread", async (req, res, next) => {
   try {
+    let threads = await fetchThreads();
     let { title, genre, content } = req.body;
     validateTitleAndContent(title, content);
 
@@ -112,11 +125,13 @@ app.post("/add_thread", (req, res, next) => {
   }
 });
 
-app.get("/thread/:id", (req, res, next) => {
+app.get("/thread/:id", async(req, res, next) => {
+  let threads  = await fetchThreads();
+
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
     const thread = threads.find((thread) => thread.id === id);
-    const postsFromThread = posts.filter((post) => post.threadID === thread.id);
+    const postsFromThread = await fetchPostsByThreadID(thread.id);
     if (thread) {
       res.status(200).render("thread.ejs", {
         thread,
@@ -133,7 +148,8 @@ app.get("/thread/:id", (req, res, next) => {
 });
 
 // Protected route example
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  const threads = await fetchThreads();
   if (req.isAuthenticated()) {
     res.status(200).render("index.ejs", { threads, user: req.user, genres });
   } else {
