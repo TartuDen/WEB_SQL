@@ -17,9 +17,9 @@ function validateTitleAndContent(title, content) {
   }
 
   // Check for spaces in title
-  if (!title.includes(' ')) {
-    throw new AppError("Title must contain at least one space.", 400);
-  }
+  // if (!title.includes(' ')) {
+  //   throw new AppError("Title must contain at least one space.", 400);
+  // }
 
   // Check for spaces in content
   if (!content.includes(' ')) {

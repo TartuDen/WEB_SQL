@@ -82,6 +82,24 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
+
+
+
+
+
+app.get("/edit_thread/:id",async(req,res,next)=>{
+  try{
+    const id = parseInt(req.params.id);
+    const thread = threads.find((thread) => thread.id == id);
+    const user = req.user;
+    console.log("......thread....\n",threads)
+    res.status(200).render("editThread.ejs",{thread, user})
+  }catch(err){
+    next(err);
+  }
+})
+
+
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
   try {
@@ -212,6 +230,7 @@ passport.deserializeUser((user, cb) => {
 // Place the error handler middleware registration after all your route handlers and other middleware, but before the app.listen call. This ensures that any errors occurring during request handling will be caught and handled by this middleware.
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+app.listen(PORT, (err) => {
+  if(err) throw err;
   console.log(`Server is running on port ${PORT}`);
 });
