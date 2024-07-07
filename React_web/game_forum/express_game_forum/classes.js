@@ -15,10 +15,10 @@ class Likes {
 }
 
 class Thread {
-    constructor(id=0, title="none", genre=[], author="none", created=new Date("2023-07-06T16:00:00.000Z"), likes=new Likes(), imgs=[], content="none") {
+    constructor(id=0, title="none", genres=[], author="none", created=new Date("2023-07-06T16:00:00.000Z"), likes=new Likes(), imgs=[], content="none") {
         this.id = id;
         this.title = title;
-        this.genre = genre;
+        this.genres = genres;
         this.author = author;
         this.created = created;
         this.likes = likes;  // Instance of Likes class
@@ -27,7 +27,7 @@ class Thread {
     }
 
     getInfo() {
-        return `Thread: ${this.title} by ${this.author} - Genre: ${this.genre} - ${this.likes.getInfo()}`;
+        return `Thread: ${this.title} by ${this.author} - Genre: ${this.genres} - ${this.likes.getInfo()}`;
     }
 }
 

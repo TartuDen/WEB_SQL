@@ -24,7 +24,7 @@
       <tbody>
         <tr>
           <td><%= thread.title %></td>
-          <td><%= thread.genre.join(', ') %></td>
+          <td><%= thread.genres.join(', ') %></td>
           <td><%= thread.author %></td>
           <td><%= new Date(thread.created).toLocaleDateString() %></td>
           <td>👍<%= thread.likes.like %> / 👎🏾<%= thread.likes.dislike %></td>

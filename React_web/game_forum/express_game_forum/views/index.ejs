@@ -31,7 +31,7 @@
               <th scope="row"><%= thread.id %></th>
               <td>
                 <a href="/thread/<%= thread.id %>"><%= thread.title %></a>
-                <% if (user && user.user_name === thread.author) { %>
+                <% if (user && user.email === thread.author) { %>
                   <form action="/edit_thread/<%= thread.id %>" method="get" style="display: inline;">
                     <button type="submit" style="border: none; background: none; cursor: pointer;">✏️</button>
                   </form>
@@ -41,7 +41,7 @@
                   </form>
                 <% } %>
               </td>
-              <td><%= thread.genre.join(', ') %></td>
+              <td><%= thread.genres.join(', ') %></td>
               <td><%= thread.author %></td>
               <td><%= new Date(thread.created).toLocaleDateString() %></td>
               <td>👍<%= thread.likes.like %> / 👎🏾<%= thread.likes.dislike %></td>

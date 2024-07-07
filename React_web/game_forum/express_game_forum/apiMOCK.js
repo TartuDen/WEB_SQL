@@ -6,7 +6,7 @@ let threads = [
     {
         id: 0,
         title: "Lineage 2 - Classic Server Updates",
-        genre: ["MMORPG"],
+        genres: ["MMORPG"],
         author: "john@gamersforum.com",
         created: new Date("2023-06-10T14:48:00.000Z"),
         likes: {
@@ -19,7 +19,7 @@ let threads = [
     {
         id: 1,
         title: "Throne and Liberty - Beta Test Feedback",
-        genre: ["MMORPG", "Open World"],
+        genres: ["MMORPG", "Open World"],
         author: "alex@gamehub.com",
         created: new Date("2023-07-01T10:30:00.000Z"),
         likes: {
@@ -32,7 +32,7 @@ let threads = [
     {
         id: 2,
         title: "World of Warcraft - Dragonflight Expansion Review",
-        genre: ["MMORPG", "Open World"],
+        genres: ["MMORPG", "Open World"],
         author: "lisa@gamecritic.com",
         created: new Date("2023-06-20T08:45:00.000Z"),
         likes: {
@@ -45,7 +45,7 @@ let threads = [
     {
         id: 3,
         title: "Tarisland - New MMORPG on the Block",
-        genre: ["RPG", "Fantasy"],
+        genres: ["RPG", "Fantasy"],
         author: "chris@gamingworld.com",
         created: new Date("2023-07-05T17:20:00.000Z"),
         likes: {
@@ -54,7 +54,21 @@ let threads = [
         },
         imgs: [],
         content: "Tarisland is a new MMORPG that's quickly gaining traction among gamers. Its unique art style, combined with innovative gameplay mechanics, sets it apart from other titles in the genre. Early players praise its engaging story and the depth of its crafting system. As more content is released, Tarisland has the potential to become a major player in the MMORPG space."
+    },
+    {
+        id: 4,
+        title: "TL - The MMORPG that I'm Waiting For",
+        genres: ["MMORPG", "Open World"],
+        author: "denver1033@gmail.com",
+        created: new Date("2024-07-05T17:20:00.000Z"),
+        likes: {
+            like: 5,
+            dislike: 8
+        },
+        imgs: [],
+        content: "Throne and Liberty, often abbreviated as TL, is an upcoming MMORPG that has captured the attention and excitement of the gaming community."
     }
+    
 ];
 
 let posts = [

@@ -17,6 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 const ProxyUrl = "http://localhost:8081";
 const ExpressApiServer = "http://localhost:8082";
+let threads = await fetchThreads();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -92,8 +93,8 @@ app.get("/edit_thread/:id",async(req,res,next)=>{
     const id = parseInt(req.params.id);
     const thread = threads.find((thread) => thread.id == id);
     const user = req.user;
-    console.log("......thread....\n",threads)
-    res.status(200).render("editThread.ejs",{thread, user})
+    console.log("......thread....\n",thread)
+    res.status(200).render("editThread.ejs",{thread, user, genres})
   }catch(err){
     next(err);
   }
@@ -103,29 +104,29 @@ app.get("/edit_thread/:id",async(req,res,next)=>{
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
   try {
-    let threads = await fetchThreads();
-    let { title, genre, content } = req.body;
+    // let threads = await fetchThreads();
+    let { title, genres, content } = req.body;
+    
     validateTitleAndContent(title, content);
 
     // Check if genre is not an array
-    if (!Array.isArray(genre)) {
+    if (!Array.isArray(genres)) {
       // If it's not, make it an array
-      genre = [genre];
+      genres = [genres];
     }
-
     // Generate a new ID for the thread
     const newId =
       threads.length > 0
         ? Math.max(...threads.map((thread) => thread.id)) + 1
         : 1;
 
-    const author = req.user.user_name;
+    const author = req.user.email;
 
     // Create a new Thread object
     const newThread = new Thread(
       newId,
       title,
-      genre,
+      genres,
       author,
       new Date(),
       new Likes(),
@@ -135,6 +136,7 @@ app.post("/add_thread", async (req, res, next) => {
 
     // Add the new thread to the threads array
     threads.push(newThread);
+    console.log(".....newThread....\n",newThread);
 
     // Send a response back to the client
     res.redirect(`/thread/${newThread.id}`);
@@ -144,7 +146,7 @@ app.post("/add_thread", async (req, res, next) => {
 });
 
 app.get("/thread/:id", async(req, res, next) => {
-  let threads  = await fetchThreads();
+  // let threads  = await fetchThreads();
 
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
@@ -167,7 +169,7 @@ app.get("/thread/:id", async(req, res, next) => {
 
 // Protected route example
 app.get("/", async (req, res) => {
-  const threads = await fetchThreads();
+  // const threads = await fetchThreads();
   if (req.isAuthenticated()) {
     res.status(200).render("index.ejs", { threads, user: req.user, genres });
   } else {
