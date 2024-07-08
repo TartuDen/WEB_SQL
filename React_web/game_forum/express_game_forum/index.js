@@ -41,10 +41,10 @@ app.use(passport.session());
 
 const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const message = err.message || "Internal Server Error";
 
   res.status(statusCode).json({
-    status: 'error',
+    status: "error",
     statusCode,
     message,
   });
@@ -83,30 +83,51 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
-
-
-
-
-
-app.get("/edit_thread/:id",async(req,res,next)=>{
-  try{
+app.get("/edit_thread/:id", async (req, res, next) => {
+  try {
     const id = parseInt(req.params.id);
     const thread = threads.find((thread) => thread.id == id);
     const user = req.user;
-    console.log("......thread....\n",thread)
-    res.status(200).render("editThread.ejs",{thread, user, genres})
-  }catch(err){
+    res.status(200).render("editThread.ejs", { thread, user, genres });
+  } catch (err) {
     next(err);
   }
-})
+});
 
+app.post("/edit_thread/:id", async (req, res, next) => {
+  const threadId = parseInt(req.params.id);
+  const { title, content } = req.body;
+  const genres = Array.isArray(req.body.genres) ? req.body.genres : [req.body.genres];
+
+  try {
+    // Retrieve the existing thread index
+    const threadIndex = threads.findIndex(thread => thread.id === threadId);
+
+    if (threadIndex === -1) {
+      return res.status(404).send("Thread not found");
+    }
+
+    // Update the thread with the new data
+    threads[threadIndex] = {
+      ...threads[threadIndex],
+      title,
+      genres,
+      content,
+    };
+    console.log("......updThread.....\n",threads[threadIndex])
+    // Redirect to the thread page or send a success response
+    res.redirect(`/thread/${threadId}`);
+  } catch (err) {
+    next(err); // Pass the error to the error handler middleware
+  }
+});
 
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
   try {
     // let threads = await fetchThreads();
     let { title, genres, content } = req.body;
-    
+
     validateTitleAndContent(title, content);
 
     // Check if genre is not an array
@@ -136,7 +157,7 @@ app.post("/add_thread", async (req, res, next) => {
 
     // Add the new thread to the threads array
     threads.push(newThread);
-    console.log(".....newThread....\n",newThread);
+    console.log(".....newThread....\n", newThread);
 
     // Send a response back to the client
     res.redirect(`/thread/${newThread.id}`);
@@ -145,7 +166,7 @@ app.post("/add_thread", async (req, res, next) => {
   }
 });
 
-app.get("/thread/:id", async(req, res, next) => {
+app.get("/thread/:id", async (req, res, next) => {
   // let threads  = await fetchThreads();
 
   if (req.isAuthenticated()) {
@@ -233,6 +254,6 @@ passport.deserializeUser((user, cb) => {
 app.use(errorHandler);
 
 app.listen(PORT, (err) => {
-  if(err) throw err;
+  if (err) throw err;
   console.log(`Server is running on port ${PORT}`);
 });
