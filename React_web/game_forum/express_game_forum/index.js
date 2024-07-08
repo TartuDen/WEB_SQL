@@ -1,4 +1,4 @@
-// Your main file (e.g., app.js or server.js)
+// index.js
 import express from "express";
 import session from "express-session";
 import passport from "passport";
@@ -83,6 +83,27 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
+app.post("/delete_thread/:id", async (req, res, next) => {
+  const threadId = parseInt(req.params.id);
+
+  try {
+    // Retrieve the existing thread index
+    const threadIndex = threads.findIndex(thread => thread.id === threadId);
+
+    if (threadIndex === -1) {
+      return res.status(404).send("Thread not found");
+    }
+
+    // Remove the thread from the threads array
+    threads.splice(threadIndex, 1);
+
+    // Redirect to the main page or send a success response
+    res.redirect("/");
+  } catch (err) {
+    next(err); // Pass the error to the error handler middleware
+  }
+});
+
 app.get("/edit_thread/:id", async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
@@ -114,7 +135,6 @@ app.post("/edit_thread/:id", async (req, res, next) => {
       genres,
       content,
     };
-    console.log("......updThread.....\n",threads[threadIndex])
     // Redirect to the thread page or send a success response
     res.redirect(`/thread/${threadId}`);
   } catch (err) {
