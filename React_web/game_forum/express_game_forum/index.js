@@ -6,7 +6,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 
 import { fetchThreads, fetchPostsByThreadID } from "./apiMOCK.js";
-import { Thread, Post, Likes } from "./classes.js";
+import { Thread, Post, Like } from "./classes.js";
 import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";

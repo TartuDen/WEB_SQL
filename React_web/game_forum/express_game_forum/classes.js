@@ -1,53 +1,80 @@
 
-class Likes {
-    constructor(like=0, dislike=0) {
-        this.like = like;
-        this.dislike = dislike;
-    }
-
-    getTotal() {
-        return this.like - this.dislike;
-    }
-
-    getInfo() {
-        return `Likes: ${this.like}, Dislikes: ${this.dislike}`;
+class Like {
+    constructor(userId, threadId = null, postId = null, type = "like") {
+        this.userId = userId;
+        this.threadId = threadId; // Associate with a thread if applicable
+        this.postId = postId;     // Associate with a post if applicable
+        this.type = type;         // 'like' or 'dislike'
     }
 }
 
+
 class Thread {
-    constructor(id=0, title="none", genres=[], author="none", created=new Date("2023-07-06T16:00:00.000Z"), likes=new Likes(), imgs=[], content="none") {
+    constructor(id = 0, title = "none", genres = [], author = "none", created = new Date("2023-07-06T16:00:00.000Z"), likes = [], imgs = [], content = "none") {
         this.id = id;
         this.title = title;
         this.genres = genres;
         this.author = author;
         this.created = created;
-        this.likes = likes;  // Instance of Likes class
+        this.likes = likes;  // Array of Like instances
         this.imgs = imgs;    // Array of image URLs
         this.content = content;
     }
 
+    addLike(userId, type = "like") {
+        const like = new Like(userId, this.id, null, type);
+        this.likes.push(like);
+    }
+
+    removeLike(userId) {
+        this.likes = this.likes.filter(like => like.userId !== userId || like.threadId !== this.id);
+    }
+
+    getTotalLikes() {
+        return this.likes.filter(like => like.type === "like").length;
+    }
+
+    getTotalDislikes() {
+        return this.likes.filter(like => like.type === "dislike").length;
+    }
+
     getInfo() {
-        return `Thread: ${this.title} by ${this.author} - Genre: ${this.genres} - ${this.likes.getInfo()}`;
+        return `Thread: ${this.title} by ${this.author} - Genre: ${this.genres} - Likes: ${this.getTotalLikes()}, Dislikes: ${this.getTotalDislikes()}`;
     }
 }
 
 class Post {
-    constructor(id=0, threadID=0, author="none", created=new Date("2023-07-06T16:00:00.000Z"), likes=new Likes(), imgs=[], content="none") {
+    constructor(id = 0, threadID = 0, author = "none", created = new Date("2023-07-06T16:00:00.000Z"), likes = [], imgs = [], content = "none") {
         this.id = id;
         this.threadID = threadID;
         this.author = author;
         this.created = created;
-        this.likes = likes;  // Instance of Likes class
+        this.likes = likes;  // Array of Like instances
         this.imgs = imgs;    // Array of image URLs
         this.content = content;
     }
 
+    addLike(userId, type = "like") {
+        const like = new Like(userId, null, this.id, type);
+        this.likes.push(like);
+    }
+
+    removeLike(userId) {
+        this.likes = this.likes.filter(like => like.userId !== userId || like.postId !== this.id);
+    }
+
+    getTotalLikes() {
+        return this.likes.filter(like => like.type === "like").length;
+    }
+
+    getTotalDislikes() {
+        return this.likes.filter(like => like.type === "dislike").length;
+    }
+
     getInfo() {
-        return `Post by ${this.author} in Thread ID ${this.threadID} - ${this.likes.getInfo()}`;
+        return `Post by ${this.author} in Thread ID ${this.threadID} - Likes: ${this.getTotalLikes()}, Dislikes: ${this.getTotalDislikes()}`;
     }
 }
-
-
 
 class AppError extends Error {
     constructor(message, statusCode) {
@@ -59,4 +86,4 @@ class AppError extends Error {
   
  
 
-export {Likes, Post, Thread, AppError}
+export {Like, Post, Thread, AppError}

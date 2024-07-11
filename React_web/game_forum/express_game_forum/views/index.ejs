@@ -1,4 +1,3 @@
-<!-- index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,6 @@
   <title>Thread List</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="/css/styles.css">
-
 </head>
 <body>
   <%- include('parts/header.ejs') %>
@@ -45,23 +43,23 @@
               <td><%= thread.genres.join(', ') %></td>
               <td><%= thread.author %></td>
               <td><%= new Date(thread.created).toLocaleDateString() %></td>
-              <td>👍<%= thread.likes.like %> / 👎🏾<%= thread.likes.dislike %></td>
-            </tr>
+              <% 
+              let likeCount = thread.likes.filter(like => like.type === 'like').length;
+              let dislikeCount = thread.likes.filter(like => like.type === 'dislike').length;
+            %>
+            <td>👍<span class="like-count"><%= likeCount %></span> / 👎🏾<span class="dislike-count"><%= dislikeCount %></span></td>
+          </tr>
           <% }) %>
         <% } %>
       </tbody>
-      
-      
     </table>
   </div>
   <%- include('parts/footer.ejs') %>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   
-  <!-- ___________________________________________________________________ -->
-  <script>//for sorting main table
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
-
       const comparer = (idx, asc) => (a, b) => {
         if (idx === 5) { // if the likes column is being sorted
           const likesA = parseInt(a.children[idx].innerText.split('👍')[1]);
@@ -81,17 +79,27 @@
           .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
           .forEach(tr => tbody.appendChild(tr));
 
-        // Reset classes on all headers except the one that was clicked
         table.querySelectorAll('th.sortable').forEach(header => {
           header.classList.remove('asc', 'desc');
         });
 
-        // Set the appropriate class on the clicked header
         th.classList.toggle('asc', this.asc);
         th.classList.toggle('desc', !this.asc);
       })));
+
+      // Calculate likes and dislikes
+      document.querySelectorAll('.like-count').forEach(span => {
+        const likes = JSON.parse(span.dataset.likes.replace(/&quot;/g,'"'));
+        const totalLikes = likes.filter(like => like.type === 'like').length;
+        span.innerText = totalLikes;
+      });
+
+      document.querySelectorAll('.dislike-count').forEach(span => {
+        const likes = JSON.parse(span.dataset.likes.replace(/&quot;/g,'"'));
+        const totalDislikes = likes.filter(like => like.type === 'dislike').length;
+        span.innerText = totalDislikes;
+      });
     });
   </script>
-  <!-- _________________________________________________ -->
 </body>
 </html>
