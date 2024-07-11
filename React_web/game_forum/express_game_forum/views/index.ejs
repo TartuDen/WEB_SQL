@@ -86,19 +86,6 @@
         th.classList.toggle('asc', this.asc);
         th.classList.toggle('desc', !this.asc);
       })));
-
-      // Calculate likes and dislikes
-      document.querySelectorAll('.like-count').forEach(span => {
-        const likes = JSON.parse(span.dataset.likes.replace(/&quot;/g,'"'));
-        const totalLikes = likes.filter(like => like.type === 'like').length;
-        span.innerText = totalLikes;
-      });
-
-      document.querySelectorAll('.dislike-count').forEach(span => {
-        const likes = JSON.parse(span.dataset.likes.replace(/&quot;/g,'"'));
-        const totalDislikes = likes.filter(like => like.type === 'dislike').length;
-        span.innerText = totalDislikes;
-      });
     });
   </script>
 </body>
