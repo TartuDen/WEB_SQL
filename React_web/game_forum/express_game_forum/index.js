@@ -83,12 +83,61 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
+// Handler to add a like
+app.post("/add_like", async (req, res, next) => {
+  try {
+    const { email, threadId, postId } = req.body;
+
+    // Determine whether we're dealing with a thread or a post
+    const id = threadId || postId;
+    const type = threadId ? "thread" : "post";
+
+    // Fetch the appropriate data based on type
+    let item;
+    if (type === "thread") {
+      item = threads.find((thread) => thread.id === parseInt(id));
+    } else {
+      const posts = await fetchPosts(); // Assuming you have a fetchPosts function
+      item = posts.find((post) => post.id === parseInt(id));
+    }
+
+    // If the item is not found, return an error
+    if (!item) {
+      return res
+        .status(404)
+        .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
+    }
+
+    // Check if the user has already liked the item
+    const existingLike = item.likes.find((like) => like.email === email);
+    if (!existingLike) {
+      // Add the like
+      item.likes.push({ userId: email, type: "like" });
+      threads = threads.map(thread => thread.id === item.id ? item : thread)
+    }
+
+
+    res.redirect("/");
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/add_dislike", async (req, res, next) => {
+  try {
+    console.log("......dislike...\n", req.body);
+    res.redirect("/");
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post("/delete_thread/:id", async (req, res, next) => {
   const threadId = parseInt(req.params.id);
 
   try {
     // Retrieve the existing thread index
-    const threadIndex = threads.findIndex(thread => thread.id === threadId);
+    const threadIndex = threads.findIndex((thread) => thread.id === threadId);
 
     if (threadIndex === -1) {
       return res.status(404).send("Thread not found");
@@ -118,11 +167,13 @@ app.get("/edit_thread/:id", async (req, res, next) => {
 app.post("/edit_thread/:id", async (req, res, next) => {
   const threadId = parseInt(req.params.id);
   const { title, content } = req.body;
-  const genres = Array.isArray(req.body.genres) ? req.body.genres : [req.body.genres];
+  const genres = Array.isArray(req.body.genres)
+    ? req.body.genres
+    : [req.body.genres];
 
   try {
     // Retrieve the existing thread index
-    const threadIndex = threads.findIndex(thread => thread.id === threadId);
+    const threadIndex = threads.findIndex((thread) => thread.id === threadId);
 
     if (threadIndex === -1) {
       return res.status(404).send("Thread not found");

@@ -1,7 +1,7 @@
 
 class Like {
-    constructor(userId, threadId = null, postId = null, type = "like") {
-        this.userId = userId;
+    constructor(email, threadId = null, postId = null, type = "like") {
+        this.email = email;
         this.threadId = threadId; // Associate with a thread if applicable
         this.postId = postId;     // Associate with a post if applicable
         this.type = type;         // 'like' or 'dislike'
@@ -21,13 +21,13 @@ class Thread {
         this.content = content;
     }
 
-    addLike(userId, type = "like") {
-        const like = new Like(userId, this.id, null, type);
+    addLike(email, type = "like") {
+        const like = new Like(email, this.id, null, type);
         this.likes.push(like);
     }
 
-    removeLike(userId) {
-        this.likes = this.likes.filter(like => like.userId !== userId || like.threadId !== this.id);
+    removeLike(email) {
+        this.likes = this.likes.filter(like => like.email !== email || like.threadId !== this.id);
     }
 
     getTotalLikes() {
@@ -54,13 +54,13 @@ class Post {
         this.content = content;
     }
 
-    addLike(userId, type = "like") {
-        const like = new Like(userId, null, this.id, type);
+    addLike(email, type = "like") {
+        const like = new Like(email, null, this.id, type);
         this.likes.push(like);
     }
 
-    removeLike(userId) {
-        this.likes = this.likes.filter(like => like.userId !== userId || like.postId !== this.id);
+    removeLike(email) {
+        this.likes = this.likes.filter(like => like.email !== email || like.postId !== this.id);
     }
 
     getTotalLikes() {
