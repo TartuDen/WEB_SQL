@@ -1,17 +1,19 @@
 // setupDatabase.js
-import { Pool } from 'pg';
+import pkg from 'pg';
+const { Pool } = pkg;
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 
 const pool = new Pool({
-    user: 'your_username',
+    user: 'postgres',
     host: 'localhost',
     database: 'game_forum',
     password: process.env.DB_PASS,
     port: process.env.DB_PORT || 5432,
 });
+
 
 const createTables = async () => {
     const client = await pool.connect();
@@ -20,8 +22,9 @@ const createTables = async () => {
         const createUsersTable = `
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
-                name VARCHAR(100),
-                email VARCHAR(100) UNIQUE
+                user_name VARCHAR(100),
+                email VARCHAR(100) UNIQUE,
+                ava BYTEA
             );
         `;
 
@@ -30,9 +33,9 @@ const createTables = async () => {
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255),
                 genres TEXT[],
-                author VARCHAR(100),
+                author INTEGER REFERENCES users(id),
                 created TIMESTAMP,
-                content TEXT
+                content VARCHAR(4000)
             );
         `;
 
@@ -40,16 +43,16 @@ const createTables = async () => {
             CREATE TABLE IF NOT EXISTS posts (
                 id SERIAL PRIMARY KEY,
                 threadID INTEGER REFERENCES threads(id),
-                author VARCHAR(100),
+                author INTEGER REFERENCES users(id),
                 created TIMESTAMP,
-                content TEXT
+                content VARCHAR(4000)
             );
         `;
 
         const createLikesTable = `
             CREATE TABLE IF NOT EXISTS likes (
                 id SERIAL PRIMARY KEY,
-                email VARCHAR(100),
+                userId INTEGER REFERENCES users(id),
                 threadId INTEGER REFERENCES threads(id),
                 postId INTEGER REFERENCES posts(id),
                 type VARCHAR(10)
@@ -69,6 +72,6 @@ const createTables = async () => {
     }
 };
 
-createTables().catch(err => console.error("Error setting up database:", err));
+// createTables().catch(err => console.error("Error setting up database:", err));
 
-export default createTables;
+export {createTables, pool};
