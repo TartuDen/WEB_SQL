@@ -2,9 +2,9 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 import dotenv from 'dotenv';
+import { users, threads, posts, likes } from './apiMOCKS.js'; // Import your mock data
 
 dotenv.config();
-
 
 const pool = new Pool({
     user: 'postgres',
@@ -13,7 +13,6 @@ const pool = new Pool({
     password: process.env.DB_PASS,
     port: process.env.DB_PORT || 5432,
 });
-
 
 const createTables = async () => {
     const client = await pool.connect();
@@ -72,6 +71,63 @@ const createTables = async () => {
     }
 };
 
-// createTables().catch(err => console.error("Error setting up database:", err));
+const insertData = async () => {
+    const client = await pool.connect();
 
-export {createTables, pool};
+    try {
+        await client.query('BEGIN');
+
+        // Insert users
+        for (let user of users) {
+            await client.query(`
+                INSERT INTO users (user_name, email, ava)
+                VALUES ($1, $2, $3)
+            `, [user.name, user.email, user.ava]);
+        }
+
+        // Insert threads
+        for (let thread of threads) {
+            await client.query(`
+                INSERT INTO threads (title, genres, author, created, content)
+                VALUES ($1, $2, $3, $4, $5)
+            `, [thread.title, thread.genres, thread.author, thread.created, thread.content]);
+        }
+
+        // Insert posts
+        for (let post of posts) {
+            await client.query(`
+                INSERT INTO posts (threadID, author, created, content)
+                VALUES ($1, $2, $3, $4)
+            `, [post.threadID, post.author, post.created, post.content]);
+        }
+
+        // Insert likes
+        for (let like of likes) {
+            await client.query(`
+                INSERT INTO likes (userId, threadId, postId, type)
+                VALUES ($1, $2, $3, $4)
+            `, [like.userId, like.threadId, like.postId, like.type]);
+        }
+
+        await client.query('COMMIT');
+        console.log("All data inserted successfully.");
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error("Error inserting data:", err);
+    } finally {
+        client.release();
+    }
+};
+
+const setupDatabase = async () => {
+    await createTables();
+    // await insertData();
+};
+
+setupDatabase().then(() => {
+    console.log("Database setup complete with data inserted.");
+}).catch(err => {
+    console.error("Error setting up database:", err);
+});
+
+export { createTables, insertData, pool };

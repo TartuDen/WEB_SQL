@@ -27,7 +27,46 @@ async function initializeDatabase() {
 
 initializeDatabase();
 
+app.get("/", async (req, res) => {
+    try {
+        const client = await pool.connect();
+        
+        // Query to get threads with author emails and associated likes
+        const result = await client.query(`
+            SELECT 
+                threads.id AS thread_id,
+                threads.title,
+                threads.genres,
+                threads.created,
+                threads.content,
+                users.email AS author_email,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'userId', likes.userId, 
+                            'threadId', likes.threadId, 
+                            'postId', likes.postId, 
+                            'type', likes.type
+                        )
+                    ) FILTER (WHERE likes.id IS NOT NULL), 
+                    '[]'
+                ) AS likes
+            FROM threads
+            JOIN users ON threads.author = users.id
+            LEFT JOIN likes ON threads.id = likes.threadId
+            GROUP BY threads.id, users.email
+        `);
 
+        const threads = result.rows;
+        console.log("......here......\n", threads);
+        client.release();
+
+        res.status(200).json(threads);
+    } catch (err) {
+        console.error("error", err.message);
+        res.status(500).send("Server error");
+    }
+});
 
 
 app.listen(PORT, (err)=>{

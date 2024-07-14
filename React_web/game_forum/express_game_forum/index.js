@@ -4,6 +4,7 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
+import axios from "axios";
 
 import { fetchThreads, fetchPostsByThreadID } from "./apiMOCK.js";
 import { Thread, Post, Like } from "./classes.js";
@@ -259,13 +260,20 @@ app.get("/thread/:id", async (req, res, next) => {
   }
 });
 
-// Protected route example
-app.get("/", async (req, res) => {
-  // const threads = await fetchThreads();
-  if (req.isAuthenticated()) {
-    res.status(200).render("index.ejs", { threads, user: req.user, genres });
-  } else {
-    res.redirect("/auth/google");
+
+app.get("/", async (req, res, next) => {
+  try {
+      const response = await axios.get('http://localhost:8085');
+      const threads = response.data;
+      if (req.isAuthenticated()) {
+          res.status(200).render("index.ejs", { threads, user: req.user, genres });
+      } else {
+          res.redirect("/auth/google");
+      }
+  } catch (err) {
+      // console.error("error", err.message);
+      // res.status(500).send("Server error");
+      next(err);
   }
 });
 
