@@ -26,6 +26,45 @@ async function initializeDatabase() {
 }
 
 initializeDatabase();
+//_________________________________________________________
+
+// Handler to add a new thread
+// Handler to add a new thread
+app.post('/add_thread_to_db', async (req, res) => {
+    try {
+      const { title, genres, author, created, content } = req.body;
+  
+      const client = await pool.connect();
+  
+      // First, get the author ID from the email
+      const authorResult = await client.query(
+        'SELECT id FROM users WHERE email = $1',
+        [author]
+      );
+  
+      // Check if the author exists
+      if (authorResult.rows.length === 0) {
+        throw new Error('Author not found');
+      }
+  
+      const authorId = parseInt(authorResult.rows[0].id);
+      // Insert the new thread
+      const result = await client.query(
+        'INSERT INTO threads (title, genres, author, created, content) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [title, genres, authorId, created, content]
+      );
+  
+      client.release();
+  
+      res.status(200).json(result.rows[0]);
+    } catch (err) {
+      console.error('Error adding thread:', err.message);
+      res.status(500).send('Server error');
+    }
+  });
+  
+  
+
 
 app.get("/posts", async (req, res) => {
     const threadId = parseInt(req.query.threadId);

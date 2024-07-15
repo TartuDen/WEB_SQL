@@ -197,7 +197,6 @@ app.post("/edit_thread/:id", async (req, res, next) => {
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
   try {
-    // let threads = await fetchThreads();
     let { title, genres, content } = req.body;
 
     validateTitleAndContent(title, content);
@@ -207,30 +206,29 @@ app.post("/add_thread", async (req, res, next) => {
       // If it's not, make it an array
       genres = [genres];
     }
-    // Generate a new ID for the thread
-    const newId =
-      threads.length > 0
-        ? Math.max(...threads.map((thread) => thread.id)) + 1
-        : 1;
 
     const author = req.user.email;
 
     // Create a new Thread object
-    const newThread = new Thread(
-      newId,
+    const newThread = {
       title,
       genres,
       author,
-      new Date(),
-      new Like(),
-      [], // empty array for images
+      created: new Date(),
       content
-    );
+    };
+    // Add the new thread to the database via Axios request
+    const response = await axios.post('http://localhost:8085/add_thread_to_db', newThread);
 
-    // Add the new thread to the threads array
-    threads.push(newThread);
-    // Send a response back to the client
-    res.redirect(`/thread/${newThread.id}`);
+    // Check if the request was successful
+    if (response.status === 200) {
+      // Add the new thread to the local threads array
+      threads.push(newThread);
+      // Send a response back to the client
+      res.redirect(`/`);
+    } else {
+      throw new Error('Failed to add the thread to the database');
+    }
   } catch (err) {
     next(err); // Pass the error to the error handler middleware
   }
@@ -248,8 +246,6 @@ app.get("/thread/:id", async (req, res, next) => {
       // Send a request to fetch posts associated with the thread
       const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
       const postsFromThread = postsResponse.data;
-      console.log("....posts.....\n",postsFromThread);
-
       if (thread) {
         res.status(200).render("thread.ejs", {
           thread,

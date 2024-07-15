@@ -121,7 +121,7 @@ const insertData = async () => {
 
 const setupDatabase = async () => {
     await createTables();
-    await insertData();
+    // await insertData();
 };
 
 setupDatabase().then(() => {
