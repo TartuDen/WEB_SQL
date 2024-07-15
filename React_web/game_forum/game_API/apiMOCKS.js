@@ -86,7 +86,7 @@ let posts = [
     {
         id: 1,
         threadID: 1,
-        author: 1,
+        author: 2,
         created: new Date("2023-06-12T09:30:00.000Z"),
         imgs: [],
         content: "I'm really enjoying the recent updates to Lineage 2's classic server. The new quests are challenging and the improved graphics make the game feel fresh again. However, I'm still not convinced about the balance changes in PvP."
@@ -94,7 +94,7 @@ let posts = [
     {
         id: 2,
         threadID: 2,
-        author: 2,
+        author: 3,
         created: new Date("2023-07-02T11:15:00.000Z"),
         imgs: [],
         content: "Throne and Liberty's beta has exceeded my expectations. The world is incredibly immersive and the combat system is so smooth. Can't wait to see what the final release has in store!"
@@ -102,7 +102,7 @@ let posts = [
     {
         id: 3,
         threadID: 3,
-        author: 3,
+        author: 1,
         created: new Date("2023-06-21T13:45:00.000Z"),
         imgs: [],
         content: "Dragonflight is exactly what World of Warcraft needed. The new zones are stunning, and I love the dragon-riding feature. It's brought a lot of fun back into the game for me."
@@ -110,7 +110,7 @@ let posts = [
     {
         id: 4,
         threadID: 4,
-        author: 4,
+        author: 1,
         created: new Date("2023-07-06T16:00:00.000Z"),
         imgs: [],
         content: "Tarisland is a breath of fresh air in the MMORPG genre. The art style is unique and the crafting system is really deep. There are still some bugs, but the potential is definitely there."

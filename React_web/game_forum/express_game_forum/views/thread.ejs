@@ -92,7 +92,7 @@
           <% if (locals.postsFromThread){ %> <% if (postsFromThread &&
           postsFromThread.length) { %> <% postsFromThread.forEach(post => { %>
           <tr>
-            <td><%= post.author %></td>
+            <td><%= post.author_email %></td>
             <td><%= post.content %></td>
             <td><%= new Date(post.created).toLocaleDateString() %></td>
           </tr>

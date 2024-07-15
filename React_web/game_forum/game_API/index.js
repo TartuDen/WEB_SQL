@@ -27,6 +27,46 @@ async function initializeDatabase() {
 
 initializeDatabase();
 
+app.get("/posts", async (req, res) => {
+    const threadId = parseInt(req.query.threadId);
+  
+    if (isNaN(threadId)) {
+      return res.status(400).send("Invalid thread ID");
+    }
+  
+    try {
+      const client = await pool.connect();
+  
+      // Query to get posts with author's email and images
+      const query = `
+      SELECT
+        posts.id,
+        posts.threadID,
+        posts.author,
+        posts.created,
+        posts.content,
+        users.email AS author_email
+      FROM
+        posts
+      LEFT JOIN
+        users ON posts.author = users.id
+      WHERE
+        posts.threadID = $1
+      ORDER BY
+        posts.created;
+    `;
+  
+      const result = await client.query(query, [threadId]);
+      const posts = result.rows;
+      client.release();
+  
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error("Error fetching posts:", err.message);
+      res.status(500).send("Server error");
+    }
+  });
+
 app.get("/thread/:id", async (req, res) => {
     const threadId = req.params.id;
 

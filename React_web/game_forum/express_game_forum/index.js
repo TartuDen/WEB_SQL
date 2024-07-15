@@ -229,8 +229,6 @@ app.post("/add_thread", async (req, res, next) => {
 
     // Add the new thread to the threads array
     threads.push(newThread);
-    console.log(".....newThread....\n", newThread);
-
     // Send a response back to the client
     res.redirect(`/thread/${newThread.id}`);
   } catch (err) {
@@ -248,13 +246,14 @@ app.get("/thread/:id", async (req, res, next) => {
       const thread = threadResponse.data;
 
       // Send a request to fetch posts associated with the thread
-      // const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
-      // const postsFromThread = postsResponse.data;
+      const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
+      const postsFromThread = postsResponse.data;
+      console.log("....posts.....\n",postsFromThread);
 
       if (thread) {
         res.status(200).render("thread.ejs", {
           thread,
-          // postsFromThread,
+          postsFromThread,
           user: req.user,
           genres,
         });
@@ -276,7 +275,6 @@ app.get("/", async (req, res, next) => {
   try {
       const response = await axios.get('http://localhost:8085');
       const threads = response.data;
-      console.log("......threads.....\n",threads)
       if (req.isAuthenticated()) {
           res.status(200).render("index.ejs", { threads, user: req.user, genres });
       } else {
