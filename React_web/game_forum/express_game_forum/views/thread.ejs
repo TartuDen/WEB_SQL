@@ -17,7 +17,7 @@
     <div class="container my-5">
       <h1 class="mb-4"><%= thread.title %></h1>
       <div>
-        <% if (user && user.email === thread.author) { %>
+        <% if (user && user.email === thread.author_email) { %>
         <form
           action="/edit_thread/<%= thread.id %>"
           method="get"
@@ -61,7 +61,7 @@
             <tr>
               <td><%= thread.title %></td>
               <td><%= thread.genres.join(', ') %></td>
-              <td><%= thread.author %></td>
+              <td><%= thread.author_email %></td>
               <td><%= new Date(thread.created).toLocaleDateString() %></td>
               <% let likeCount = thread.likes.filter(like => like.type ===
               'like').length; let dislikeCount = thread.likes.filter(like =>

@@ -31,12 +31,12 @@
         <tbody>
           <% if (locals.threads) { %> <% threads.forEach(thread => { %>
           <tr>
-            <th scope="row"><%= thread.id %></th>
+            <th scope="row"><%= thread.thread_id %></th>
             <td>
-              <a href="/thread/<%= thread.id %>"><%= thread.title %></a>
-              <% if (user && user.email === thread.author) { %>
+              <a href="/thread/<%= thread.thread_id %>"><%= thread.title %></a>
+              <% if (user && user.email === thread.author_email) { %>
               <form
-                action="/edit_thread/<%= thread.id %>"
+                action="/edit_thread/<%= thread.thread_id %>"
                 method="get"
                 style="display: inline"
               >
@@ -48,7 +48,7 @@
                 </button>
               </form>
               <form
-                action="/delete_thread/<%= thread.id %>"
+                action="/delete_thread/<%= thread.thread_id %>"
                 method="post"
                 style="display: inline"
               >
@@ -64,7 +64,7 @@
               <% } %>
             </td>
             <td><%= thread.genres.join(', ') %></td>
-            <td><%= thread.author %></td>
+            <td><%= thread.author_email %></td>
             <td><%= new Date(thread.created).toLocaleDateString() %></td>
             <% let likeCount = thread.likes.filter(like => like.type ===
             'like').length; let dislikeCount = thread.likes.filter(like =>
@@ -72,7 +72,7 @@
             <td>
               <form action="/add_like" method="post" style="display: inline">
                 <input type="hidden" name="email" value="<%= user.email %>" />
-                <input type="hidden" name="threadId" value="<%= thread.id %>" />
+                <input type="hidden" name="threadId" value="<%= thread.thread_id %>" />
                 <button
                   type="submit"
                   style="border: none; background: none; cursor: pointer"
@@ -84,7 +84,7 @@
               /
               <form action="/add_dislike" method="post" style="display: inline">
                 <input type="hidden" name="email" value="<%= user.email %>" />
-                <input type="hidden" name="threadId" value="<%= thread.id %>" />
+                <input type="hidden" name="threadId" value="<%= thread.thread_id %>" />
                 <button
                   type="submit"
                   style="border: none; background: none; cursor: pointer"

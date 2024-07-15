@@ -222,7 +222,7 @@ app.post("/add_thread", async (req, res, next) => {
       genres,
       author,
       new Date(),
-      new Likes(),
+      new Like(),
       [], // empty array for images
       content
     );
@@ -239,21 +239,31 @@ app.post("/add_thread", async (req, res, next) => {
 });
 
 app.get("/thread/:id", async (req, res, next) => {
-  // let threads  = await fetchThreads();
-
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
-    const thread = threads.find((thread) => thread.id === id);
-    const postsFromThread = await fetchPostsByThreadID(thread.id);
-    if (thread) {
-      res.status(200).render("thread.ejs", {
-        thread,
-        postsFromThread,
-        user: req.user,
-        genres,
-      });
-    } else {
-      next(new AppError("Thread not found", 404)); // Pass the error to the error handler middleware
+
+    try {
+      // Send a request to the backend to fetch the specific thread by ID
+      const threadResponse = await axios.get(`http://localhost:8085/thread/${id}`);
+      const thread = threadResponse.data;
+
+      // Send a request to fetch posts associated with the thread
+      // const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
+      // const postsFromThread = postsResponse.data;
+
+      if (thread) {
+        res.status(200).render("thread.ejs", {
+          thread,
+          // postsFromThread,
+          user: req.user,
+          genres,
+        });
+      } else {
+        next(new AppError("Thread not found", 404)); // Pass the error to the error handler middleware
+      }
+    } catch (err) {
+      console.error("Error fetching thread:", err.message);
+      next(new AppError("Error fetching thread", 500)); // Pass the error to the error handler middleware
     }
   } else {
     res.redirect("/auth/google");
@@ -261,10 +271,12 @@ app.get("/thread/:id", async (req, res, next) => {
 });
 
 
+
 app.get("/", async (req, res, next) => {
   try {
       const response = await axios.get('http://localhost:8085');
       const threads = response.data;
+      console.log("......threads.....\n",threads)
       if (req.isAuthenticated()) {
           res.status(200).render("index.ejs", { threads, user: req.user, genres });
       } else {
