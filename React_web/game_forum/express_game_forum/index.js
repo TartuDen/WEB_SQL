@@ -133,26 +133,7 @@ app.post("/add_dislike", async (req, res, next) => {
   }
 });
 
-app.post("/delete_thread/:id", async (req, res, next) => {
-  const threadId = parseInt(req.params.id);
 
-  try {
-    // Retrieve the existing thread index
-    const threadIndex = threads.findIndex((thread) => thread.id === threadId);
-
-    if (threadIndex === -1) {
-      return res.status(404).send("Thread not found");
-    }
-
-    // Remove the thread from the threads array
-    threads.splice(threadIndex, 1);
-
-    // Redirect to the main page or send a success response
-    res.redirect("/");
-  } catch (err) {
-    next(err); // Pass the error to the error handler middleware
-  }
-});
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   try {
@@ -193,6 +174,22 @@ app.post("/edit_thread/:id", async (req, res, next) => {
     next(err); // Pass the error to the error handler middleware
   }
 });
+
+
+app.post("/delete_thread/:id", async (req, res, next) => {
+  const threadId = parseInt(req.params.id);
+
+  try {
+       // Send a delete request to the API
+       await axios.delete(`http://localhost:8085/threads/${threadId}`);
+
+    // Redirect to the main page or send a success response
+    res.redirect("/");
+  } catch (err) {
+    next(err); // Pass the error to the error handler middleware
+  }
+});
+
 
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
