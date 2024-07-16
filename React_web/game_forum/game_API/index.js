@@ -28,6 +28,35 @@ async function initializeDatabase() {
 initializeDatabase();
 //_________________________________________________________
 
+app.put('/edit_thread/:id', async (req, res) => {
+  const threadId = parseInt(req.params.id);
+  const { title, content, genres } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    // Update the thread in the database
+    const result = await client.query(`
+      UPDATE threads
+      SET title = $1, content = $2, genres = $3
+      WHERE id = $4
+      RETURNING *
+    `, [title, content, genres, threadId]);
+
+    client.release();
+
+    if (result.rowCount === 0) {
+      return res.status(404).send('Thread not found');
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error updating thread:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 app.delete('/threads/:id', async (req, res) => {
     const threadId = parseInt(req.params.id);
 

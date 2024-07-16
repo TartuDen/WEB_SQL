@@ -151,25 +151,20 @@ app.get("/edit_thread/:id", async (req, res, next) => {
 app.post("/edit_thread/:id", async (req, res, next) => {
   const threadId = parseInt(req.params.id);
   const { title, content } = req.body;
-  const genres = Array.isArray(req.body.genres)
-    ? req.body.genres
-    : [req.body.genres];
+  const genres = Array.isArray(req.body.genres) ? req.body.genres : [req.body.genres];
 
   try {
-    // Retrieve the existing thread index
-    const threadIndex = threads.findIndex((thread) => thread.id === threadId);
-
-    if (threadIndex === -1) {
-      return res.status(404).send("Thread not found");
-    }
-
-    // Update the thread with the new data
-    threads[threadIndex] = {
-      ...threads[threadIndex],
+    // Construct the updated thread object
+    const updatedThread = {
       title,
-      genres,
       content,
+      genres
     };
+
+
+    // Send an Axios request to the API to replace the thread
+    const response = await axios.put(`http://localhost:8085/edit_thread/${threadId}`, updatedThread);
+
     // Redirect to the thread page or send a success response
     res.redirect(`/thread/${threadId}`);
   } catch (err) {
