@@ -138,7 +138,9 @@ app.post("/add_dislike", async (req, res, next) => {
 app.get("/edit_thread/:id", async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
-    const thread = threads.find((thread) => thread.id == id);
+
+    const response = await axios.get(`http://localhost:8085/thread/${id}`);
+    const thread = response.data;
     const user = req.user;
     res.status(200).render("editThread.ejs", { thread, user, genres });
   } catch (err) {
