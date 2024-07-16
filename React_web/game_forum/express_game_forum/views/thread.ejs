@@ -19,7 +19,7 @@
       <div>
         <% if (user && user.email === thread.author_email) { %>
         <form
-          action="/edit_thread/<%= thread.id %>"
+          action="/edit_thread/<%= thread.thread_id %>"
           method="get"
           style="display: inline"
         >
@@ -31,7 +31,7 @@
           </button>
         </form>
         <form
-          action="/delete_thread/<%= thread.id %>"
+          action="/delete_thread/<%= thread.thread_id %>"
           method="post"
           style="display: inline"
         >
