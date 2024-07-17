@@ -20,7 +20,7 @@
       <table class="table table-dark table-striped mt-3">
         <thead>
           <tr>
-            <th scope="col" data-column="id" class="sortable">#</th>
+            <!-- <th scope="col" data-column="id" class="sortable">#</th> -->
             <th scope="col" data-column="title" class="sortable">Title</th>
             <th scope="col" data-column="genre" class="sortable">Genre</th>
             <th scope="col" data-column="author" class="sortable">Author</th>
@@ -31,7 +31,7 @@
         <tbody>
           <% if (locals.threads) { %> <% threads.forEach(thread => { %>
           <tr>
-            <th scope="row"><%= thread.thread_id %></th>
+            <!-- <th scope="row"><%= thread.thread_id %></th> -->
             <td>
               <a href="/thread/<%= thread.thread_id %>"><%= thread.title %></a>
               <% if (user && user.email === thread.author_email) { %>
