@@ -200,8 +200,10 @@ app.post("/add_thread", async (req, res, next) => {
       // If it's not, make it an array
       genres = [genres];
     }
-
-    const author = req.user.email;
+    console.log("...email....\n",req.user);
+    const authorEmail = req.user.email;
+    let apiResp = await axios.post("http://localhost:8085/get_user_auth", { email: authorEmail });
+    const author = parseInt(apiResp.data.id);
 
     // Create a new Thread object
     const newThread = {
@@ -211,13 +213,12 @@ app.post("/add_thread", async (req, res, next) => {
       created: new Date(),
       content
     };
+    console.log("...newThread....\n",newThread);
     // Add the new thread to the database via Axios request
     const response = await axios.post('http://localhost:8085/add_thread_to_db', newThread);
 
     // Check if the request was successful
     if (response.status === 200) {
-      // Add the new thread to the local threads array
-      threads.push(newThread);
       // Send a response back to the client
       res.redirect(`/`);
     } else {
@@ -288,17 +289,11 @@ passport.use(
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
+
       try {
-        // let apiResp = await axios.post("http://localhost:8082/get_user_auth", { email: profile.email });
-        let apiResp = {
-          data: {
-            user_name: profile.name.givenName,
-            email: profile.emails[0].value,
-            ava: profile.photos[0].value,
-          },
-        };
+        let apiResp = await axios.post("http://localhost:8085/get_user_auth", { email: profile.emails[0].value });
         if (!apiResp.data.email) {
-          const newUser = await axios.post(`${ProxyUrl}/reg_user`, {
+          const newUser = await axios.post(`http://localhost:8085/reg_user`, {
             user_name: profile.name.givenName,
             email: profile.emails[0].value,
             ava: profile.photos[0].value,

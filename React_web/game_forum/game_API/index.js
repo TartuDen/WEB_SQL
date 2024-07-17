@@ -28,6 +28,57 @@ async function initializeDatabase() {
 initializeDatabase();
 //_________________________________________________________
 
+app.post('/get_user_auth', async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+      const client = await pool.connect();
+      const query = 'SELECT * FROM users WHERE email = $1';
+      const result = await client.query(query, [email]);
+      if (result.rows.length === 0) {
+          return res.json({ error: 'User not found' });
+      }
+      const user = result.rows[0];
+      res.status(200).json(user);
+      client.release();
+  } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.post('/reg_user', async (req, res) => {
+  const { user_name, email, ava } = req.body;
+  if (!user_name || !email) {
+      return res.status(400).json({ error: 'Username and email are required' });
+  }
+
+  try {
+      const client = await pool.connect();
+      const query = `
+          INSERT INTO users (user_name, email, ava)
+          VALUES ($1, $2, $3)
+          RETURNING *`;
+      const values = [user_name, email, ava];
+      const result = await client.query(query, values);
+
+      const newUser = result.rows[0];
+      res.status(201).json(newUser);
+      client.release();
+  } catch (error) {
+      console.error('Error registering user:', error);
+      if (error.code === '23505') { // Unique constraint violation
+          res.status(409).json({ error: 'Email already exists' });
+      } else {
+          res.status(500).json({ error: 'Internal server error' });
+      }
+  }
+});
+
 app.put('/edit_thread/:id', async (req, res) => {
   const threadId = parseInt(req.params.id);
   const { title, content, genres } = req.body;
