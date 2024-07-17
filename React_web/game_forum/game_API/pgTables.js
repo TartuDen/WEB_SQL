@@ -18,6 +18,13 @@ const createTables = async () => {
     const client = await pool.connect();
 
     try {
+        const dropTables = `
+            DROP TABLE IF EXISTS likes;
+            DROP TABLE IF EXISTS posts;
+            DROP TABLE IF EXISTS threads;
+            DROP TABLE IF EXISTS users;
+        `;
+
         const createUsersTable = `
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
@@ -58,6 +65,7 @@ const createTables = async () => {
             );
         `;
 
+        // await client.query(dropTables); // Drop existing tables
         await client.query(createUsersTable);
         await client.query(createThreadsTable);
         await client.query(createPostsTable);
@@ -70,6 +78,7 @@ const createTables = async () => {
         client.release();
     }
 };
+
 
 const insertData = async () => {
     const client = await pool.connect();

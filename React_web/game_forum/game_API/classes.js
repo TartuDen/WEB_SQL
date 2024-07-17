@@ -1,7 +1,7 @@
 
 class Like {
-    constructor(email, threadId = null, postId = null, type = "like") {
-        this.email = email;
+    constructor(userId, threadId = null, postId = null, type = "like") {
+        this.userId = userId;
         this.threadId = threadId; // Associate with a thread if applicable
         this.postId = postId;     // Associate with a post if applicable
         this.type = type;         // 'like' or 'dislike'
