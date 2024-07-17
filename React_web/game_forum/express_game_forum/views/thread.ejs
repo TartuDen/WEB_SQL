@@ -15,94 +15,84 @@
   <body>
     <%- include('parts/header.ejs') %>
     <div class="container my-5">
-      <h1 class="mb-4"><%= thread.title %></h1>
-      <div>
-        <% if (user && user.email === thread.author_email) { %>
-        <form
-          action="/edit_thread/<%= thread.thread_id %>"
-          method="get"
-          style="display: inline"
-        >
-          <button
-            type="submit"
-            style="border: none; background: none; cursor: pointer"
-          >
-            ✏️
-          </button>
-        </form>
-        <form
-          action="/delete_thread/<%= thread.thread_id %>"
-          method="post"
-          style="display: inline"
-        >
-          <input type="hidden" name="_method" value="DELETE" />
-          <button
-            type="submit"
-            style="border: none; background: none; cursor: pointer"
-            onclick="return confirm('Are you sure you want to delete this thread?')"
-          >
-            🗑️
-          </button>
-        </form>
-        <% } %>
-      </div>
-      <div class="d-flex justify-content-between">
-        <table class="table table-dark table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Genre</th>
-              <th scope="col">Author</th>
-              <th scope="col">Created</th>
-              <th scope="col">Likes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><%= thread.title %></td>
-              <td><%= thread.genres.join(', ') %></td>
-              <td><%= thread.author_email %></td>
-              <td><%= new Date(thread.created).toLocaleDateString() %></td>
+      <table class="table table-dark table-striped">
+        <tbody>
+          <tr>
+            <td rowspan="2" class="align-middle table-active">
+              <p>Avatar</p>
+              <p><%= thread.author_email %></p>
+              <p>
+                Created: <%= new Date(thread.created).toLocaleDateString() %>
+              </p>
+            </td>
+            <td>
+              <h2><%= thread.title %></h2>
+              <p>[<%= thread.genres.join(', ') %>]</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p><%= thread.content %></p>
               <% let likeCount = thread.likes.filter(like => like.type ===
               'like').length; let dislikeCount = thread.likes.filter(like =>
               like.type === 'dislike').length; %>
-              <td>
-                👍<span class="like-count"><%= likeCount %></span> / 👎🏾<span
-                  class="dislike-count"
-                  ><%= dislikeCount %></span
+              <p>
+                👍 <span class="like-count"><%= likeCount %></span> / 👎🏾
+                <span class="dislike-count"><%= dislikeCount %></span>
+              </p>
+              <% if (user && user.email === thread.author_email) { %>
+              <form
+                action="/edit_thread/<%= thread.thread_id %>"
+                method="get"
+                style="display: inline"
+              >
+                <button
+                  type="submit"
+                  style="border: none; background: none; cursor: pointer"
                 >
-              </td>
-            </tr>
-            <tr>
-              <td colspan="5"><%= thread.content %></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <h2 class="mt-5">Posts</h2>
-      <table class="table table-dark table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Author</th>
-            <th scope="col">Content</th>
-            <th scope="col">Created</th>
+                  ✏️
+                </button>
+              </form>
+              <form
+                action="/delete_thread/<%= thread.thread_id %>"
+                method="post"
+                style="display: inline"
+              >
+                <input type="hidden" name="_method" value="DELETE" />
+                <button
+                  type="submit"
+                  style="border: none; background: none; cursor: pointer"
+                  onclick="return confirm('Are you sure you want to delete this thread?')"
+                >
+                  🗑️
+                </button>
+              </form>
+              <% } %>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <% if (locals.postsFromThread){ %> <% if (postsFromThread &&
-          postsFromThread.length) { %> <% postsFromThread.forEach(post => { %>
-          <tr>
-            <td><%= post.author_email %></td>
-            <td><%= post.content %></td>
-            <td><%= new Date(post.created).toLocaleDateString() %></td>
-          </tr>
-          <% }) %> <% } else { %>
-          <tr>
-            <td colspan="3">No posts found.</td>
-          </tr>
-          <% } %> <% } %>
         </tbody>
       </table>
+      <h2 class="mt-5">Posts</h2>
+      <% if (locals.postsFromThread && postsFromThread.length) { %>
+      <table class="table table-dark table-striped">
+        <tbody>
+          <% postsFromThread.forEach(post => { %>
+          <tr>
+            <td class="table-active">
+              <p>Avatar</p>
+              <p>Author: <%= post.author_email %></p>
+              <p>Created: <%= new Date(post.created).toLocaleDateString() %></p>
+            </td>
+            <td>
+              <p>Content: <%= post.content %></p>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <p>No posts found.</p>
+      <% } %>
       <a href="/" class="btn btn-primary mt-3">Back to Threads</a>
     </div>
     <%- include('parts/footer.ejs') %>
