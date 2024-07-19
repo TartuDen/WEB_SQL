@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 const ProxyUrl = "http://localhost:8081";
 const ExpressApiServer = "http://localhost:8082";
-let threads = await fetchThreads();
+// let threads = await fetchThreads();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -95,29 +95,40 @@ app.post("/add_like", async (req, res, next) => {
       const type = threadId ? "thread" : "post";
 
       // Fetch the appropriate data based on type
-      let item;
       if (type === "thread") {
-        item = threads.find((thread) => thread.id === parseInt(id));
+        const response = await axios.get("http://localhost:8085");
+        const threads = response.data;
+        let likedThread = threads.find((thread) => thread.thread_id === parseInt(id));
+        // If the item is not found, return an error
+        if (!likedThread) {
+          return res
+            .status(404)
+            .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
+        }
+
+        // Check if the user has already liked the item
+        const existingLike = likedThread.likes.find(
+          (like) => like.userId === req.user.id
+        );
+        if (!existingLike) {
+          // Add the like
+
+          let newLike = new Like(
+            parseInt(req.user.id),
+            likedThread.thread_id,
+            null,
+            "like"
+          );
+          let apiResp = await axios.post("http://localhost:8085/add_like",newLike);
+          console.log("....added Like...\n",apiResp.data);
+        } else{
+          let apiResp = await axios.post("http://localhost:8085/remove_like",existingLike);
+          console.log(apiResp.data)
+
+        }
       } else {
         const posts = await fetchPosts(); // Assuming you have a fetchPosts function
         item = posts.find((post) => post.id === parseInt(id));
-      }
-
-      // If the item is not found, return an error
-      if (!item) {
-        return res
-          .status(404)
-          .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
-      }
-
-      // Check if the user has already liked the item
-      const existingLike = item.likes.find((like) => like.email === email);
-      if (!existingLike) {
-        // Add the like
-        item.likes.push({ userId: email, type: "like" });
-        threads = threads.map((thread) =>
-          thread.id === item.id ? item : thread
-        );
       }
 
       res.redirect("/");
