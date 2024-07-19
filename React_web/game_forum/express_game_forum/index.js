@@ -86,146 +86,176 @@ app.get("/auth/logout", (req, res) => {
 
 // Handler to add a like
 app.post("/add_like", async (req, res, next) => {
-  try {
-    const { email, threadId, postId } = req.body;
+  if (req.isAuthenticated()) {
+    try {
+      const { email, threadId, postId } = req.body;
 
-    // Determine whether we're dealing with a thread or a post
-    const id = threadId || postId;
-    const type = threadId ? "thread" : "post";
+      // Determine whether we're dealing with a thread or a post
+      const id = threadId || postId;
+      const type = threadId ? "thread" : "post";
 
-    // Fetch the appropriate data based on type
-    let item;
-    if (type === "thread") {
-      item = threads.find((thread) => thread.id === parseInt(id));
-    } else {
-      const posts = await fetchPosts(); // Assuming you have a fetchPosts function
-      item = posts.find((post) => post.id === parseInt(id));
+      // Fetch the appropriate data based on type
+      let item;
+      if (type === "thread") {
+        item = threads.find((thread) => thread.id === parseInt(id));
+      } else {
+        const posts = await fetchPosts(); // Assuming you have a fetchPosts function
+        item = posts.find((post) => post.id === parseInt(id));
+      }
+
+      // If the item is not found, return an error
+      if (!item) {
+        return res
+          .status(404)
+          .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
+      }
+
+      // Check if the user has already liked the item
+      const existingLike = item.likes.find((like) => like.email === email);
+      if (!existingLike) {
+        // Add the like
+        item.likes.push({ userId: email, type: "like" });
+        threads = threads.map((thread) =>
+          thread.id === item.id ? item : thread
+        );
+      }
+
+      res.redirect("/");
+    } catch (err) {
+      next(err);
     }
-
-    // If the item is not found, return an error
-    if (!item) {
-      return res
-        .status(404)
-        .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
-    }
-
-    // Check if the user has already liked the item
-    const existingLike = item.likes.find((like) => like.email === email);
-    if (!existingLike) {
-      // Add the like
-      item.likes.push({ userId: email, type: "like" });
-      threads = threads.map(thread => thread.id === item.id ? item : thread)
-    }
-
-
-    res.redirect("/");
-  } catch (err) {
-    next(err);
+  } else {
+    res.redirect("/auth/google");
   }
 });
 
 app.post("/add_dislike", async (req, res, next) => {
-  try {
-    console.log("......dislike...\n", req.body);
-    res.redirect("/");
-  } catch (err) {
-    next(err);
+  if (req.isAuthenticated()) {
+    try {
+      console.log("......dislike...\n", req.body);
+      res.redirect("/");
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.redirect("/auth/google");
   }
 });
 
-
-
 app.get("/edit_thread/:id", async (req, res, next) => {
-  try {
-    const id = parseInt(req.params.id);
+  if (req.isAuthenticated()) {
+    try {
+      const id = parseInt(req.params.id);
 
-    const response = await axios.get(`http://localhost:8085/thread/${id}`);
-    const thread = response.data;
-    const user = req.user;
-    res.status(200).render("editThread.ejs", { thread, user, genres });
-  } catch (err) {
-    next(err);
+      const response = await axios.get(`http://localhost:8085/thread/${id}`);
+      const thread = response.data;
+      const user = req.user;
+      res.status(200).render("editThread.ejs", { thread, user, genres });
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.redirect("/auth/google");
   }
 });
 
 app.post("/edit_thread/:id", async (req, res, next) => {
-  const threadId = parseInt(req.params.id);
-  const { title, content } = req.body;
-  const genres = Array.isArray(req.body.genres) ? req.body.genres : [req.body.genres];
+  if (req.isAuthenticated()) {
+    const threadId = parseInt(req.params.id);
+    const { title, content } = req.body;
+    const genres = Array.isArray(req.body.genres)
+      ? req.body.genres
+      : [req.body.genres];
 
-  try {
-    // Construct the updated thread object
-    const updatedThread = {
-      title,
-      content,
-      genres
-    };
+    try {
+      // Construct the updated thread object
+      const updatedThread = {
+        title,
+        content,
+        genres,
+      };
 
+      // Send an Axios request to the API to replace the thread
+      const response = await axios.put(
+        `http://localhost:8085/edit_thread/${threadId}`,
+        updatedThread
+      );
 
-    // Send an Axios request to the API to replace the thread
-    const response = await axios.put(`http://localhost:8085/edit_thread/${threadId}`, updatedThread);
-
-    // Redirect to the thread page or send a success response
-    res.redirect(`/thread/${threadId}`);
-  } catch (err) {
-    next(err); // Pass the error to the error handler middleware
+      // Redirect to the thread page or send a success response
+      res.redirect(`/thread/${threadId}`);
+    } catch (err) {
+      next(err); // Pass the error to the error handler middleware
+    }
+  } else {
+    res.redirect("/auth/google");
   }
 });
-
 
 app.post("/delete_thread/:id", async (req, res, next) => {
-  const threadId = parseInt(req.params.id);
+  if (req.isAuthenticated()) {
+    const threadId = parseInt(req.params.id);
 
-  try {
-       // Send a delete request to the API
-       await axios.delete(`http://localhost:8085/threads/${threadId}`);
+    try {
+      // Send a delete request to the API
+      await axios.delete(`http://localhost:8085/threads/${threadId}`);
 
-    // Redirect to the main page or send a success response
-    res.redirect("/");
-  } catch (err) {
-    next(err); // Pass the error to the error handler middleware
+      // Redirect to the main page or send a success response
+      res.redirect("/");
+    } catch (err) {
+      next(err); // Pass the error to the error handler middleware
+    }
+  } else {
+    res.redirect("/auth/google");
   }
 });
-
 
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
-  try {
-    let { title, genres, content } = req.body;
+  if (req.isAuthenticated()) {
+    try {
+      let { title, genres, content } = req.body;
 
-    validateTitleAndContent(title, content);
+      validateTitleAndContent(title, content);
 
-    // Check if genre is not an array
-    if (!Array.isArray(genres)) {
-      // If it's not, make it an array
-      genres = [genres];
+      // Check if genre is not an array
+      if (!Array.isArray(genres)) {
+        // If it's not, make it an array
+        genres = [genres];
+      }
+      console.log("...email....\n", req.user);
+      const authorEmail = req.user.email;
+      let apiResp = await axios.post("http://localhost:8085/get_user_auth", {
+        email: authorEmail,
+      });
+      const author = parseInt(apiResp.data.id);
+
+      // Create a new Thread object
+      const newThread = {
+        title,
+        genres,
+        author,
+        created: new Date(),
+        content,
+      };
+      console.log("...newThread....\n", newThread);
+      // Add the new thread to the database via Axios request
+      const response = await axios.post(
+        "http://localhost:8085/add_thread_to_db",
+        newThread
+      );
+
+      // Check if the request was successful
+      if (response.status === 200) {
+        // Send a response back to the client
+        res.redirect(`/`);
+      } else {
+        throw new Error("Failed to add the thread to the database");
+      }
+    } catch (err) {
+      next(err); // Pass the error to the error handler middleware
     }
-    console.log("...email....\n",req.user);
-    const authorEmail = req.user.email;
-    let apiResp = await axios.post("http://localhost:8085/get_user_auth", { email: authorEmail });
-    const author = parseInt(apiResp.data.id);
-
-    // Create a new Thread object
-    const newThread = {
-      title,
-      genres,
-      author,
-      created: new Date(),
-      content
-    };
-    console.log("...newThread....\n",newThread);
-    // Add the new thread to the database via Axios request
-    const response = await axios.post('http://localhost:8085/add_thread_to_db', newThread);
-
-    // Check if the request was successful
-    if (response.status === 200) {
-      // Send a response back to the client
-      res.redirect(`/`);
-    } else {
-      throw new Error('Failed to add the thread to the database');
-    }
-  } catch (err) {
-    next(err); // Pass the error to the error handler middleware
+  } else {
+    res.redirect("/auth/google");
   }
 });
 
@@ -235,11 +265,15 @@ app.get("/thread/:id", async (req, res, next) => {
 
     try {
       // Send a request to the backend to fetch the specific thread by ID
-      const threadResponse = await axios.get(`http://localhost:8085/thread/${id}`);
+      const threadResponse = await axios.get(
+        `http://localhost:8085/thread/${id}`
+      );
       const thread = threadResponse.data;
 
       // Send a request to fetch posts associated with the thread
-      const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
+      const postsResponse = await axios.get(
+        `http://localhost:8085/posts?threadId=${id}`
+      );
       const postsFromThread = postsResponse.data;
       if (thread) {
         res.status(200).render("thread.ejs", {
@@ -260,21 +294,19 @@ app.get("/thread/:id", async (req, res, next) => {
   }
 });
 
-
-
 app.get("/", async (req, res, next) => {
   try {
-      const response = await axios.get('http://localhost:8085');
-      const threads = response.data;
-      if (req.isAuthenticated()) {
-          res.status(200).render("index.ejs", { threads, user: req.user, genres });
-      } else {
-          res.redirect("/auth/google");
-      }
+    const response = await axios.get("http://localhost:8085");
+    const threads = response.data;
+    if (req.isAuthenticated()) {
+      res.status(200).render("index.ejs", { threads, user: req.user, genres });
+    } else {
+      res.redirect("/auth/google");
+    }
   } catch (err) {
-      // console.error("error", err.message);
-      // res.status(500).send("Server error");
-      next(err);
+    // console.error("error", err.message);
+    // res.status(500).send("Server error");
+    next(err);
   }
 });
 
@@ -289,9 +321,10 @@ passport.use(
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
-
       try {
-        let apiResp = await axios.post("http://localhost:8085/get_user_auth", { email: profile.emails[0].value });
+        let apiResp = await axios.post("http://localhost:8085/get_user_auth", {
+          email: profile.emails[0].value,
+        });
         if (!apiResp.data.email) {
           const newUser = await axios.post(`http://localhost:8085/reg_user`, {
             user_name: profile.name.givenName,
