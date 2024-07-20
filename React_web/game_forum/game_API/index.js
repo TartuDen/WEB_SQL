@@ -29,6 +29,25 @@ initializeDatabase();
 //_________________________________________________________
 
 
+app.post("/add_post", async (req, res, next) => {
+  try {
+    const client = await pool.connect();
+    const { threadId, authorId, authorEmail, content, created } = req.body;
+
+    const insertPostQuery = `
+      INSERT INTO posts (threadID, author, created, content)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `;
+    const values = [parseInt(threadId), parseInt(authorId), created, content];
+    const result = await client.query(insertPostQuery, values);
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.json({message: err})
+  }
+});
+
 app.post("/remove_like", async (req, res) => {
   const { userId, threadId, postId, type } = req.body;
 

@@ -231,6 +231,29 @@ app.post("/delete_thread/:id", async (req, res, next) => {
   }
 });
 
+
+app.post("/add_post", async (req, res, next) => {
+  if (req.isAuthenticated()) {
+    try {
+      const { threadId, content } = req.body;
+      const newPost = {
+        threadId: parseInt(threadId),
+        authorId: req.user.id,
+        authorEmail: req.user.email,
+        content,
+        created: new Date()
+      };
+      let response = await axios.post("http://localhost:8085/add_post", newPost);
+      console.log(response.data);
+      res.redirect(`/thread/${threadId}`);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.redirect("/auth/google");
+  }
+});
+
 // Handler to add a new thread
 app.post("/add_thread", async (req, res, next) => {
   if (req.isAuthenticated()) {

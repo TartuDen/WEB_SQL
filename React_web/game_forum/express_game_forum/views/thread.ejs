@@ -15,6 +15,11 @@
   <body>
     <%- include('parts/header.ejs') %>
     <div class="container my-5">
+      
+      
+      
+      
+
       <table class="table table-dark table-striped">
         <tbody>
           <tr>
@@ -73,6 +78,18 @@
         </tbody>
       </table>
       <h2 class="mt-5">Posts</h2>
+      
+      <%- include("newPostModal.ejs") %>
+      <button
+        type="button"
+        class="btn btn-outline-light ms-3"
+        data-bs-toggle="modal"
+        data-bs-target="#addPostModal"
+      >
+        Add Post
+      </button>
+
+
       <% if (locals.postsFromThread && postsFromThread.length) { %>
       <table class="table table-dark table-striped">
         <tbody>
@@ -91,7 +108,7 @@
         </tbody>
       </table>
       <% } else { %>
-      <p>No posts found.</p>
+      <p>No posts found. Be first to post one!</p>
       <% } %>
       <a href="/" class="btn btn-primary mt-3">Back to Threads</a>
     </div>
