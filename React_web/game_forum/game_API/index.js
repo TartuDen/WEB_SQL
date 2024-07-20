@@ -76,8 +76,6 @@ app.post("/remove_like", async (req, res) => {
 
 app.post('/add_like', async (req, res) => {
   const newLike = req.body;
-  console.log("..new like.\n",newLike);
-
   // Validate the incoming request data
   if (!newLike.userId || !newLike.type || (newLike.threadId === undefined && newLike.postId === undefined)) {
       return res.status(400).json({ error: 'Invalid request data' });
@@ -229,7 +227,7 @@ app.post('/add_thread_to_db', async (req, res) => {
   
       // First, get the author ID from the email
       const authorResult = await client.query(
-        'SELECT id FROM users WHERE email = $1',
+        'SELECT id FROM users WHERE id = $1',
         [author]
       );
   
@@ -238,11 +236,11 @@ app.post('/add_thread_to_db', async (req, res) => {
         throw new Error('Author not found');
       }
   
-      const authorId = parseInt(authorResult.rows[0].id);
+      // const authorId = parseInt(authorResult.rows[0].id);
       // Insert the new thread
       const result = await client.query(
         'INSERT INTO threads (title, genres, author, created, content) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [title, genres, authorId, created, content]
+        [title, genres, author, created, content]
       );
   
       client.release();
@@ -257,46 +255,51 @@ app.post('/add_thread_to_db', async (req, res) => {
   
 
 
-app.get("/posts", async (req, res) => {
+  app.get("/posts", async (req, res) => {
     const threadId = parseInt(req.query.threadId);
   
     if (isNaN(threadId)) {
-      return res.status(400).send("Invalid thread ID");
+      return res.status(400).json({ message: "Invalid thread ID" });
     }
   
     try {
       const client = await pool.connect();
   
-      // Query to get posts with author's email and images
+      // Query to get posts with author's email
       const query = `
-      SELECT
-        posts.id,
-        posts.threadID,
-        posts.author,
-        posts.created,
-        posts.content,
-        users.email AS author_email
-      FROM
-        posts
-      LEFT JOIN
-        users ON posts.author = users.id
-      WHERE
-        posts.threadID = $1
-      ORDER BY
-        posts.created;
-    `;
+        SELECT
+          posts.id,
+          posts.threadID,
+          posts.author,
+          posts.created,
+          posts.content,
+          users.email AS author_email
+        FROM
+          posts
+        LEFT JOIN
+          users ON posts.author = users.id
+        WHERE
+          posts.threadID = $1
+        ORDER BY
+          posts.created;
+      `;
   
       const result = await client.query(query, [threadId]);
       const posts = result.rows;
       client.release();
   
+      // Handle the case when no posts are found
+      if (posts.length === 0) {
+        return res.status(200).json({ message: "No posts found", posts: [] });
+      }
+  
       res.status(200).json(posts);
     } catch (err) {
       console.error("Error fetching posts:", err.message);
-      res.status(500).send("Server error");
+      res.status(500).json({ message: "Error fetching posts" });
     }
   });
-
+  
 app.get("/thread/:id", async (req, res) => {
     const threadId = req.params.id;
 
@@ -346,7 +349,7 @@ app.get("/thread/:id", async (req, res) => {
 });
 
 
-app.get("/", async (req, res) => {
+app.get("/threads", async (req, res) => {
     try {
         const client = await pool.connect();
         

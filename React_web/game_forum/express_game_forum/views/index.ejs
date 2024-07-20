@@ -71,8 +71,8 @@
             like.type === 'dislike').length; %>
             <td>
               <form action="/add_like" method="post" style="display: inline">
-                <input type="hidden" name="email" value="<%= user.email %>" />
                 <input type="hidden" name="threadId" value="<%= thread.thread_id %>" />
+                <input type="hidden" name="action" value="like">
                 <button
                   type="submit"
                   style="border: none; background: none; cursor: pointer"
@@ -82,9 +82,9 @@
               </form>
               <span class="like-count"><%= likeCount %></span>
               /
-              <form action="/add_dislike" method="post" style="display: inline">
-                <input type="hidden" name="email" value="<%= user.email %>" />
+              <form action="/add_like" method="post" style="display: inline">
                 <input type="hidden" name="threadId" value="<%= thread.thread_id %>" />
+                <input type="hidden" name="action" value="dislike">
                 <button
                   type="submit"
                   style="border: none; background: none; cursor: pointer"
@@ -106,7 +106,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
+    <script>// script of sorting of main table
       document.addEventListener("DOMContentLoaded", () => {
         const getCellValue = (tr, idx) =>
           tr.children[idx].innerText || tr.children[idx].textContent;
@@ -126,7 +126,6 @@
             );
           }
         };
-
         document.querySelectorAll("th.sortable").forEach((th) =>
           th.addEventListener("click", () => {
             const table = th.closest("table");

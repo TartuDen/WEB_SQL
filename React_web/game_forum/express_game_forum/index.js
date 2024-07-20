@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8081;
 const ProxyUrl = "http://localhost:8081";
-const ExpressApiServer = "http://localhost:8082";
+
 // let threads = await fetchThreads();
 
 app.use(express.json());
@@ -84,51 +84,43 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
-// Handler to add a like
+// Handler to add a like or dislike
 app.post("/add_like", async (req, res, next) => {
   if (req.isAuthenticated()) {
     try {
-      const { email, threadId, postId } = req.body;
+      const { threadId, action } = req.body;
 
-      // Determine whether we're dealing with a thread or a post
-      const id = threadId || postId;
-      const type = threadId ? "thread" : "post";
+      // Determine whether we're dealing with a thread
+      const id = threadId;
+      const type = "thread";
 
       // Fetch the appropriate data based on type
-      if (type === "thread") {
-        const response = await axios.get("http://localhost:8085");
-        const threads = response.data;
-        let likedThread = threads.find((thread) => thread.thread_id === parseInt(id));
-        // If the item is not found, return an error
-        if (!likedThread) {
-          return res
-            .status(404)
-            .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
-        }
+      const response = await axios.get("http://localhost:8085/threads");
+      const threads = response.data;
+      let likedThread = threads.find((thread) => thread.thread_id === parseInt(id));
 
-        // Check if the user has already liked the item
-        const existingLike = likedThread.likes.find(
-          (like) => like.userId === req.user.id
-        );
-        if (!existingLike) {
-          // Add the like
+      // If the item is not found, return an error
+      if (!likedThread) {
+        return res
+          .status(404)
+          .send(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
+      }
 
-          let newLike = new Like(
-            parseInt(req.user.id),
-            likedThread.thread_id,
-            null,
-            "like"
-          );
-          let apiResp = await axios.post("http://localhost:8085/add_like",newLike);
-          console.log("....added Like...\n",apiResp.data);
-        } else{
-          let apiResp = await axios.post("http://localhost:8085/remove_like",existingLike);
-          console.log(apiResp.data)
-
-        }
+      // Check if the user has already liked/disliked the item
+      const existingLike = likedThread.likes.find(
+        (like) => like.userId === req.user.id && like.type === action
+      );
+      console.log("here")
+      if (!existingLike) {
+        
+        // Add the like/dislike
+        let newLike = new Like  (req.user.id, likedThread.thread_id,null, action );
+        let resp = await axios.post("http://localhost:8085/add_like", newLike);
+        console.log(resp.data)
       } else {
-        const posts = await fetchPosts(); // Assuming you have a fetchPosts function
-        item = posts.find((post) => post.id === parseInt(id));
+        // Remove the like/dislike
+        let resp = await axios.post("http://localhost:8085/remove_like", existingLike);
+        console.log(resp.data);
       }
 
       res.redirect("/");
@@ -140,18 +132,6 @@ app.post("/add_like", async (req, res, next) => {
   }
 });
 
-app.post("/add_dislike", async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    try {
-      console.log("......dislike...\n", req.body);
-      res.redirect("/");
-    } catch (err) {
-      next(err);
-    }
-  } else {
-    res.redirect("/auth/google");
-  }
-});
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -273,19 +253,22 @@ app.post("/add_thread", async (req, res, next) => {
 app.get("/thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
+    console.log(".......id........\n",id)
+
+    if (isNaN(id)) {
+      console.error("Invalid thread ID:", req.params.id);
+      return next(new AppError("Invalid thread ID", 400));
+    }
 
     try {
       // Send a request to the backend to fetch the specific thread by ID
-      const threadResponse = await axios.get(
-        `http://localhost:8085/thread/${id}`
-      );
+      const threadResponse = await axios.get(`http://localhost:8085/thread/${id}`);
       const thread = threadResponse.data;
 
       // Send a request to fetch posts associated with the thread
-      const postsResponse = await axios.get(
-        `http://localhost:8085/posts?threadId=${id}`
-      );
+      const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
       const postsFromThread = postsResponse.data;
+
       if (thread) {
         res.status(200).render("thread.ejs", {
           thread,
@@ -294,11 +277,25 @@ app.get("/thread/:id", async (req, res, next) => {
           genres,
         });
       } else {
+        console.error(`Thread with ID ${id} not found.`);
         next(new AppError("Thread not found", 404)); // Pass the error to the error handler middleware
       }
     } catch (err) {
-      console.error("Error fetching thread:", err.message);
-      next(new AppError("Error fetching thread", 500)); // Pass the error to the error handler middleware
+      console.error(`Error fetching thread with ID ${id}:`, err.message);
+
+      // Differentiate between different types of errors
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Response status:', err.response.status);
+        console.error('Response headers:', err.response.headers);
+        next(new AppError(`Error fetching thread: ${err.response.statusText}`, err.response.status));
+      } else if (err.request) {
+        console.error('Request data:', err.request);
+        next(new AppError("No response received from the server", 500));
+      } else {
+        console.error('Error message:', err.message);
+        next(new AppError("Error setting up request", 500));
+      }
     }
   } else {
     res.redirect("/auth/google");
@@ -307,7 +304,7 @@ app.get("/thread/:id", async (req, res, next) => {
 
 app.get("/", async (req, res, next) => {
   try {
-    const response = await axios.get("http://localhost:8085");
+    const response = await axios.get("http://localhost:8085/threads");
     const threads = response.data;
     if (req.isAuthenticated()) {
       res.status(200).render("index.ejs", { threads, user: req.user, genres });
