@@ -64,10 +64,12 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: `${ProxyUrl}/login` }),
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:8081/login",
+  }),
   (req, res) => {
     // Successful authentication, redirect to home
-    res.redirect(`${ProxyUrl}`);
+    res.redirect("http://localhost:8081");
   }
 );
 
@@ -97,7 +99,9 @@ app.post("/add_like", async (req, res, next) => {
       // Fetch the appropriate data based on type
       const response = await axios.get("http://localhost:8085/threads");
       const threads = response.data;
-      let likedThread = threads.find((thread) => thread.thread_id === parseInt(id));
+      let likedThread = threads.find(
+        (thread) => thread.thread_id === parseInt(id)
+      );
 
       // If the item is not found, return an error
       if (!likedThread) {
@@ -110,16 +114,22 @@ app.post("/add_like", async (req, res, next) => {
       const existingLike = likedThread.likes.find(
         (like) => like.userId === req.user.id && like.type === action
       );
-      console.log("here")
       if (!existingLike) {
-        
         // Add the like/dislike
-        let newLike = new Like  (req.user.id, likedThread.thread_id,null, action );
+        let newLike = new Like(
+          req.user.id,
+          likedThread.thread_id,
+          null,
+          action
+        );
         let resp = await axios.post("http://localhost:8085/add_like", newLike);
-        console.log(resp.data)
+        console.log(resp.data);
       } else {
         // Remove the like/dislike
-        let resp = await axios.post("http://localhost:8085/remove_like", existingLike);
+        let resp = await axios.post(
+          "http://localhost:8085/remove_like",
+          existingLike
+        );
         console.log(resp.data);
       }
 
@@ -131,7 +141,6 @@ app.post("/add_like", async (req, res, next) => {
     res.redirect("/auth/google");
   }
 });
-
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -253,7 +262,11 @@ app.post("/add_thread", async (req, res, next) => {
 app.get("/thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
-    console.log(".......id........\n",id)
+
+    // Logging the Raw ID: First, log the raw value of req.params.id to understand its initial state.
+    // Attempt to Parse: Use JSON.parse() to parse otherId. If it’s already a plain string number, parsing will fail, and it will be used as is.
+    // Check and Convert to Number: After parsing, check if otherId is a number using parseInt(). If it’s not a number, handle the error.
+    // Proceed with Valid ID: Once you have a valid number, proceed with your intended logic.
 
     if (isNaN(id)) {
       console.error("Invalid thread ID:", req.params.id);
@@ -262,11 +275,15 @@ app.get("/thread/:id", async (req, res, next) => {
 
     try {
       // Send a request to the backend to fetch the specific thread by ID
-      const threadResponse = await axios.get(`http://localhost:8085/thread/${id}`);
+      const threadResponse = await axios.get(
+        `http://localhost:8085/thread/${id}`
+      );
       const thread = threadResponse.data;
 
       // Send a request to fetch posts associated with the thread
-      const postsResponse = await axios.get(`http://localhost:8085/posts?threadId=${id}`);
+      const postsResponse = await axios.get(
+        `http://localhost:8085/posts?threadId=${id}`
+      );
       const postsFromThread = postsResponse.data;
 
       if (thread) {
@@ -285,15 +302,20 @@ app.get("/thread/:id", async (req, res, next) => {
 
       // Differentiate between different types of errors
       if (err.response) {
-        console.error('Response data:', err.response.data);
-        console.error('Response status:', err.response.status);
-        console.error('Response headers:', err.response.headers);
-        next(new AppError(`Error fetching thread: ${err.response.statusText}`, err.response.status));
+        console.error("Response data:", err.response.data);
+        console.error("Response status:", err.response.status);
+        console.error("Response headers:", err.response.headers);
+        next(
+          new AppError(
+            `Error fetching thread: ${err.response.statusText}`,
+            err.response.status
+          )
+        );
       } else if (err.request) {
-        console.error('Request data:', err.request);
+        console.error("Request data:", err.request);
         next(new AppError("No response received from the server", 500));
       } else {
-        console.error('Error message:', err.message);
+        console.error("Error message:", err.message);
         next(new AppError("Error setting up request", 500));
       }
     }
@@ -325,7 +347,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${ProxyUrl}/auth/google/callback`,
+      callbackURL: "http://localhost:8081/auth/google/callback",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
