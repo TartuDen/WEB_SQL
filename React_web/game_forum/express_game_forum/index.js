@@ -86,7 +86,6 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
-// Handler to add a like or dislike
 app.post("/add_like", async (req, res, next) => {
   if (req.isAuthenticated()) {
     try {
@@ -112,8 +111,9 @@ app.post("/add_like", async (req, res, next) => {
 
       // Check if the user has already liked/disliked the item
       const existingLike = likedThread.likes.find(
-        (like) => like.userId === req.user.id && like.type === action
+        (like) => like.userId === req.user.id
       );
+
       if (!existingLike) {
         // Add the like/dislike
         let newLike = new Like(
@@ -125,12 +125,33 @@ app.post("/add_like", async (req, res, next) => {
         let resp = await axios.post("http://localhost:8085/add_like", newLike);
         console.log(resp.data);
       } else {
-        // Remove the like/dislike
-        let resp = await axios.post(
-          "http://localhost:8085/remove_like",
-          existingLike
-        );
-        console.log(resp.data);
+        // User has already liked/disliked the thread
+        if (existingLike.type === action) {
+          // Remove the like/dislike if user clicks the same action again
+          let resp = await axios.post(
+            "http://localhost:8085/remove_like",
+            existingLike
+          );
+          console.log(resp.data);
+        } else {
+          // User switches from like to dislike or vice versa
+          // First, remove the existing like/dislike
+          let respRemove = await axios.post(
+            "http://localhost:8085/remove_like",
+            existingLike
+          );
+          console.log(respRemove.data);
+
+          // Then, add the new like/dislike
+          let newLike = new Like(
+            req.user.id,
+            likedThread.thread_id,
+            null,
+            action
+          );
+          let respAdd = await axios.post("http://localhost:8085/add_like", newLike);
+          console.log(respAdd.data);
+        }
       }
 
       res.redirect("/");
@@ -141,6 +162,7 @@ app.post("/add_like", async (req, res, next) => {
     res.redirect("/auth/google");
   }
 });
+
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
