@@ -15,11 +15,6 @@
   <body>
     <%- include('parts/header.ejs') %>
     <div class="container my-5">
-      
-      
-      
-      
-
       <table class="table table-dark table-striped">
         <tbody>
           <tr>
@@ -38,9 +33,8 @@
           <tr>
             <td>
               <p><%= thread.content %></p>
-              <% let likeCount = thread.likes.filter(like => like.type ===
-              'like').length; let dislikeCount = thread.likes.filter(like =>
-              like.type === 'dislike').length; %>
+              <% let likeCount = thread.likes.filter(like => like.type === 'like').length; 
+                 let dislikeCount = thread.likes.filter(like => like.type === 'dislike').length; %>
               <p>
                 👍 <span class="like-count"><%= likeCount %></span> / 👎🏾
                 <span class="dislike-count"><%= dislikeCount %></span>
@@ -89,7 +83,6 @@
         Add Post
       </button>
 
-
       <% if (locals.postsFromThread && postsFromThread.length) { %>
       <table class="table table-dark table-striped">
         <tbody>
@@ -102,6 +95,34 @@
             </td>
             <td>
               <p>Content: <%= post.content %></p>
+              <% if (user && user.email === post.author_email) { %>
+              <form
+                action="/edit_post/<%= post.id %>"
+                method="get"
+                style="display: inline"
+              >
+                <button
+                  type="submit"
+                  style="border: none; background: none; cursor: pointer"
+                >
+                  ✏️
+                </button>
+              </form>
+              <form
+                action="/delete_post/<%= post.id %>"
+                method="post"
+                style="display: inline"
+              >
+                <input type="hidden" name="_method" value="DELETE" />
+                <button
+                  type="submit"
+                  style="border: none; background: none; cursor: pointer"
+                  onclick="return confirm('Are you sure you want to delete this post?')"
+                >
+                  🗑️
+                </button>
+              </form>
+              <% } %>
             </td>
           </tr>
           <% }) %>

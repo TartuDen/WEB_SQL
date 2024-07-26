@@ -163,6 +163,9 @@ app.post("/add_like", async (req, res, next) => {
   }
 });
 
+app.get("/edit_post/:id", async(req,res)=>{
+  console.log(req.params)
+})
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -330,6 +333,7 @@ app.get("/thread/:id", async (req, res, next) => {
         `http://localhost:8085/posts?threadId=${id}`
       );
       const postsFromThread = postsResponse.data;
+      // console.log(".........postsForThread..........\n",postsFromThread);
 
       if (thread) {
         res.status(200).render("thread.ejs", {
