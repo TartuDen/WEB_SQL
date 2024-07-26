@@ -163,9 +163,26 @@ app.post("/add_like", async (req, res, next) => {
   }
 });
 
-app.get("/edit_post/:id", async(req,res)=>{
-  console.log(req.params)
-})
+app.post("/edit_post", async (req, res, next) => {
+  if (req.isAuthenticated()) {
+    try {
+      // Parse the JSON string from the hidden input field
+      let post = JSON.parse(req.body.post);
+      const user = req.user;
+
+      // Log the entire post object as a JSON string
+      console.log("Post Object:", JSON.stringify(post, null, 2));
+      // Uncomment the line below to render the editPost.ejs view
+      // res.status(200).render("editPost.ejs", { post, user });
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.redirect("/auth/google");
+  }
+});
+
+
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {

@@ -97,10 +97,12 @@
               <p>Content: <%= post.content %></p>
               <% if (user && user.email === post.author_email) { %>
               <form
-                action="/edit_post/<%= post.id %>"
-                method="get"
+                action="/edit_post"
+                method="post"
                 style="display: inline"
               >
+              <input type="hidden" name="post" value='<%= JSON.stringify(post) %>'>
+
                 <button
                   type="submit"
                   style="border: none; background: none; cursor: pointer"
