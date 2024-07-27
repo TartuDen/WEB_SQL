@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Game API Server",
+      "type": "shell",
+      "command": "nodemon",
+      "args": ["index.js"],
+      "options": {
+        "cwd": "${workspaceFolder}/React_web/game_forum/game_API"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Start Express Game Forum Server",
+      "type": "shell",
+      "command": "nodemon",
+      "args": ["server.js"],
+      "options": {
+        "cwd": "${workspaceFolder}/React_web/game_forum/express_game_forum"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Start Both Forum Servers",
+      "dependsOn": [
+        "Start Game API Server",
+        "Start Express Game Forum Server"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

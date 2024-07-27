@@ -173,7 +173,7 @@ app.post("/edit_post", async (req, res, next) => {
       // Log the entire post object as a JSON string
       console.log("Post Object:", JSON.stringify(post, null, 2));
       // Uncomment the line below to render the editPost.ejs view
-      // res.status(200).render("editPost.ejs", { post, user });
+      res.status(200).render("editPost.ejs", { post, user });
     } catch (err) {
       next(err);
     }
