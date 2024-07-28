@@ -149,7 +149,10 @@ app.post("/add_like", async (req, res, next) => {
             null,
             action
           );
-          let respAdd = await axios.post("http://localhost:8085/add_like", newLike);
+          let respAdd = await axios.post(
+            "http://localhost:8085/add_like",
+            newLike
+          );
           console.log(respAdd.data);
         }
       }
@@ -163,26 +166,46 @@ app.post("/add_like", async (req, res, next) => {
   }
 });
 
-// app.post("/edit_post", async (req, res, next) => {
-//   if (req.isAuthenticated()) {
-//     try {
-//       // Parse the JSON string from the hidden input field
-//       let post = JSON.parse(req.body.post);
-//       const user = req.user;
+app.post("/delete_post/:id", async (req, res) => {
+  if (req.isAuthenticated()) {
+    const postId = req.params.id;
+    try {
+      const response = await axios.delete(`http://localhost:8085/delete_post/${postId}`);
+      res.status(response.status).redirect(`/thread/${req.body.threadId}`);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.redirect("/auth/google");
+  }
+});
 
-//       // Log the entire post object as a JSON string
-//       console.log("Post Object:", JSON.stringify(post, null, 2));
-//       // Uncomment the line below to render the editPost.ejs view
-//       res.status(200).render("editPost.ejs", { post, user });
-//     } catch (err) {
-//       next(err);
-//     }
-//   } else {
-//     res.redirect("/auth/google");
-//   }
-// });
+app.post("/edit_post", async (req, res, next) => {
+  if (req.isAuthenticated()) {
+    try {
+      console.log(".....edit post..\n", req.body);
+      const user = req.user;
 
+      // Send the Axios POST request to the API server
+      const response = await axios.post("http://localhost:8085/edit_post", {
+        postId: req.body.postId,
+        threadId: req.body.threadId,
+        content: req.body.content,
+      });
 
+      // Log the API server's response
+      console.log("API server response:", response.data);
+
+      // Send the API server's response back to the client
+      // res.status(response.status).json(response.data);
+      res.status(response.status).redirect(`/thread/${req.body.threadId}`);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.redirect("/auth/google");
+  }
+});
 
 app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -251,7 +274,6 @@ app.post("/delete_thread/:id", async (req, res, next) => {
   }
 });
 
-
 app.post("/add_post", async (req, res, next) => {
   if (req.isAuthenticated()) {
     try {
@@ -261,9 +283,12 @@ app.post("/add_post", async (req, res, next) => {
         authorId: req.user.id,
         authorEmail: req.user.email,
         content,
-        created: new Date()
+        created: new Date(),
       };
-      let response = await axios.post("http://localhost:8085/add_post", newPost);
+      let response = await axios.post(
+        "http://localhost:8085/add_post",
+        newPost
+      );
       console.log(response.data);
       res.redirect(`/thread/${threadId}`);
     } catch (err) {

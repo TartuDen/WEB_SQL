@@ -27,7 +27,54 @@ async function initializeDatabase() {
 
 initializeDatabase();
 //_________________________________________________________
+app.delete("/delete_post/:id", async (req, res, next) => {
+  const postId = req.params.id;
 
+  try {
+    // Delete the post from the database
+    const deleteQuery = `
+      DELETE FROM posts 
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const result = await pool.query(deleteQuery, [postId]);
+
+    // Check if the post was deleted
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Post not found.' });
+    }
+
+    // Respond with a success message
+    res.status(200).json({ message: 'Post deleted successfully.' });
+  } catch (err) {
+    res.json({message: err})
+  }
+});
+
+app.post("/edit_post", async (req, res, next) => {
+  try {
+    const { postId, content } = req.body;
+
+    // Update the post content in the database
+    const updateQuery = `
+      UPDATE posts 
+      SET content = $1, created = NOW() 
+      WHERE id = $2
+      RETURNING *;
+    `;
+    const result = await pool.query(updateQuery, [content, postId]);
+
+    // Check if the post was updated
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Post not found.' });
+    }
+
+    // Respond with the updated post
+    res.status(200).json({ message: 'Post updated successfully.', post: result.rows[0] });
+  } catch (err) {
+    res.json({message: err})
+  }
+});
 
 app.post("/add_post", async (req, res, next) => {
   try {

@@ -9,7 +9,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editPostModalLabel-<%= post.id %>">
-          Edit Post
+          "Thread: <%= title %>"
         </h5>
         <button
           type="button"
@@ -25,11 +25,7 @@
           action="/edit_post"
         >
           <input type="hidden" name="postId" value="<%= post.id %>" />
-          <input
-            type="hidden"
-            name="threadId"
-            value="<%= threadId %>"
-          />
+          <input type="hidden" name="threadId" value="<%= threadId %>" />
           <div class="mb-3">
             <label for="editPostContent-<%= post.id %>" class="form-label"
               >Content</label
@@ -40,7 +36,8 @@
               id="editPostContent-<%= post.id %>"
               rows="3"
               required
-            ><%= post.content %></textarea
+            >
+<%= post.content %></textarea
             >
           </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>

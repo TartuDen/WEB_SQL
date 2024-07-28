@@ -136,12 +136,13 @@
                 >
                   🗑️
                 </button>
+                <input type="hidden" name="threadId" value="<%= thread.thread_id %>">
               </form>
               <% } %>
             </td>
           </tr>
           <!-- Include Edit Post Modal for Each Post -->
-          <%- include("editPostModal.ejs", { post: post, threadId: thread.thread_id }) %>
+          <%- include("editPostModal.ejs", { post: post, threadId: thread.thread_id, title: thread.title }) %>
           <% }) %>
         </tbody>
       </table>
