@@ -1,16 +1,15 @@
-<!-- Modal EDIT POST -->
 <div
   class="modal fade"
-  id="editPostModal"
+  id="editPostModal-<%= post.id %>"
   tabindex="-1"
-  aria-labelledby="editPostModalLabel"
+  aria-labelledby="editPostModalLabel-<%= post.id %>"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editPostModalLabel">
-          <%= user.user_name %> - Edit Post
+        <h5 class="modal-title" id="editPostModalLabel-<%= post.id %>">
+          Edit Post
         </h5>
         <button
           type="button"
@@ -20,26 +19,29 @@
         ></button>
       </div>
       <div class="modal-body">
-        <form id="editPostForm" method="post" action="/edit_post">
-          <input
-            type="hidden"
-            name="postId"
-            value="<%= post.id %>"
-          />
+        <form
+          id="editPostForm-<%= post.id %>"
+          method="post"
+          action="/edit_post"
+        >
+          <input type="hidden" name="postId" value="<%= post.id %>" />
           <input
             type="hidden"
             name="threadId"
-            value="<%= post.threadID %>"
+            value="<%= threadId %>"
           />
           <div class="mb-3">
-            <label for="editPostContent" class="form-label">Content</label>
+            <label for="editPostContent-<%= post.id %>" class="form-label"
+              >Content</label
+            >
             <textarea
               name="content"
               class="form-control"
-              id="editPostContent"
+              id="editPostContent-<%= post.id %>"
               rows="3"
               required
-            ><%= post.content %></textarea>
+            ><%= post.content %></textarea
+            >
           </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
