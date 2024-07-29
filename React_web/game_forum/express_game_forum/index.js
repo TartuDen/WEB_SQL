@@ -5,12 +5,14 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 import axios from "axios";
+import multer from 'multer';
 
-import { fetchThreads, fetchPostsByThreadID } from "./apiMOCK.js";
 import { Thread, Post, Like } from "./classes.js";
 import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
+import {createTables, pool} from './pgTables.js'
+import { getAllThreads, getPostsByThreadId, getThreadById } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -18,11 +20,25 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 const ProxyUrl = "http://localhost:8081";
 
-// let threads = await fetchThreads();
+// Multer setup for handling file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+// Ensure tables are created on server start
+async function initializeDatabase() {
+  try {
+      await createTables();
+      console.log("Database setup complete");
+  } catch (err) {
+      console.error("Error setting up database:", err);
+  }
+}
+
+initializeDatabase();
 
 // Configure session middleware
 app.use(
@@ -35,6 +51,9 @@ app.use(
     },
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // Initialize passport
 app.use(passport.initialize());
@@ -43,7 +62,7 @@ app.use(passport.session());
 const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-
+  console.error(`[ERROR] ${statusCode} - ${message} - ${err.stack}`);
   res.status(statusCode).json({
     status: "error",
     statusCode,
@@ -58,7 +77,7 @@ app.get(
   "/auth/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "consent", //for development keep this line, to ask user to log in
+    prompt: "consent",
   })
 );
 
@@ -68,7 +87,6 @@ app.get(
     failureRedirect: "http://localhost:8081/login",
   }),
   (req, res) => {
-    // Successful authentication, redirect to home
     res.redirect("http://localhost:8081");
   }
 );
@@ -85,6 +103,7 @@ app.get("/auth/logout", (req, res) => {
     }
   });
 });
+
 
 app.post("/add_like", async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -364,18 +383,9 @@ app.get("/thread/:id", async (req, res, next) => {
     }
 
     try {
-      // Send a request to the backend to fetch the specific thread by ID
-      const threadResponse = await axios.get(
-        `http://localhost:8085/thread/${id}`
-      );
-      const thread = threadResponse.data;
-
-      // Send a request to fetch posts associated with the thread
-      const postsResponse = await axios.get(
-        `http://localhost:8085/posts?threadId=${id}`
-      );
-      const postsFromThread = postsResponse.data;
-      // console.log(".........postsForThread..........\n",postsFromThread);
+      const thread = await getThreadById(id);
+ 
+      const postsFromThread = await getPostsByThreadId(id);
 
       if (thread) {
         res.status(200).render("thread.ejs", {
@@ -417,8 +427,7 @@ app.get("/thread/:id", async (req, res, next) => {
 
 app.get("/", async (req, res, next) => {
   try {
-    const response = await axios.get("http://localhost:8085/threads");
-    const threads = response.data;
+    const threads = await getAllThreads();
     if (req.isAuthenticated()) {
       res.status(200).render("index.ejs", { threads, user: req.user, genres });
     } else {
