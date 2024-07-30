@@ -120,11 +120,6 @@ async function getPostsByThreadId(threadId){
       const posts = result.rows;
       client.release();
   
-      // Handle the case when no posts are found
-      if (posts.length === 0) {
-        return res.status(200).json({ message: "No posts found", posts: [] });
-      }
-  
       return posts;
     } catch (err) {
       console.error("Error fetching posts:", err.message);
@@ -132,8 +127,9 @@ async function getPostsByThreadId(threadId){
     }
 }
 
-async function addThreadToDB(title, genres, author, created, content){
-    try {    
+async function addThreadToDB(newThread){
+    try {
+        const {title, genres, author, created, content} = newThread; 
         const client = await pool.connect();
     
         // First, get the author ID from the email
@@ -163,4 +159,26 @@ async function addThreadToDB(title, genres, author, created, content){
       }
 }
 
-export {getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB}
+async function getUserAuthFromDB(email){
+  if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+      const client = await pool.connect();
+      const query = 'SELECT * FROM users WHERE email = $1';
+      const result = await client.query(query, [email]);
+      if (result.rows.length === 0) {
+          return res.json({ error: 'User not found' });
+      }
+      const user = result.rows[0];
+      client.release();
+      return user;
+      
+  } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+export {getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}

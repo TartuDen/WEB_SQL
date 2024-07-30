@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { getAllThreads, getPostsByThreadId, getThreadById } from "./apiCalls.js";
+import { addThreadToDB, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -331,12 +331,9 @@ app.post("/add_thread", async (req, res, next) => {
         // If it's not, make it an array
         genres = [genres];
       }
-      console.log("...email....\n", req.user);
       const authorEmail = req.user.email;
-      let apiResp = await axios.post("http://localhost:8085/get_user_auth", {
-        email: authorEmail,
-      });
-      const author = parseInt(apiResp.data.id);
+      let apiResp = await getUserAuthFromDB(authorEmail);
+      const author = parseInt(apiResp.id);
 
       // Create a new Thread object
       const newThread = {
@@ -346,15 +343,12 @@ app.post("/add_thread", async (req, res, next) => {
         created: new Date(),
         content,
       };
-      console.log("...newThread....\n", newThread);
+      console.log("newThread......\n",newThread);
       // Add the new thread to the database via Axios request
-      const response = await axios.post(
-        "http://localhost:8085/add_thread_to_db",
-        newThread
-      );
+      const response = await addThreadToDB(newThread);
 
       // Check if the request was successful
-      if (response.status === 200) {
+      if (response.title) {
         // Send a response back to the client
         res.redirect(`/`);
       } else {
@@ -384,8 +378,10 @@ app.get("/thread/:id", async (req, res, next) => {
 
     try {
       const thread = await getThreadById(id);
+      console.log(".......thread.....\n",thread);
  
       const postsFromThread = await getPostsByThreadId(id);
+      console.log(".......posts.....\n",postsFromThread);
 
       if (thread) {
         res.status(200).render("thread.ejs", {
