@@ -181,4 +181,23 @@ async function getUserAuthFromDB(email){
   }
 }
 
-export {getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
+async function addPost(newPost){
+  try {
+    const client = await pool.connect();
+    const { threadId, authorId, content, created } = newPost;
+
+    const insertPostQuery = `
+      INSERT INTO posts (threadID, author, created, content)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `;
+    const values = [parseInt(threadId), parseInt(authorId), created, content];
+    const result = await client.query(insertPostQuery, values);
+
+    return (result.rows[0]);
+  } catch (err) {
+    res.json({message: err})
+  }
+}
+
+export {addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}

@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { addThreadToDB, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
+import { addPost, addThreadToDB, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -304,11 +304,8 @@ app.post("/add_post", async (req, res, next) => {
         content,
         created: new Date(),
       };
-      let response = await axios.post(
-        "http://localhost:8085/add_post",
-        newPost
-      );
-      console.log(response.data);
+      let response = await addPost(newPost);
+      console.log(response);
       res.redirect(`/thread/${threadId}`);
     } catch (err) {
       next(err);
@@ -343,7 +340,6 @@ app.post("/add_thread", async (req, res, next) => {
         created: new Date(),
         content,
       };
-      console.log("newThread......\n",newThread);
       // Add the new thread to the database via Axios request
       const response = await addThreadToDB(newThread);
 
@@ -378,11 +374,7 @@ app.get("/thread/:id", async (req, res, next) => {
 
     try {
       const thread = await getThreadById(id);
-      console.log(".......thread.....\n",thread);
- 
       const postsFromThread = await getPostsByThreadId(id);
-      console.log(".......posts.....\n",postsFromThread);
-
       if (thread) {
         res.status(200).render("thread.ejs", {
           thread,
