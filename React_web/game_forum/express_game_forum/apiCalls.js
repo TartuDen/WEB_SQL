@@ -200,4 +200,35 @@ async function addPost(newPost){
   }
 }
 
-export {addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
+async function deleteThread(threadId){
+    try {
+        // Start a transaction
+        const client = await pool.connect();
+        await client.query('BEGIN');
+
+        // Delete the likes associated with the thread
+        await client.query('DELETE FROM likes WHERE threadId = $1', [threadId]);
+
+        // Delete the posts associated with the thread
+        await client.query('DELETE FROM posts WHERE threadID = $1', [threadId]);
+
+        // Delete the thread itself
+        const result = await client.query('DELETE FROM threads WHERE id = $1 RETURNING *', [threadId]);
+
+        if (result.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).send('Thread not found');
+        }
+
+        // Commit the transaction
+        await client.query('COMMIT');
+    } catch (err) {
+        // Rollback the transaction in case of error
+        await client.query('ROLLBACK');
+        console.error('Error deleting thread:', err);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
+export {deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}

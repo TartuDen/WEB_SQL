@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { addPost, addThreadToDB, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
+import { addPost, addThreadToDB, deleteThread, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -281,7 +281,7 @@ app.post("/delete_thread/:id", async (req, res, next) => {
 
     try {
       // Send a delete request to the API
-      await axios.delete(`http://localhost:8085/threads/${threadId}`);
+      await deleteThread(threadId);
 
       // Redirect to the main page or send a success response
       res.redirect("/");
