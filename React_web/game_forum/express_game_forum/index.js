@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { addPost, addThreadToDB, deleteThread, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
+import { addPost, addThreadToDB, deleteThread, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -230,9 +230,7 @@ app.get("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
     try {
       const id = parseInt(req.params.id);
-
-      const response = await axios.get(`http://localhost:8085/thread/${id}`);
-      const thread = response.data;
+      const thread = await getThreadById(id);
       const user = req.user;
       res.status(200).render("editThread.ejs", { thread, user, genres });
     } catch (err) {
@@ -245,7 +243,7 @@ app.get("/edit_thread/:id", async (req, res, next) => {
 
 app.post("/edit_thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
-    const threadId = parseInt(req.params.id);
+    const id = parseInt(req.params.id);
     const { title, content } = req.body;
     const genres = Array.isArray(req.body.genres)
       ? req.body.genres
@@ -260,13 +258,10 @@ app.post("/edit_thread/:id", async (req, res, next) => {
       };
 
       // Send an Axios request to the API to replace the thread
-      const response = await axios.put(
-        `http://localhost:8085/edit_thread/${threadId}`,
-        updatedThread
-      );
-
+      const response = await editThreadById(id, updatedThread);
+      console.log(response);
       // Redirect to the thread page or send a success response
-      res.redirect(`/thread/${threadId}`);
+      res.redirect(`/thread/${id}`);
     } catch (err) {
       next(err); // Pass the error to the error handler middleware
     }

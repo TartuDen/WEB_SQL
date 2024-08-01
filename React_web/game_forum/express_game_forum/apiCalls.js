@@ -230,5 +230,32 @@ async function deleteThread(threadId){
     }
 }
 
+async function editThreadById(id, updatedThread){
+  const threadId = parseInt(id);
+  const { title, content, genres } = updatedThread;
 
-export {deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
+  try {
+    const client = await pool.connect();
+
+    // Update the thread in the database
+    const result = await client.query(`
+      UPDATE threads
+      SET title = $1, content = $2, genres = $3
+      WHERE id = $4
+      RETURNING *
+    `, [title, content, genres, threadId]);
+
+    client.release();
+
+    if (result.rowCount === 0) {
+      return res.status(404).send('Thread not found');
+    }
+
+    return result.rows[0];
+  } catch (err) {
+    console.error('Error updating thread:', err);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+export {editThreadById, deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
