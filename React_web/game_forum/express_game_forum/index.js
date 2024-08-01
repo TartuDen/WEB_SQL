@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { addPost, addThreadToDB, deleteThread, editPost, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
+import { addLIke, addPost, addThreadToDB, deletePost, deleteThread, editPost, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB, removeLike } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -115,8 +115,8 @@ app.post("/add_like", async (req, res, next) => {
       const type = "thread";
 
       // Fetch the appropriate data based on type
-      const response = await axios.get("http://localhost:8085/threads");
-      const threads = response.data;
+      const response = await getAllThreads();
+      const threads = response;
       let likedThread = threads.find(
         (thread) => thread.thread_id === parseInt(id)
       );
@@ -141,25 +141,19 @@ app.post("/add_like", async (req, res, next) => {
           null,
           action
         );
-        let resp = await axios.post("http://localhost:8085/add_like", newLike);
-        console.log(resp.data);
+        let resp = await addLIke(newLike);
+        console.log(resp);
       } else {
         // User has already liked/disliked the thread
         if (existingLike.type === action) {
           // Remove the like/dislike if user clicks the same action again
-          let resp = await axios.post(
-            "http://localhost:8085/remove_like",
-            existingLike
-          );
-          console.log(resp.data);
+          let resp = await removeLike(existingLike);
+          console.log(resp);
         } else {
           // User switches from like to dislike or vice versa
           // First, remove the existing like/dislike
-          let respRemove = await axios.post(
-            "http://localhost:8085/remove_like",
-            existingLike
-          );
-          console.log(respRemove.data);
+          let respRemove = await removeLike(existingLike);
+          console.log(respRemove);
 
           // Then, add the new like/dislike
           let newLike = new Like(
@@ -168,11 +162,8 @@ app.post("/add_like", async (req, res, next) => {
             null,
             action
           );
-          let respAdd = await axios.post(
-            "http://localhost:8085/add_like",
-            newLike
-          );
-          console.log(respAdd.data);
+          let respAdd = await addLIke(newLike);
+          console.log(respAdd);
         }
       }
 
@@ -189,7 +180,7 @@ app.post("/delete_post/:id", async (req, res) => {
   if (req.isAuthenticated()) {
     const postId = req.params.id;
     try {
-      const response = await axios.delete(`http://localhost:8085/delete_post/${postId}`);
+      const response = await deletePost(postId);
       res.status(response.status).redirect(`/thread/${req.body.threadId}`);
     } catch (err) {
       next(err);
@@ -202,9 +193,7 @@ app.post("/delete_post/:id", async (req, res) => {
 app.post("/edit_post", async (req, res, next) => {
   if (req.isAuthenticated()) {
     try {
-      console.log(".....edit post..\n", req.body);
       const user = req.user;
-
       // Send the Axios POST request to the API server
       const response = await editPost(req.body.postId, req.body.content );
       // Log the API server's response

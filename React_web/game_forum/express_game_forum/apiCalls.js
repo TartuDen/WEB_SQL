@@ -282,4 +282,100 @@ async function editPost(postId, content){
   }
 }
 
-export {editPost, editThreadById, deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
+async function deletePost(postId){
+  try {
+    // Delete the post from the database
+    const deleteQuery = `
+      DELETE FROM posts 
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const result = await pool.query(deleteQuery, [postId]);
+
+    // Check if the post was deleted
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Post not found.' });
+    }
+
+    // Respond with a success message
+    return { message: 'Post deleted successfully.' };
+  } catch (err) {
+    res.json({message: err})
+  }
+}
+
+async function addLIke(newLike){
+  // Validate the incoming request data
+  if (!newLike.userId || !newLike.type || (newLike.threadId === undefined && newLike.postId === undefined)) {
+    return res.status(400).json({ error: 'Invalid request data' });
+}
+
+try {
+    const client = await pool.connect();
+
+    const insertLikeQuery = `
+        INSERT INTO likes (userId, threadId, postId, type)
+        VALUES ($1, $2, $3, $4)
+    `;
+
+    // Execute the query to insert the like
+    await client.query(insertLikeQuery, [parseInt(newLike.userId), newLike.threadId, newLike.postId, newLike.type]);
+
+    // Release the client back to the pool
+    client.release();
+
+    // Send a success response
+    return { message: 'Like added successfully' };
+} catch (error) {
+    console.error('Error adding like:', error);
+    // Send an error response
+    res.status(500).json({ error: 'Internal server error' });
+}
+}
+
+async function removeLike(existingLike){
+  const { userId, threadId, postId, type } = existingLike;
+
+  // Validate the incoming request data
+  if (!userId || !type || (threadId === null && postId === null)) {
+      return res.status(400).json({ error: 'Invalid request data' });
+  }
+
+  try {
+      const client = await pool.connect();
+
+      // Construct the delete query based on provided fields
+      let deleteLikeQuery = `DELETE FROM likes WHERE userId = $1 AND type = $2`;
+      let queryParams = [userId, type];
+
+      if (threadId !== null) {
+          deleteLikeQuery += ` AND threadId = $3`;
+          queryParams.push(threadId);
+      }
+
+      if (postId !== null) {
+          deleteLikeQuery += ` AND postId = $4`;
+          queryParams.push(postId);
+      }
+
+      // Execute the delete query
+      const result = await client.query(deleteLikeQuery, queryParams);
+
+      // Check if any row was deleted
+      if (result.rowCount === 0) {
+          throw new Error('No like found to remove');
+      }
+
+      // Release the client back to the pool
+      client.release();
+
+      // Send a success response
+     return { message: 'Like removed successfully' };
+  } catch (error) {
+      console.error('Error removing like:', error);
+      // Send an error response
+      res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+export {removeLike, addLIke, deletePost, editPost, editThreadById, deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
