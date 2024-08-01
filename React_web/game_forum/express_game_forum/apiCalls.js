@@ -258,4 +258,28 @@ async function editThreadById(id, updatedThread){
   }
 }
 
-export {editThreadById, deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}
+async function editPost(postId, content){
+  try {
+  
+    // Update the post content in the database
+    const updateQuery = `
+      UPDATE posts 
+      SET content = $1, created = NOW() 
+      WHERE id = $2
+      RETURNING *;
+    `;
+    const result = await pool.query(updateQuery, [content, postId]);
+
+    // Check if the post was updated
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Post not found.' });
+    }
+
+    // Respond with the updated post
+    return { message: 'Post updated successfully.', post: result.rows[0] };
+  } catch (err) {
+    res.json({message: err})
+  }
+}
+
+export {editPost, editThreadById, deleteThread, addPost, getAllThreads, getThreadById, getPostsByThreadId, addThreadToDB, getUserAuthFromDB}

@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { addPost, addThreadToDB, deleteThread, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
+import { addPost, addThreadToDB, deleteThread, editPost, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -206,14 +206,9 @@ app.post("/edit_post", async (req, res, next) => {
       const user = req.user;
 
       // Send the Axios POST request to the API server
-      const response = await axios.post("http://localhost:8085/edit_post", {
-        postId: req.body.postId,
-        threadId: req.body.threadId,
-        content: req.body.content,
-      });
-
+      const response = await editPost(req.body.postId, req.body.content );
       // Log the API server's response
-      console.log("API server response:", response.data);
+      console.log("API server response:", response);
 
       // Send the API server's response back to the client
       // res.status(response.status).json(response.data);
