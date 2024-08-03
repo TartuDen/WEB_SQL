@@ -12,7 +12,7 @@ import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
 import {createTables, pool} from './pgTables.js'
-import { addLIke, addPost, addThreadToDB, deletePost, deleteThread, editPost, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUserAuthFromDB, removeLike } from "./apiCalls.js";
+import { addLIke, addPost, addThreadToDB, deletePost, deleteThread, editPost, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUser, getUserAuthFromDB, regUser, removeLike } from "./apiCalls.js";
 
 dotenv.config();
 
@@ -419,11 +419,9 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        let apiResp = await axios.post("http://localhost:8085/get_user_auth", {
-          email: profile.emails[0].value,
-        });
-        if (!apiResp.data.email) {
-          const newUser = await axios.post(`http://localhost:8085/reg_user`, {
+        let apiResp = await getUser(profile.emails[0].value);
+        if (!apiResp.email) {
+          const newUser = await regUser({
             user_name: profile.name.givenName,
             email: profile.emails[0].value,
             ava: profile.photos[0].value,
@@ -431,7 +429,7 @@ passport.use(
           cb(null, newUser.data);
         } else {
           //IF user already exist
-          cb(null, apiResp.data);
+          cb(null, apiResp);
         }
       } catch (err) {
         console.error("Error during fetching user: ", err.message);
