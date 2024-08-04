@@ -5,14 +5,29 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 import axios from "axios";
-import multer from 'multer';
+import multer from "multer";
 
 import { Thread, Post, Like } from "./classes.js";
 import { genres } from "./settings.js";
 import { validateTitleAndContent } from "./validation.js";
 import { AppError } from "./classes.js";
-import {createTables, pool} from './pgTables.js'
-import { addLIke, addPost, addThreadToDB, deletePost, deleteThread, editPost, editThreadById, getAllThreads, getPostsByThreadId, getThreadById, getUser, getUserAuthFromDB, regUser, removeLike } from "./apiCalls.js";
+import { createTables, pool } from "./pgTables.js";
+import {
+  addLIke,
+  addPost,
+  addThreadToDB,
+  deletePost,
+  deleteThread,
+  editPost,
+  editThreadById,
+  getAllThreads,
+  getPostsByThreadId,
+  getThreadById,
+  getUser,
+  getUserAuthFromDB,
+  regUser,
+  removeLike,
+} from "./apiCalls.js";
 
 dotenv.config();
 
@@ -31,10 +46,10 @@ app.use(express.static("public"));
 // Ensure tables are created on server start
 async function initializeDatabase() {
   try {
-      await createTables();
-      console.log("Database setup complete");
+    await createTables();
+    console.log("Database setup complete");
   } catch (err) {
-      console.error("Error setting up database:", err);
+    console.error("Error setting up database:", err);
   }
 }
 
@@ -53,7 +68,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // Initialize passport
 app.use(passport.initialize());
@@ -103,7 +117,6 @@ app.get("/auth/logout", (req, res) => {
     }
   });
 });
-
 
 app.post("/add_like", async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -195,7 +208,7 @@ app.post("/edit_post", async (req, res, next) => {
     try {
       const user = req.user;
       // Send the Axios POST request to the API server
-      const response = await editPost(req.body.postId, req.body.content );
+      const response = await editPost(req.body.postId, req.body.content);
       // Log the API server's response
       console.log("API server response:", response);
 
@@ -346,45 +359,42 @@ app.get("/thread/:id", async (req, res, next) => {
     // Check and Convert to Number: After parsing, check if otherId is a number using parseInt(). If it’s not a number, handle the error.
     // Proceed with Valid ID: Once you have a valid number, proceed with your intended logic.
 
-    if (isNaN(id)) {
-      console.error("Invalid thread ID:", req.params.id);
-      return next(new AppError("Invalid thread ID", 400));
-    }
+    if (!isNaN(id)) {
+      try {
+        const thread = await getThreadById(id);
+        const postsFromThread = await getPostsByThreadId(id);
+        if (thread) {
+          res.status(200).render("thread.ejs", {
+            thread,
+            postsFromThread,
+            user: req.user,
+            genres,
+          });
+        } else {
+          console.error(`Thread with ID ${id} not found.`);
+          next(new AppError("Thread not found", 404)); // Pass the error to the error handler middleware
+        }
+      } catch (err) {
+        console.error(`Error fetching thread with ID ${id}:`, err.message);
 
-    try {
-      const thread = await getThreadById(id);
-      const postsFromThread = await getPostsByThreadId(id);
-      if (thread) {
-        res.status(200).render("thread.ejs", {
-          thread,
-          postsFromThread,
-          user: req.user,
-          genres,
-        });
-      } else {
-        console.error(`Thread with ID ${id} not found.`);
-        next(new AppError("Thread not found", 404)); // Pass the error to the error handler middleware
-      }
-    } catch (err) {
-      console.error(`Error fetching thread with ID ${id}:`, err.message);
-
-      // Differentiate between different types of errors
-      if (err.response) {
-        console.error("Response data:", err.response.data);
-        console.error("Response status:", err.response.status);
-        console.error("Response headers:", err.response.headers);
-        next(
-          new AppError(
-            `Error fetching thread: ${err.response.statusText}`,
-            err.response.status
-          )
-        );
-      } else if (err.request) {
-        console.error("Request data:", err.request);
-        next(new AppError("No response received from the server", 500));
-      } else {
-        console.error("Error message:", err.message);
-        next(new AppError("Error setting up request", 500));
+        // Differentiate between different types of errors
+        if (err.response) {
+          console.error("Response data:", err.response.data);
+          console.error("Response status:", err.response.status);
+          console.error("Response headers:", err.response.headers);
+          next(
+            new AppError(
+              `Error fetching thread: ${err.response.statusText}`,
+              err.response.status
+            )
+          );
+        } else if (err.request) {
+          console.error("Request data:", err.request);
+          next(new AppError("No response received from the server", 500));
+        } else {
+          console.error("Error message:", err.message);
+          next(new AppError("Error setting up request", 500));
+        }
       }
     }
   } else {
@@ -393,6 +403,7 @@ app.get("/thread/:id", async (req, res, next) => {
 });
 
 app.get("/", async (req, res, next) => {
+
   try {
     const threads = await getAllThreads();
     if (req.isAuthenticated()) {
