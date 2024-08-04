@@ -14,20 +14,46 @@
     />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      .fixed-width-column {
+        min-width: 100px; /* Adjust this value as needed */
+        max-width: 150px; /* Adjust this value as needed */
+        word-wrap: break-word;
+      }
+
+      .content-column {
+        min-width: 500px; /* Adjust this value as needed */
+        max-width: 600px; /* Adjust this value as needed */
+        word-wrap: break-word;
+        position: relative;
+      }
+
+      .post-row {
+        border-bottom: 10px solid #444; /* Adjust this value for desired separation */
+        padding-top: 10px; /* Adjust padding as needed */
+        padding-bottom: 10px; /* Adjust padding as needed */
+      }
+
+      .actions {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
+    </style>
   </head>
   <body>
     <!-- Header Include -->
     <%- include('parts/header.ejs') %>
-    
+   
     <!-- Main Content Container -->
     <div class="container my-5">
-      
+     
       <!-- Thread Information Table -->
       <table class="table table-dark table-striped">
         <tbody>
           <!-- Thread Author and Metadata -->
           <tr>
-            <td rowspan="2" class="align-middle table-active">
+            <td rowspan="2" class="align-middle table-active fixed-width-column">
               <p>Avatar</p>
               <p><%= thread.author_email %></p>
               <p>
@@ -35,51 +61,53 @@
               </p>
             </td>
             <!-- Thread Title and Genres -->
-            <td>
+            <td class="content-column">
               <h2><%= thread.title %></h2>
               <p>[<%= thread.genres.join(', ') %>]</p>
             </td>
           </tr>
           <!-- Thread Content and Actions -->
           <tr>
-            <td>
+            <td class="content-column">
               <p><%= thread.content %></p>
               <!-- Like and Dislike Counts -->
-              <% let likeCount = thread.likes.filter(like => like.type === 'like').length; 
+              <% let likeCount = thread.likes.filter(like => like.type === 'like').length;
                  let dislikeCount = thread.likes.filter(like => like.type === 'dislike').length; %>
               <p>
                 👍 <span class="like-count"><%= likeCount %></span> / 👎🏾
                 <span class="dislike-count"><%= dislikeCount %></span>
               </p>
               <!-- Edit and Delete Thread Actions -->
-              <% if (user && user.email === thread.author_email) { %>
-              <form
-                action="/edit_thread/<%= thread.thread_id %>"
-                method="get"
-                style="display: inline"
-              >
-                <button
-                  type="submit"
-                  style="border: none; background: none; cursor: pointer"
+              <div class="actions">
+                <% if (user && user.email === thread.author_email) { %>
+                <form
+                  action="/edit_thread/<%= thread.thread_id %>"
+                  method="get"
+                  style="display: inline"
                 >
-                  ✏️
-                </button>
-              </form>
-              <form
-                action="/delete_thread/<%= thread.thread_id %>"
-                method="post"
-                style="display: inline"
-              >
-                <input type="hidden" name="_method" value="DELETE" />
-                <button
-                  type="submit"
-                  style="border: none; background: none; cursor: pointer"
-                  onclick="return confirm('Are you sure you want to delete this thread?')"
+                  <button
+                    type="submit"
+                    style="border: none; background: none; cursor: pointer"
+                  >
+                    ✏️
+                  </button>
+                </form>
+                <form
+                  action="/delete_thread/<%= thread.thread_id %>"
+                  method="post"
+                  style="display: inline"
                 >
-                  🗑️
-                </button>
-              </form>
-              <% } %>
+                  <input type="hidden" name="_method" value="DELETE" />
+                  <button
+                    type="submit"
+                    style="border: none; background: none; cursor: pointer"
+                    onclick="return confirm('Are you sure you want to delete this thread?')"
+                  >
+                    🗑️
+                  </button>
+                </form>
+                <% } %>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -87,7 +115,7 @@
 
       <!-- Section for Posts -->
       <h2 class="mt-5">Posts</h2>
-      
+     
       <!-- Include New Post Modal -->
       <%- include("newPostModal.ejs") %>
       <button
@@ -104,41 +132,43 @@
       <table class="table table-dark table-striped">
         <tbody>
           <% postsFromThread.forEach(post => { %>
-          <tr>
+          <tr class="post-row">
             <!-- Post Author and Metadata -->
-            <td class="table-active">
+            <td class="table-active fixed-width-column">
               <p>Avatar</p>
               <p>Author: <%= post.author_email %></p>
               <p>Created: <%= new Date(post.created).toLocaleDateString() %></p>
             </td>
             <!-- Post Content and Actions -->
-            <td>
-              <p>Content: <%= post.content %></p>
-              <% if (user && user.email === post.author_email) { %>
-              <button
-                type="button"
-                class="btn ms-3"
-                data-bs-toggle="modal"
-                data-bs-target="#editPostModal-<%= post.id %>"
-              >
-                ✏️
-              </button>
-              <form
-                action="/delete_post/<%= post.id %>"
-                method="post"
-                style="display: inline"
-              >
-                <input type="hidden" name="_method" value="DELETE" />
+            <td class="content-column">
+              <p><%= post.content %></p>
+              <div class="actions">
+                <% if (user && user.email === post.author_email) { %>
                 <button
-                  type="submit"
-                  style="border: none; background: none; cursor: pointer"
-                  onclick="return confirm('Are you sure you want to delete this post?')"
+                  type="button"
+                  class="btn ms-3"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editPostModal-<%= post.id %>"
                 >
-                  🗑️
+                  ✏️
                 </button>
-                <input type="hidden" name="threadId" value="<%= thread.thread_id %>">
-              </form>
-              <% } %>
+                <form
+                  action="/delete_post/<%= post.id %>"
+                  method="post"
+                  style="display: inline"
+                >
+                  <input type="hidden" name="_method" value="DELETE" />
+                  <button
+                    type="submit"
+                    style="border: none; background: none; cursor: pointer"
+                    onclick="return confirm('Are you sure you want to delete this post?')"
+                  >
+                    🗑️
+                  </button>
+                  <input type="hidden" name="threadId" value="<%= thread.thread_id %>">
+                </form>
+                <% } %>
+              </div>
             </td>
           </tr>
           <!-- Include Edit Post Modal for Each Post -->
@@ -153,10 +183,10 @@
       <!-- Back to Threads Button -->
       <a href="/" class="btn btn-primary mt-3">Back to Threads</a>
     </div>
-    
+   
     <!-- Footer Include -->
     <%- include('parts/footer.ejs') %>
-    
+   
     <!-- Bootstrap JS Bundle -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

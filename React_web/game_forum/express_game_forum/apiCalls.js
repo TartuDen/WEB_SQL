@@ -268,7 +268,7 @@ async function editPost(postId, content) {
     // Update the post content in the database
     const updateQuery = `
       UPDATE posts 
-      SET content = $1, created = NOW() 
+      SET content = $1
       WHERE id = $2
       RETURNING *;
     `;
