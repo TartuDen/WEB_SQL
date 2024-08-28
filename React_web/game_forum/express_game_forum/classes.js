@@ -1,4 +1,4 @@
-
+// classes.js
 class Like {
     constructor(userId, threadId = null, postId = null, type = "like") {
         this.userId = userId;

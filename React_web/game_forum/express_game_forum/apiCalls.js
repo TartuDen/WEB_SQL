@@ -1,3 +1,4 @@
+// apiCalls.js
 import { createTables, pool } from "./pgTables.js";
 
 async function getAllThreads() {
