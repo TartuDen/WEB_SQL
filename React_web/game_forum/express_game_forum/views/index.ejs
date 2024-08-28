@@ -34,8 +34,6 @@
             <!-- <th scope="row"><%= thread.thread_id %></th> -->
             <td>
               <a href="/thread/<%= thread.thread_id %>"><%= thread.title %></a>
-            </td>
-            <td>
               <% if (user && user.email === thread.author_email) { %>
               <form
                 action="/edit_thread/<%= thread.thread_id %>"

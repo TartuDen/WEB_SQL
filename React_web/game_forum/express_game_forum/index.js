@@ -354,11 +354,6 @@ app.get("/thread/:id", async (req, res, next) => {
   if (req.isAuthenticated()) {
     const id = parseInt(req.params.id);
 
-    // Logging the Raw ID: First, log the raw value of req.params.id to understand its initial state.
-    // Attempt to Parse: Use JSON.parse() to parse otherId. If it’s already a plain string number, parsing will fail, and it will be used as is.
-    // Check and Convert to Number: After parsing, check if otherId is a number using parseInt(). If it’s not a number, handle the error.
-    // Proceed with Valid ID: Once you have a valid number, proceed with your intended logic.
-
     if (!isNaN(id)) {
       try {
         const thread = await getThreadById(id);
